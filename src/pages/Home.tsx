@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "../App.css";
 import { Unity, useUnityContext } from "react-unity-webgl";
+import LoadingGame from "../components/LoadingGame";
 
-const Home=()=> {
+const Home = () => {
   const {
     unityProvider,
     loadingProgression,
@@ -19,9 +20,14 @@ const Home=()=> {
 
   return (
     <div className="unity-container">
-      <Unity unityProvider={unityProvider} className="unity-game" />
+      {!isLoaded ? <LoadingGame progress={loadingProgression} /> : null}
+      <Unity
+        unityProvider={unityProvider}
+        className="unity-game"
+        style={{ display: isLoaded ? "block" : "none" }}
+      />
     </div>
   );
-}
+};
 
 export default Home;

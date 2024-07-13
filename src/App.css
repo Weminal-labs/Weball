@@ -13,9 +13,9 @@ body, html {
 #root {
   height: 100%;
   width: 100%;
-  display: flex;
+  /* display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: center; */
 }
 
 .unity-container {
@@ -27,6 +27,7 @@ body, html {
 }
 
 .unity-game {
-  width: 1200px; /* Điều chỉnh kích thước phù hợp với game của bạn */
-  height: 600px; /* Điều chỉnh kích thước phù hợp với game của bạn */
+  border-radius: 12px;
+  width: 1000px; 
+  height: 500px; 
 }
