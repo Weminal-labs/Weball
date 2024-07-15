@@ -20,22 +20,14 @@ const Home = () => {
 
   return (
     <>
-      <div style={{
-        backgroundImage: "url('../public/bg.jpg')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        width: "100%",
-        height: "100vh",
-        overflow: "hidden",
-        
-      }}>
-        <Header />
-        <div className="unity-container">
-          <UnityGame unityProvider={unityProvider} isLoaded={isLoaded} loadingProgression={loadingProgression} />
-        </div>
+      <div className="unity-container">
+        <UnityGame
+          unityProvider={unityProvider}
+          isLoaded={isLoaded}
+          loadingProgression={loadingProgression}
+        />
       </div>
     </>
-
   );
 };
 
