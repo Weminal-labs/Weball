@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useAuthCallback } from "aptimus-sdk-test/react";
 import { CircularProgress } from "@mui/material";
 
