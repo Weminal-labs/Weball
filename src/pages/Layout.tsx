@@ -8,10 +8,10 @@ const Layout = () => {
         backgroundImage: "url('../public/bg.jpg')",
         backgroundSize: "cover",
         backgroundPosition: "center",
+        backgroundRepeat: 'no-repeat',
         width: "100%",
         height: "100vh",
         overflow: "hidden",
-        
       }}>
         <Header />
         <Outlet></Outlet>

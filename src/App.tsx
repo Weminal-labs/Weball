@@ -6,18 +6,20 @@ import Rooms from "./pages/Rooms";
 import Layout from "./pages/Layout";
 import { LoginPage } from "./pages/Login";
 import { CallbackPage } from "./pages/Callback";
+import RequireAuth from "./components/RequireAuth";
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/"  element={<Layout/>}>
-          <Route path="/" element={<Home />} />
-          <Route path="rooms" element={<Rooms />} />
+        <Route path="/" element={<Layout />}>
+          <Route element={<RequireAuth />}>
+            <Route path="/" element={<Home />} />
+            <Route path="rooms" element={<Rooms />} />
+          </Route>
         </Route>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/callback" element={<CallbackPage />} />
-
       </Routes>
     </Router>
   );

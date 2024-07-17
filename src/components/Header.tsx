@@ -2,7 +2,8 @@ import React from "react";
 import styled from "styled-components";
 import PersonIcon from "@mui/icons-material/Person";
 import { NavLink } from "react-router-dom";
-import { useAptimusFlow, useKeylessLogin } from "aptimus-sdk-test/react";
+import { useAptimusFlow } from "aptimus-sdk-test/react";
+import useAuth from "../hooks/useAuth";
 
 const HeaderContainer = styled.div`
   width: 95%;
@@ -10,7 +11,7 @@ const HeaderContainer = styled.div`
   padding: 28px;
   text-align: left;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-evenly;
   align-items: center;
 `;
 
@@ -28,6 +29,7 @@ const TitleContainer = styled.header`
   height: 24px;
   background-color: #0e235e;
   padding: 16px 12px;
+
   display: flex;
   justify-content: center;
   align-items: center;
@@ -50,16 +52,17 @@ const Title = styled.h1`
 `;
 
 const FeaturesContainer = styled.div`
-  padding-right: 100px;
-  margin-left: 40px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 300px;
-  height: 100%;
-  cursor: pointer;
-  gap: 30px;
-  font-weight: 500;
+    padding-right: 100px
+    margin-left: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 300px;
+    height: 100%;
+    cursor: pointer;
+    gap: 30px;
+    font-weight:500
+
 `;
 
 const Feature = styled.div`
@@ -77,10 +80,27 @@ const StyledNavLink = styled(NavLink)`
     color: #e72222;
   }
 
-  &:hover {
-    color: #ddd;
-  }
+  // &:hover {
+  //   color: #ddd;
+  // }
 `;
+// const RoomsContainer = styled.div`
+//     display: flex;
+//     justify-content: center;
+//     align-items: center;
+//     width: 250px;
+//     height: 50px;
+//     // background-color: #E72222;
+//     border-radius: 50px;
+//     margin-right: 25px;
+//     cursor: pointer;
+// `;
+
+// const Rooms = styled.div`
+//     color: #fff;
+//     font-size: 30px;
+//     font-weight: bold;
+// `;
 
 const RightHeader = styled.div`
   display: flex;
@@ -104,8 +124,10 @@ const ProfileButton = styled.button`
 `;
 
 const Header: React.FC = () => {
+  const { auth } = useAuth();
   const flow = useAptimusFlow();
 
+  console.log(auth)
   return (
     <HeaderContainer>
       <LeftHeader>
@@ -118,7 +140,7 @@ const Header: React.FC = () => {
                 objectFit: "cover",
                 borderRadius: "50px",
               }}
-              src="/logo.jpg"
+              src={"../public/logo.jpg"}
               alt="logo"
             />
           </Logo>
@@ -126,15 +148,18 @@ const Header: React.FC = () => {
         </TitleContainer>
         <FeaturesContainer>
           <StyledNavLink to="/">
-            <Feature>Home</Feature>
+            <p>Home</p>
           </StyledNavLink>
           <StyledNavLink to="/rooms">
-            <Feature>Rooms</Feature>
+            <p>Rooms</p>
           </StyledNavLink>
         </FeaturesContainer>
       </LeftHeader>
       <RightHeader>
-        <ProfileButton onClick={() => flow.logout()}>
+        <h2 onClick={()=>{
+          flow.logout();
+        }}>hello {auth?.email}</h2>
+        <ProfileButton>
           <PersonIcon />
         </ProfileButton>
       </RightHeader>

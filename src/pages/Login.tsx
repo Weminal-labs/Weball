@@ -1,5 +1,5 @@
 import React from "react";
-import { useAptimusFlow } from "aptimus-sdk-test/react";
+import { useAptimusFlow, } from "aptimus-sdk-test/react";
 
 export const LoginPage = () => {
   const flow = useAptimusFlow();
@@ -11,9 +11,9 @@ export const LoginPage = () => {
         "898060815188-os2kha196hocdsuqpjhao3r52d4k9tkk.apps.googleusercontent.com",
       redirectUrl: `${window.location.origin}/callback`,
     });
-    console.log(url);
     window.location.href = url.toString();
   };
+
 
   return (
     <div style={{
