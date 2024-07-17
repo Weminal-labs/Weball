@@ -1,8 +1,9 @@
 import React from "react";
 import styled from "styled-components";
 import PersonIcon from "@mui/icons-material/Person";
+import SearchIcon from "@mui/icons-material/Search";
 import { NavLink } from "react-router-dom";
-import { useAptimusFlow, useKeylessLogin } from "aptimus-sdk-test/react";
+import { useAptimusFlow } from "aptimus-sdk-test/react";
 
 const HeaderContainer = styled.div`
   width: 95%;
@@ -18,8 +19,7 @@ const LeftHeader = styled.div`
   display: flex;
   justify-content: left;
   align-items: center;
-  width: 100%;
-  height: 100%;
+  flex: 1
 `;
 
 const TitleContainer = styled.header`
@@ -50,16 +50,17 @@ const Title = styled.h1`
 `;
 
 const FeaturesContainer = styled.div`
-  padding-right: 100px;
   margin-left: 40px;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 300px;
   height: 100%;
   cursor: pointer;
   gap: 30px;
   font-weight: 500;
+  border: 2px solid #fff;
+  padding: 10px;
+  border-radius: 50px;
 `;
 
 const Feature = styled.div`
@@ -67,6 +68,7 @@ const Feature = styled.div`
   font-size: 16px;
   letter-spacing: 2px;
 `;
+
 const StyledNavLink = styled(NavLink)`
   color: #fff;
   font-size: 16px;
@@ -82,12 +84,61 @@ const StyledNavLink = styled(NavLink)`
   }
 `;
 
+const Search = styled.div`
+  width: 60%;
+  position: relative;
+  display: flex;
+  flex: 1;
+  margin-left: 40px;
+`;
+
+const SearchTerm = styled.input`
+  width: 100%;
+  border: 3px solid #00B4CC;
+  border-right: none;
+  padding: 6px 10px;
+  height: 20px;
+  border-radius: 20px 0 0 20px;
+  outline: none;
+  color: #9DBFAF;
+
+  &:focus {
+    color: #00B4CC;
+  }
+  line-height: 20px;
+`;
+
+const SearchButton = styled.button`
+  width: 40px;
+  height: 36px;
+  border: 1px solid #00B4CC;
+  background: #00B4CC;
+  text-align: center;
+  color: #fff;
+  border-radius: 0 5px 5px 0;
+  cursor: pointer;
+  font-size: 20px;
+  line-height: 20px;
+`;
+
 const RightHeader = styled.div`
   display: flex;
   justify-content: right;
   align-items: center;
-  width: 150px;
-  height: 40px;
+  flex: 1;
+`;
+
+const ProfileNameContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 15px;
+`;
+
+const ProfileName = styled.p`
+  color: #fff;
+  font-size: 20px;
+  font-weight: bold;
 `;
 
 const ProfileButton = styled.button`
@@ -126,14 +177,20 @@ const Header: React.FC = () => {
         </TitleContainer>
         <FeaturesContainer>
           <StyledNavLink to="/">
-            <Feature>Home</Feature>
-          </StyledNavLink>
-          <StyledNavLink to="/rooms">
-            <Feature>Rooms</Feature>
+            <Feature>Apply for Subcription</Feature>
           </StyledNavLink>
         </FeaturesContainer>
       </LeftHeader>
+        <Search>
+          <SearchTerm type="text" placeholder="What are you looking for?" />
+          <SearchButton type="submit">
+            <SearchIcon />
+          </SearchButton>
+        </Search>
       <RightHeader>
+          <ProfileNameContainer>
+            <ProfileName>Hoang Long Vu</ProfileName>
+          </ProfileNameContainer>
         <ProfileButton onClick={() => flow.logout()}>
           <PersonIcon />
         </ProfileButton>
