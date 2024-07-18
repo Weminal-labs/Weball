@@ -31,15 +31,14 @@ const Layout = () => {
     <LayoutContainer>
       <Header />
       <ContentContainer>
-        <SideBarContainer>
-          <SideBar items={[
+        <SideBar 
+          items={[
             { icon: <HomeOutlined />, text: "Home", onClick: () => { handleItemClick("Home") } },
-              { icon: <MeetingRoom />, text: "Create Room", onClick: () => { handleItemClick("Create Room") } },
-              { icon: <MeetingRoomOutlined />, text: "Join Room", onClick: () => { handleItemClick("Join Room") } },
-              { icon: <LeaderboardOutlined />, text: "Leaderboard", onClick: () => { handleItemClick("Leaderboard") } },
-              { icon: <AttachMoneyOutlined />, text: "Add Bets", onClick: () => { handleItemClick("Add Bets") } }
-            ]} selectedItem={selectedItem} />
-        </SideBarContainer>
+            { icon: <MeetingRoom />, text: "Create Room", onClick: () => { handleItemClick("Create Room") } },
+            { icon: <MeetingRoomOutlined />, text: "Join Room", onClick: () => { handleItemClick("Join Room") } },
+            { icon: <LeaderboardOutlined />, text: "Leaderboard", onClick: () => { handleItemClick("Leaderboard") } },
+            { icon: <AttachMoneyOutlined />, text: "Add Bets", onClick: () => { handleItemClick("Add Bets") } }
+          ]} selectedItem={selectedItem} />
         <Outlet />
       </ContentContainer>
     </LayoutContainer>
@@ -47,27 +46,20 @@ const Layout = () => {
 };
 
 const LayoutContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  width: 100%;
+  display: grid;
+  grid-template-rows: 15% 85%;
   background-color: #000;
+  height: 100vh;
 `;
 
 const ContentContainer = styled.div`
-  flex: 11; 
-  display: flex;
+  display: grid;
+  grid-template-rows: 100%;
+  grid-template-columns: 100px 1400px;
   justify-content: center;
   align-items: center;
   padding: 20px; 
   flex-direction: row;
-`;
-
-const SideBarContainer = styled.div`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
 `;
 
 export default Layout;

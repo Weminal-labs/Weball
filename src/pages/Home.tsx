@@ -8,12 +8,12 @@ import "../App.css";
 const Home: React.FC = () => {
   const { isShowing, toggle } = useModal();
   return (
-      <ContentContainer>
-        <ShowModalButton onClick={toggle}>
-          <ShowModalText className="play-game">PLAY GAME</ShowModalText>
-        </ShowModalButton>
-        <UnityModal isShowing={isShowing} hide={toggle} />
-      </ContentContainer>
+    <ContentContainer>
+      <ShowModalButton onClick={toggle}>
+        <ShowModalText className="play-game">PLAY GAME</ShowModalText>
+      </ShowModalButton>
+      <UnityModal isShowing={isShowing} hide={toggle} />
+    </ContentContainer>
   );
 };
 
