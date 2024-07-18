@@ -1,26 +1,15 @@
 import React, { useEffect } from "react";
-
 import { CircularProgress } from "@mui/material";
 import { useAuthCallback } from "aptimus-sdk-test/react";
-import { User } from "../type/type";
-import { jwtDecode } from "jwt-decode";
-import useAuth from "../hooks/useAuth";
 
 export const CallbackPage = () => {
   const { handled } = useAuthCallback(); // This hook will handle the callback from the authentication provider
-  const {  getAuth} = useAuth();
 
   useEffect(() => {
-
-      if (handled) {
-        window.location.href = "/";
+    if (handled) {
+      window.location.href = "/";
     }
- 
-
   }, [handled]);
-
-
-
 
   return (
     <div
@@ -33,7 +22,7 @@ export const CallbackPage = () => {
         overflow: "hidden",
         display: "flex",
         justifyContent: "center",
-        alignItems: "center"
+        alignItems: "center",
       }}
     >
       <CircularProgress />

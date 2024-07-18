@@ -1,16 +1,19 @@
 import { useState } from 'react';
 
 const useModal = () => {
-  const [isShowing, setIsShowing] = useState<boolean>(false);
+    const [isShowing, setIsShowing] = useState(false);
+    const [modalContent, setModalContent] = useState(null);
 
-  const toggle = () => {
-    setIsShowing(!isShowing);
-  };
+    function toggle(content = null) {
+        setIsShowing(!isShowing);
+        setModalContent(content);
+    }
 
-  return {
-    isShowing,
-    toggle,
-  };
+    return {
+        isShowing,
+        toggle,
+        modalContent
+    };
 };
 
 export default useModal;

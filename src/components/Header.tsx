@@ -1,33 +1,30 @@
 import React from "react";
 import styled from "styled-components";
-import PersonIcon from "@mui/icons-material/Person";
-import { NavLink } from "react-router-dom";
+import SearchIcon from "@mui/icons-material/Search";
 import { useAptimusFlow } from "aptimus-sdk-test/react";
 import useAuth from "../hooks/useAuth";
 import { Avatar } from "@mui/material";
 
 const HeaderContainer = styled.div`
-  width: 95%;
   height: 40px;
   padding: 20px;
   text-align: left;
   display: flex;
   justify-content: space-evenly;
   align-items: center;
-
+  background-color: #181818;
 `;
 
 const LeftHeader = styled.div`
   display: flex;
   justify-content: left;
   align-items: center;
-  width: 100%;
-  height: 100%;
+  flex: 1;
 `;
 
 const TitleContainer = styled.header`
-  background: linear-gradient(to right, #3a6084, #0e235e);
-  width: 190px;
+  background: linear-gradient(180deg, #885bff 0%, #5977d6 100%);
+  width: 160px;
   height: 24px;
   background-color: #0e235e;
   padding: 16px 12px;
@@ -43,7 +40,7 @@ const Logo = styled.div`
   width: 40px;
   height: 40px;
   border-radius: 50px;
-  margin-right: 15px;
+  margin-right: 5px;
 `;
 
 const Title = styled.h1`
@@ -53,89 +50,60 @@ const Title = styled.h1`
   letter-spacing: 3px;
 `;
 
-const FeaturesContainer = styled.div`
-    padding-right: 100px
-    margin-left: 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 300px;
-    height: 100%;
-    cursor: pointer;
-    gap: 30px;
-    font-weight:500
-
+const Search = styled.div`
+  width: 40%;
+  position: relative;
+  display: flex;
+  flex: 1;
+  margin-left: 40px;
 `;
 
-const Feature = styled.div`
-  color: #fff;
-  font-size: 16px;
-  letter-spacing: 2px;
-`;
-const StyledNavLink = styled(NavLink)`
-  color: #fff;
-  font-size: 16px;
-  letter-spacing: 2px;
-  text-decoration: none;
-  border: none;
-  &.active {
-    color: #e72222;
+const SearchTerm = styled.input`
+  width: 100%;
+  border: 3px solid #00b4cc;
+  border-right: none;
+  padding: 6px 10px;
+  height: 20px;
+  border-radius: 20px 0 0 20px;
+  outline: none;
+  color: #9dbfaf;
+
+  &:focus {
+    color: #00b4cc;
   }
-
-  // &:hover {
-  //   color: #ddd;
-  // }
+  line-height: 20px;
 `;
-// const RoomsContainer = styled.div`
-//     display: flex;
-//     justify-content: center;
-//     align-items: center;
-//     width: 250px;
-//     height: 50px;
-//     // background-color: #E72222;
-//     border-radius: 50px;
-//     margin-right: 25px;
-//     cursor: pointer;
-// `;
 
-// const Rooms = styled.div`
-//     color: #fff;
-//     font-size: 30px;
-//     font-weight: bold;
-// `;
+const SearchButton = styled.button`
+  width: 40px;
+  height: 36px;
+  border: 1px solid #00b4cc;
+  background: #00b4cc;
+  text-align: center;
+  color: #fff;
+  border-radius: 0 5px 5px 0;
+  cursor: pointer;
+  font-size: 20px;
+  line-height: 20px;
+`;
 
 const RightHeader = styled.div`
   display: flex;
   justify-content: right;
   align-items: center;
-  width: 150px;
-  height: 40px;
+  flex: 1;
 `;
 
-const ProfileButton = styled.button`
-  width: 40px;
-  height: 40px;
-  background-color: #3d4b61;
-  color: #fff;
-  font-size: 16px;
-  font-weight: bold;
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
-  margin-right: 15px;
-`;
 const WelcomeText = styled.p`
-  color:white;
-  font-size:14px;
-  margin-right:20px;
-
-
-`
+  color: white;
+  font-size: 14px;
+  margin-right: 20px;
+`;
 const Header: React.FC = () => {
   const { auth } = useAuth();
   const flow = useAptimusFlow();
 
-  console.log(auth)
+  console.log(auth);
   return (
     <HeaderContainer>
       <LeftHeader>
@@ -148,29 +116,28 @@ const Header: React.FC = () => {
                 objectFit: "cover",
                 borderRadius: "50px",
               }}
-              src={"../public/logo.jpg"}
+              src={"../public/logo.png"}
               alt="logo"
             />
           </Logo>
           <Title>WEBALL</Title>
         </TitleContainer>
-        <FeaturesContainer>
-          <StyledNavLink to="/">
-            <p>Home</p>
-          </StyledNavLink>
-          <StyledNavLink to="/rooms">
-            <p>Rooms</p>
-          </StyledNavLink>
-        </FeaturesContainer>
       </LeftHeader>
+      <Search>
+        <SearchTerm type="text" placeholder="What are you looking for?" />
+        <SearchButton type="submit">
+          <SearchIcon />
+        </SearchButton>
+      </Search>
       <RightHeader>
-        <WelcomeText onClick={()=>{
-          flow.logout();
-        }}> {auth?.email}</WelcomeText>
-        {/* <ProfileButton> */}
-        <Avatar  src={auth?.picture} sx={{cursor:"pointer"}} />
-
-        {/* </ProfileButton> */}
+        <WelcomeText
+          onClick={() => {
+            flow.logout();
+          }}
+        >
+          {auth?.email}
+        </WelcomeText>
+        <Avatar src={auth?.picture} />
       </RightHeader>
     </HeaderContainer>
   );

@@ -21,16 +21,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const getAuth = async () => {
     const session = await flow.getSession();
     if (session && session.jwt) {
-      console.log("kkkkk")
       const user: User = jwtDecode(session.jwt);
       setAuth(user);
     }
   };
 
-
-  // useEffect(() => {
-  //   console.log("Auth State Updated:", auth);
-  // }, [auth]);
   return (
     <AuthContext.Provider value={{ auth, setAuth ,getAuth}}>
       {children}

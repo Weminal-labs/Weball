@@ -1,49 +1,66 @@
-import React from 'react';
-import { Box, Drawer, List, ListItem, ListItemIcon, ListItemText, Typography } from '@mui/material';
-import HomeIcon from '@mui/icons-material/Home';
-import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
-import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
-import GroupIcon from '@mui/icons-material/Group';
-import EventIcon from '@mui/icons-material/Event';
-import ChatIcon from '@mui/icons-material/Chat';
-import WalletIcon from '@mui/icons-material/AccountBalanceWallet';
-import HelpIcon from '@mui/icons-material/Help';
+import React from "react";
+import { Box, Drawer, List, ListItemIcon, ListItemText } from "@mui/material";
+import { NavLink } from "react-router-dom";
+import HomeIcon from "@mui/icons-material/Home";
+import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
+import GroupIcon from "@mui/icons-material/Group";
+import { AttachMoneyOutlined, LeaderboardOutlined } from "@mui/icons-material";
 
 const drawerWidth = 100;
 
 const items = [
-  { text: 'Home', icon: <HomeIcon /> },
-  { text: 'Create', icon: <SportsEsportsIcon /> },
-  { text: 'join', icon: <GroupIcon /> },
+  { text: "Home", icon: <HomeIcon />, to: "/" },
+  { text: "Create", icon: <SportsEsportsIcon />, to: "/create-room" },
+  { text: "Join", icon: <GroupIcon />, to: "/join-room" },
+  { text: "Boarding", icon: <LeaderboardOutlined />, to: "/leaderboard" },
+  { text: "Bet", icon: <AttachMoneyOutlined />, to: "/add-bets" },
 
 ];
 
-const SideBar=()=> {
+const SideBar = () => {
   return (
     <Box
       sx={{
         width: drawerWidth,
-        // marginTop:"48px",
+        height:"100%",
         flexShrink: 0,
-        [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
+         background: "#181818",
+        [`& .MuiDrawer-paper`]: {
+          width: drawerWidth,
+          boxSizing: "border-box",
+          marginTop: "48px",
+        },
       }}
     >
       <Box sx={{ overflow: 'auto' }}>
-        <List>
+        <List sx={{padding:"0px 8px"}}>
           {items.map((item, index) => (
-            <ListItem button key={index}>
-              <ListItemIcon sx={{ display: 'flex', justifyContent: 'center', flexDirection:"column", alignItems:"center" }}>
-                {item.icon}
-                <ListItemText primary={item.text} sx={{ textAlign: 'center' }} />
-
+            <NavLink
+              to={item.to}
+              key={index}
+              style={({ isActive }) => ({
+                borderRadius:'8px',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                textDecoration: 'none',
+                color: isActive ? 'white' : 'grey',
+                background: isActive ? 'linear-gradient(180deg, #885BFF 0%, #5977D6 100%)' : 'transparent',
+                padding: '10px 0',
+                width: '100%'
+              })}
+            >
+              <ListItemIcon sx={{ display: 'flex', justifyContent: 'center', color: 'inherit' }}>
+                {React.cloneElement(item.icon, { color: 'inherit' })}
               </ListItemIcon>
-            </ListItem>
+              <ListItemText primary={item.text} sx={{ textAlign: 'center', color: 'inherit' }} />
+            </NavLink>
           ))}
         </List>
-       
       </Box>
     </Box>
   );
-}
+};
 
 export default SideBar;
