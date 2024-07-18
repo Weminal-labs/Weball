@@ -1,55 +1,38 @@
+// import React from "react";
 import "../App.css";
-import { useUnityContext } from "react-unity-webgl";
-import Header from "../components/Header";
-import UnityGame from "../components/UnityGame";
-import { useAptimusFlow } from "aptimus-sdk-test/react";
-import { useEffect } from "react";
-import { jwtDecode } from "jwt-decode";
-import { User } from "../type/type";
-import useAuth from "../hooks/useAuth";
+import useModal from "../hooks/useModal";
+import UnityModal from "../components/UnityModal";
 
 const Home = () => {
-  const flow = useAptimusFlow();
+  const { isShowing, toggle } = useModal();
 
-  const {
-    unityProvider,
-    loadingProgression,
-    isLoaded,
-    // sendMessage,
-    // addEventListener,
-    // removeEventListener,
-  } = useUnityContext({
-    loaderUrl: "build/Build/Build.loader.js",
-    dataUrl: "build/Build/Build.data",
-    frameworkUrl: "build/Build/Build.framework.js",
-    codeUrl: "build/Build/Build.wasm",
-  });
-  useEffect(() => {
-    test();
-  }, []);
-  const { setAuth, auth } = useAuth();
+  // const test = async () => {
+  //   const session = await flow.getSession();
+  //   const user: User = jwtDecode(session.jwt ?? "");
 
-  const test = async () => {
-    const session = await flow.getSession();
-    const user: User = jwtDecode(session.jwt ?? "");
+  //   // Map the decoded JWT object to the User interface
 
-    // Map the decoded JWT object to the User interface
-
-    if (user) {
-      setAuth(user);
-      console.log(auth);
-    }
-  };
+  //   if (user) {
+  //     setAuth(user);
+  //     console.log(auth);
+  //   }
+  // };
   return (
-    <>
+    <div
+      style={{
+    
+        width: "100%",
+        height: "100vh",
+        overflow: "hidden"
+      }}
+    >
       <div className="unity-container">
-        <UnityGame
-          unityProvider={unityProvider}
-          isLoaded={isLoaded}
-          loadingProgression={loadingProgression}
-        />
+        <button className="show-modal" onClick={toggle}>
+          <span className="play-game">PLAY GAME</span>
+        </button>
+        <UnityModal isShowing={isShowing} hide={toggle} />
       </div>
-    </>
+    </div>
   );
 };
 

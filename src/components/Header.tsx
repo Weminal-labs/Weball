@@ -4,15 +4,17 @@ import PersonIcon from "@mui/icons-material/Person";
 import { NavLink } from "react-router-dom";
 import { useAptimusFlow } from "aptimus-sdk-test/react";
 import useAuth from "../hooks/useAuth";
+import { Avatar } from "@mui/material";
 
 const HeaderContainer = styled.div`
   width: 95%;
   height: 40px;
-  padding: 28px;
+  padding: 20px;
   text-align: left;
   display: flex;
   justify-content: space-evenly;
   align-items: center;
+
 `;
 
 const LeftHeader = styled.div`
@@ -122,7 +124,13 @@ const ProfileButton = styled.button`
   cursor: pointer;
   margin-right: 15px;
 `;
+const WelcomeText = styled.p`
+  color:white;
+  font-size:14px;
+  margin-right:20px;
 
+
+`
 const Header: React.FC = () => {
   const { auth } = useAuth();
   const flow = useAptimusFlow();
@@ -156,12 +164,13 @@ const Header: React.FC = () => {
         </FeaturesContainer>
       </LeftHeader>
       <RightHeader>
-        <h2 onClick={()=>{
+        <WelcomeText onClick={()=>{
           flow.logout();
-        }}>hello {auth?.email}</h2>
-        <ProfileButton>
-          <PersonIcon />
-        </ProfileButton>
+        }}> {auth?.email}</WelcomeText>
+        {/* <ProfileButton> */}
+        <Avatar  src={auth?.picture} sx={{cursor:"pointer"}} />
+
+        {/* </ProfileButton> */}
       </RightHeader>
     </HeaderContainer>
   );

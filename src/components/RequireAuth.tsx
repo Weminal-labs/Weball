@@ -13,14 +13,14 @@ const RequireAuth = () => {
   const [loading,setLoading ] =useState(true)
   useEffect(() => {
     if (!auth) {
-    //   const test = async () => {
-    //     const session = await flow.getSession();
-    //     if (session && session.jwt) {
-    //       const user: User = jwtDecode(session.jwt ?? "");
-    //       setAuth(user);
-    //     }
-    //     setLoading(false);
-    //   };
+      const test = async () => {
+        const session = await flow.getSession();
+        if (session && session.jwt) {
+          const user: User = jwtDecode(session.jwt ?? "");
+          setAuth(user);
+        }
+        setLoading(false);
+      };
 
       test();
     } else {
@@ -29,18 +29,18 @@ const RequireAuth = () => {
     console.log("Auth:", auth);
   }, [auth, setAuth]);
 
-  const test = async () => {
-    const session = await flow.getSession();
-    const user: User = jwtDecode(session.jwt ?? "");
-    // Map the decoded JWT object to the User interface
+  // const test = async () => {
+  //   const session = await flow.getSession();
+  //   const user: User = jwtDecode(session.jwt ?? "");
+  //   // Map the decoded JWT object to the User interface
 
-    if (user) {
-      setAuth(user);
-      console.log(auth);
-    }
-    setLoading(false)
+  //   if (user) {
+  //     setAuth(user);
+  //     console.log(auth);
+  //   }
+  //   setLoading(false)
 
-  };
+  // };
   if(loading){
     return <div>loading...</div>
   }

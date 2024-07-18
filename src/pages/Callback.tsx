@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+
 import { CircularProgress } from "@mui/material";
 import { useAuthCallback } from "aptimus-sdk-test/react";
 import { User } from "../type/type";
