@@ -11,6 +11,7 @@ import AddBets from "./pages/AddBets";
 import { LoginPage } from "./pages/Login";
 import { CallbackPage } from "./pages/Callback";
 import RequireAuth from "./components/RequireAuth";
+import AuthLayout from "./pages/AuthLayout";
 
 function App() {
   return (
@@ -26,8 +27,12 @@ function App() {
             <Route path="/add-bets" element={<AddBets />} />
           </Route>
         </Route>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/callback" element={<CallbackPage />} />
+        <Route path="/auth" element={<AuthLayout />}>
+
+          <Route path="login" element={<LoginPage />} />
+        </Route>
+        <Route path="callback" element={<CallbackPage />} />
+
       </Routes>
     </Router>
   );

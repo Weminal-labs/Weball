@@ -3,7 +3,7 @@ import { CircularProgress } from "@mui/material";
 import { useAuthCallback } from "aptimus-sdk-test/react";
 
 export const CallbackPage = () => {
-  const { handled } = useAuthCallback(); // This hook will handle the callback from the authentication provider
+  const { handled } = useAuthCallback();
 
   useEffect(() => {
     if (handled) {
@@ -12,19 +12,7 @@ export const CallbackPage = () => {
   }, [handled]);
 
   return (
-    <div
-      style={{
-        backgroundImage: "url('../public/bg.jpg')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        width: "100%",
-        height: "100vh",
-        overflow: "hidden",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
+    <div className="flex justify-center">
       <CircularProgress />
     </div>
   );

@@ -34,7 +34,7 @@ const RequireAuth = () => {
     return <div>loading...</div>
   }
  else{
-  return auth?<Outlet />:<Navigate to="/login" state={{ from: location }} replace />;
+  return auth?<Outlet />:<Navigate to="auth/login" state={{ from: location }} replace />;
   }
 };
 

@@ -1,10 +1,13 @@
 import React from "react";
-import { useAptimusFlow, } from "aptimus-sdk-test/react";
+import { useAptimusFlow } from "aptimus-sdk-test/react";
+import "../index.css";
+import { FcGoogle } from "react-icons/fc";
 
 export const LoginPage = () => {
   const flow = useAptimusFlow();
 
   const startLogin = async () => {
+    console.log(window.location.origin)
     const url = await flow.createAuthorizationURL({
       provider: "google",
       clientId:
@@ -14,30 +17,18 @@ export const LoginPage = () => {
     window.location.href = url.toString();
   };
 
-
   return (
-    <div style={{
-      backgroundImage: "url('../public/bg.jpg')",
-      backgroundSize: "cover",
-      backgroundPosition: "center",
-      width: "100%",
-      height: "100vh",
-      overflow: "hidden",
-
-    }}>
-      <button
-        className="flex justify-center items-center border border-gray-300 rounded-lg px-8 py-2 text-gray-700 hover:bg-gray-100 hover:shadow-sm active:bg-gray-50 active:scale-95 transition-all"
+    <div className="flex items-center justify-center">
+      <div
+        className="flex cursor-pointer gap-2 rounded-lg bg-white px-4 py-2 font-semibold text-blue-500 shadow-md hover:bg-blue-700 hover:text-white"
         onClick={startLogin}
       >
-        <img
-          src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png"
-          alt="Google logo"
-          className="w-6 h-6 mr-2"
-        />
-        Sign in with Google
-      </button>
+        <FcGoogle size={"2.5rem"}></FcGoogle>
+        <p className="blinking self-center font-bold ">
+          {" "}
+          Sign in with Google
+        </p>
+      </div>
     </div>
-
-
   );
 };
