@@ -53,7 +53,7 @@ const CloseButton = styled.span`
 
 interface ModalProps {
   isShowing: boolean;
-  hide: () => void;
+  hide: () => void|null;
 }
 
 const UnityModal: React.FC<ModalProps> = ({ isShowing, hide }) => {

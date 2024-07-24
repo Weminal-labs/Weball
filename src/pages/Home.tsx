@@ -3,16 +3,24 @@ import styled from "styled-components";
 import useModal from "../hooks/useModal";
 import UnityModal from "../components/UnityModal";
 import "../App.css";
-
+import { Button } from "@mui/material";
+import { useAptimusFlow, useKeylessLogin } from "aptimus-sdk-test/react";
+import { Aptos, AptosAccount, AptosConfig, InputViewFunctionData, Network } from "@aptos-labs/ts-sdk";
+import { AptimusNetwork } from "aptimus-sdk-test";
 
 const Home: React.FC = () => {
   const { isShowing, toggle } = useModal();
+  const { address } = useKeylessLogin();
+  const flow = useAptimusFlow();
+
+  
+
   return (
     <ContentContainer>
-      <ShowModalButton onClick={toggle}>
+      {/* <ShowModalButton onClick={toggle}>
         <ShowModalText className="play-game">PLAY GAME</ShowModalText>
       </ShowModalButton>
-      <UnityModal isShowing={isShowing} hide={toggle} />
+      <UnityModal isShowing={isShowing} hide={toggle} /> */}
     </ContentContainer>
   );
 };
@@ -23,7 +31,7 @@ const ContentContainer = styled.div`
   align-items: center;
   width: 100%;
   height: 100%;
-  background:grey
+  background: grey;
 `;
 
 const ShowModalButton = styled.button`

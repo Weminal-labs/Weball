@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useEffect, useState } from "react";
+import { createContext, ReactNode, useState } from "react";
 import { User } from "../type/type";
 import { useAptimusFlow } from "aptimus-sdk-test/react";
 import { jwtDecode } from "jwt-decode";

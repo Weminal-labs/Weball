@@ -1,34 +1,61 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Room from '../components/Room';
 import RoomModal from '../components/RoomModal';
 import useModal from '../hooks/useModal';
+import { Aptos, AptosConfig, InputViewFunctionData, Network } from '@aptos-labs/ts-sdk';
+import { RoomType } from '../type/type';
+import { Pagination, Stack } from '@mui/material';
+import { MODULE_ADDRESS } from '../utils/Var';
+const ITEMS_PER_PAGE = 6;
 
 const JoinRoom: React.FC = () => {
     const { isShowing, toggle, modalContent } = useModal();
+    const [isLoading, setIsLoading] =useState<boolean>(true)
+    const [list,setList]=useState<RoomType[]>([])
+    const [page, setPage] = useState<number>(1);
 
-    const rooms = [
-        { roomName: "Room 1", currentName: "Longvu", opponentName: "", bettingAmount: 25 },
-        { roomName: "Room 2", currentName: "Longvu", opponentName: "", bettingAmount: 5 },
-        { roomName: "Room 3", currentName: "Longvu", opponentName: "", bettingAmount: 50 },
-        { roomName: "Room 4", currentName: "Longvu", opponentName: "", bettingAmount: 30 },
-        { roomName: "Room 5", currentName: "Longvu", opponentName: "", bettingAmount: 100 }
-    ];
+    useEffect(()=>{
+        getRooms();
+    })
 
+    const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+        setPage(value);
+    };
+    const startIndex = (page - 1) * ITEMS_PER_PAGE;
+    const endIndex = startIndex + ITEMS_PER_PAGE;
+    const displayedRooms = list.slice(startIndex, endIndex);
+
+    const getRooms =async ()=>{
+        const aptosConfig = new AptosConfig({ network: Network.TESTNET });
+        const aptos = new Aptos(aptosConfig);
+        console.log(MODULE_ADDRESS)
+        const payload: InputViewFunctionData = {
+          function: `${MODULE_ADDRESS}::gamev3::get_all_rooms`,
+        };
+         
+        const data = (await aptos.view({ payload }));
+        setIsLoading(false)
+        setList(data[0])
+    }
     return (
         <JoinRoomContainer>
-            {rooms.map((room, index) => (
-                <Room 
-                    key={index} 
-                    roomName={room.roomName} 
-                    currentName={room.currentName} 
-                    opponentName={room.opponentName} 
-                    bettingAmount={room.bettingAmount} 
-                    onClick={() => toggle(room)} 
-                />
-            ))}
-            {isShowing && <RoomModal room={modalContent} onClose={toggle} />}
-        </JoinRoomContainer>
+        {displayedRooms.map((room, index) => (
+            <Room 
+                key={index} 
+                roomType={room}
+                
+            />
+        ))}
+        {isShowing && <RoomModal room={modalContent} onClose={toggle} />}
+        <Stack spacing={2}>
+            <Pagination
+                count={Math.ceil(list.length / ITEMS_PER_PAGE)}
+                page={page}
+                onChange={handlePageChange}
+            />
+        </Stack>
+    </JoinRoomContainer>
     );
 };
 
@@ -40,6 +67,9 @@ const JoinRoomContainer = styled.div`
     flex-wrap: wrap;
     gap: 25px;
     padding: 50px;
+      overflow:auto;
+    background: linear-gradient(45deg, #7ad8f5 30%, #26de57 90%);
 `;
+
 
 export default JoinRoom;

@@ -1,109 +1,56 @@
-import styled from "styled-components";
+import {
+  Box,
+  Card,
+  CardContent,
+  CardMedia,
+  Divider,
+  Typography,
+} from "@mui/material";
+import { AttachMoney, People } from "@mui/icons-material";
+import useAuth from "../hooks/useAuth";
+import { RoomType } from "../type/type";
+import { shortenAddress } from "../utils/Shorten";
 
 interface RoomProps {
-    roomName: string;
-    currentName: string;
-    opponentName: string;
-    bettingAmount: number;
-    onClick: () => void;
+  roomType: RoomType;
 }
 
-const RoomCard: React.FC<RoomProps> = ({ roomName, currentName, opponentName, bettingAmount, onClick }) => {
-    return (
-        <RoomCardContainer>
-            <RoomName>{roomName}</RoomName>
-            <BettingAmount>{bettingAmount} APT</BettingAmount>
-            <RoomInfo>
-                <PlayerNameWrapper>
-                    <Playername>{currentName}</Playername>
-                </PlayerNameWrapper>
-                <PlayerNameWrapper>
-                    <Playername>{opponentName}</Playername>
-                </PlayerNameWrapper>
-            </RoomInfo>
-            <JoinButton onClick={onClick}>Join</JoinButton>
-        </RoomCardContainer>
-    );
+const RoomCard: React.FC<RoomProps> = ({ roomType }) => {
+  const { auth } = useAuth();
+
+  return (
+    <Card sx={{ maxWidth: 450 }}>
+      <CardMedia
+        sx={{ height: 280, width: 380 }}
+        image="./public/stadium/stadium1.jpg"
+        title="Stadium"
+      />
+      <CardContent>
+        <h2 className="text-lg font-semibold">Stadium: {roomType.room_name}</h2>
+        <Box className="my-2 flex gap-2">
+          <Box className="flex gap-1" sx={{ color: "#1976d2" }}>
+            <People sx={{ color: "#1976d2" }} />
+            <Typography component="span" sx={{ color: "#1976d2" }}>
+              {roomType.is_player2_joined?"2":"1"}/2 players
+            </Typography>
+          </Box>
+          <Box className="flex gap-1" sx={{ color: "#1976d2" }}>
+            <AttachMoney sx={{ color: "#1976d2" }} />
+            <Typography component="span" sx={{ color: "#1976d2" }}>
+              {roomType.bet_amount} aptos
+            </Typography>
+          </Box>
+        </Box>
+        <Divider variant="middle" />
+        <div className="my-3 flex flex-col gap-1">
+          <div className="text-sm opacity-85">
+            Creator: {shortenAddress(roomType.creator, 5)}
+          </div>
+          <div>ID: {roomType.room_id}</div>
+        </div>
+      </CardContent>
+    </Card>
+  );
 };
 
-const RoomCardContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  background-color: #f9f9f9;
-  border-radius: 10px;
-  padding: 20px;
-  margin: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  background-image: url("./public/vs.png");
-  background-size: cover;
-  background-position: center;
-  gap: 15px;
-  padding-bottom: 30px;
-  height: 250px;
-  width: 230px;
-`;
-
-const RoomName = styled.h2`
-  color: #333;
-  font-size: 36px;
-  margin-bottom: 0px;
-  margin-top: -10px;
-`;
-
-const BettingAmount = styled.span`
-  color: #333;
-  font-size: 24px;
-  margin-bottom: 12px;
-`;
-
-const RoomInfo = styled.div`
-    display: flex;
-    margin-top: 10px;
-    align-items: center;
-    width: 100%;
-    justify-content: space-between;
-`;
-
-const PlayerNameWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-`;
-
-const Playername = styled.span`
-  color: white;
-  font-size: 24px;
-  margin-bottom: 25px;
-
-`;
-
-const JoinButton = styled.button`
-  font-family: "Open Sans", sans-serif;
-  font-size: 26px;
-  letter-spacing: 2px;
-  text-decoration: none;
-  text-transform: uppercase;
-  cursor: pointer;
-  border: 3px solid;
-  padding: 0.25em 0.5em;
-  box-shadow: 1px 1px 0px 0px, 2px 2px 0px 0px, 3px 3px 0px 0px, 4px 4px 0px 0px, 5px 5px 0px 0px;
-  position: relative;
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: manipulation;
-
-  &:active {
-    box-shadow: 0px 0px 0px 0px;
-    top: 5px;
-    left: 5px;
-  }
-  @media (min-width: 768px) {
-    padding: 0.25em 0.75em;
-  }
-`
-
 export default RoomCard;
-

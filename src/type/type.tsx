@@ -15,3 +15,16 @@ export interface User {
     nonce: string;
     picture: string;
   }
+  export  interface RoomType {
+    bet_amount: string;
+    create_time: string;
+    creator: string;
+    creator_ready: boolean;
+    is_player2_joined: boolean;
+    is_player2_ready: boolean;
+    is_room_close: boolean;
+    player2: { vec: Array<any> }; // Adjust the type inside Array if you have a specific type for player2 objects
+    room_id: string;
+    room_name: string;
+  }
+  

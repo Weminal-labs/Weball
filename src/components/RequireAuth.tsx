@@ -3,12 +3,13 @@ import useAuth from '../hooks/useAuth';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import { User } from '../type/type';
-import { useAptimusFlow } from 'aptimus-sdk-test/react';
+import { useAptimusFlow, useKeylessLogin } from 'aptimus-sdk-test/react';
 
 const RequireAuth = () => {
   const { auth,setAuth } = useAuth();
   const flow = useAptimusFlow();
-
+  
+  const { address}=useKeylessLogin();
   const location = useLocation();
   const [loading,setLoading ] =useState(true)
   useEffect(() => {
@@ -26,7 +27,7 @@ const RequireAuth = () => {
     } else {
       setLoading(false);
     }
-    console.log("Auth:", auth);
+    console.log("Address:", address );
   }, [auth, setAuth]);
 
 

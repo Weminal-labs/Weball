@@ -6,7 +6,7 @@ import useAuth from "../hooks/useAuth";
 import { Avatar } from "@mui/material";
 
 const HeaderContainer = styled.div`
-  height: 40px;
+  height: 60px;
   padding: 20px;
   text-align: left;
   display: flex;
@@ -123,12 +123,12 @@ const Header: React.FC = () => {
           <Title>WEBALL</Title>
         </TitleContainer>
       </LeftHeader>
-      <Search>
+      {/* <Search>
         <SearchTerm type="text" placeholder="What are you looking for?" />
         <SearchButton type="submit">
           <SearchIcon />
         </SearchButton>
-      </Search>
+      </Search> */}
       <RightHeader>
         <WelcomeText
           onClick={() => {
