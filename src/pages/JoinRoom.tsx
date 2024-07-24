@@ -17,7 +17,7 @@ const JoinRoom: React.FC = () => {
 
     useEffect(()=>{
         getRooms();
-    })
+    },[])
 
     const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
         setPage(value);
@@ -37,6 +37,9 @@ const JoinRoom: React.FC = () => {
         const data = (await aptos.view({ payload }));
         setIsLoading(false)
         setList(data[0])
+    }
+    if(isLoading){
+        return <div>Loading...</div>
     }
     return (
         <JoinRoomContainer>
@@ -64,10 +67,10 @@ const JoinRoomContainer = styled.div`
     align-items: start;
     justify-content: start;
     height: 100%;
+    overflow-y: scroll;
     flex-wrap: wrap;
     gap: 25px;
     padding: 50px;
-      overflow:auto;
     background: linear-gradient(45deg, #7ad8f5 30%, #26de57 90%);
 `;
 

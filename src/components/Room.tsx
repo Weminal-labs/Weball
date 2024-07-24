@@ -10,6 +10,10 @@ import { AttachMoney, People } from "@mui/icons-material";
 import useAuth from "../hooks/useAuth";
 import { RoomType } from "../type/type";
 import { shortenAddress } from "../utils/Shorten";
+import { MODULE_ADDRESS } from "../utils/Var";
+import { Aptos, AptosConfig, Network } from "@aptos-labs/ts-sdk";
+import { useAptimusFlow, useKeylessLogin } from "aptimus-sdk-test/react";
+import { AptimusNetwork } from "aptimus-sdk-test";
 
 interface RoomProps {
   roomType: RoomType;
@@ -17,9 +21,37 @@ interface RoomProps {
 
 const RoomCard: React.FC<RoomProps> = ({ roomType }) => {
   const { auth } = useAuth();
+  const flow = useAptimusFlow();
+  const { address } = useKeylessLogin();
 
+  const JoinRoom =async () => {
+    const aptosConfig = new AptosConfig({ network: Network.TESTNET });
+
+    const aptos = new Aptos(aptosConfig);
+
+    const FUNCTION_NAME = `${MODULE_ADDRESS}::gamev3::join_room_by_room_id`;
+    const ROOM_ID=Number(roomType.room_id)
+    try {
+      const transaction = await aptos.transaction.build.simple({
+        sender: address ?? "",
+        data: {
+          function: FUNCTION_NAME,
+          functionArguments: [ROOM_ID],
+        },
+      });
+      const committedTransaction = await flow.executeTransaction({
+        aptos,
+        transaction,
+        network: AptimusNetwork.TESTNET,
+      });
+
+      console.log(committedTransaction.events[1].data);
+    } catch (error) {
+      console.error("Lỗi khi gọi hàm smart contract:", error);
+    }
+  };
   return (
-    <Card sx={{ maxWidth: 450 }}>
+    <Card onClick={JoinRoom} sx={{ maxWidth: 450, cursor: "pointer" }}>
       <CardMedia
         sx={{ height: 280, width: 380 }}
         image="./public/stadium/stadium1.jpg"
@@ -31,7 +63,7 @@ const RoomCard: React.FC<RoomProps> = ({ roomType }) => {
           <Box className="flex gap-1" sx={{ color: "#1976d2" }}>
             <People sx={{ color: "#1976d2" }} />
             <Typography component="span" sx={{ color: "#1976d2" }}>
-              {roomType.is_player2_joined?"2":"1"}/2 players
+              {roomType.is_player2_joined ? "2" : "1"}/2 players
             </Typography>
           </Box>
           <Box className="flex gap-1" sx={{ color: "#1976d2" }}>

@@ -15,6 +15,7 @@ import { Aptos, AptosConfig, Network } from "@aptos-labs/ts-sdk";
 import { AptimusNetwork } from "aptimus-sdk-test";
 import { UnityGameComponent, useUnityGame } from "../hooks/useUnityGame";
 import { MODULE_ADDRESS } from "../utils/Var";
+import { CreateRoomType } from "../type/type";
 const stadiums = [
   "Old Trafford",
   "Camp Nou",
@@ -54,16 +55,16 @@ const CreateRoom: React.FC = () => {
         transaction,
         network: AptimusNetwork.TESTNET,
       });
-
-      console.log(committedTransaction.events[1].data);
+      const createRoomObj: CreateRoomType= committedTransaction.events[1].data
+      console.log(createRoomObj);
       if (isLoaded === false) {
         console.log("Máy chủ chưa kết nối");
         return;
       }
       const obj = {
-        roomId: "15",
-        roomName: roomName,
-        userId: "456E",
+        roomId: createRoomObj.room_id,
+        roomName: createRoomObj.room_name,
+        userId: createRoomObj.creator,
         userName: userName,
       };
       sendMessage("RoomPlayer", "JoinOrCreateRoom", JSON.stringify(obj));
@@ -82,7 +83,7 @@ const CreateRoom: React.FC = () => {
         justifyContent: "center",
         height: "100%",
         width: "100%",
-        background: "linear-gradient(45deg, #7ad8f5 30%, #26de57 90%)", // Gradient background
+        background: "linear-gradient(45deg, #7ad8f5 30%, #26de57 90%)", 
       }}
     >
       <Box
