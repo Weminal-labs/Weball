@@ -14,23 +14,26 @@ import { MODULE_ADDRESS } from "../utils/Var";
 import { Aptos, AptosConfig, Network } from "@aptos-labs/ts-sdk";
 import { useAptimusFlow, useKeylessLogin } from "aptimus-sdk-test/react";
 import { AptimusNetwork } from "aptimus-sdk-test";
+import { useUnityGame } from "../hooks/useUnityGame";
 
 interface RoomProps {
   roomType: RoomType;
+  setShow: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const RoomCard: React.FC<RoomProps> = ({ roomType }) => {
+const RoomCard: React.FC<RoomProps> = ({ roomType, setShow, setIsLoading }) => {
   const { auth } = useAuth();
   const flow = useAptimusFlow();
   const { address } = useKeylessLogin();
+  const { sendMessage, isLoaded } = useUnityGame();
 
-  const JoinRoom =async () => {
+  const JoinRoom = async () => {
     const aptosConfig = new AptosConfig({ network: Network.TESTNET });
-
     const aptos = new Aptos(aptosConfig);
-
     const FUNCTION_NAME = `${MODULE_ADDRESS}::gamev3::join_room_by_room_id`;
-    const ROOM_ID=Number(roomType.room_id)
+    const ROOM_ID = Number(roomType.room_id);
+    setIsLoading(true)
     try {
       const transaction = await aptos.transaction.build.simple({
         sender: address ?? "",
@@ -46,6 +49,19 @@ const RoomCard: React.FC<RoomProps> = ({ roomType }) => {
       });
 
       console.log(committedTransaction.events[1].data);
+      if (isLoaded === false) {
+        console.log("Máy chủ chưa kết nối");
+        return;
+      }
+      const obj = {
+        roomId: roomType.room_id,
+        roomName: roomType.room_name,
+        userId: roomType.creator,
+        userName: "userName",
+      };
+      setIsLoading(false)
+      sendMessage("RoomPlayer", "JoinOrCreateRoom", JSON.stringify(obj));
+      setShow(true);
     } catch (error) {
       console.error("Lỗi khi gọi hàm smart contract:", error);
     }
@@ -53,7 +69,7 @@ const RoomCard: React.FC<RoomProps> = ({ roomType }) => {
   return (
     <Card onClick={JoinRoom} sx={{ maxWidth: 450, cursor: "pointer" }}>
       <CardMedia
-        sx={{ height: 280, width: 380 }}
+        sx={{ height: 280, width: "100%" }}
         image="./public/stadium/stadium1.jpg"
         title="Stadium"
       />

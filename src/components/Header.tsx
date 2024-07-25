@@ -12,7 +12,7 @@ const HeaderContainer = styled.div`
   display: flex;
   justify-content: space-evenly;
   align-items: center;
-  background-color: #181818;
+  background-color: #181733;
 `;
 
 const LeftHeader = styled.div`
@@ -25,9 +25,8 @@ const LeftHeader = styled.div`
 const TitleContainer = styled.header`
   background: linear-gradient(180deg, #885bff 0%, #5977d6 100%);
   width: 160px;
-  height: 24px;
   background-color: #0e235e;
-  padding: 16px 12px;
+  padding: 4px 12px;
 
   display: flex;
   justify-content: center;

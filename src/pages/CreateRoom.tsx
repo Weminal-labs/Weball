@@ -8,6 +8,8 @@ import {
   RadioGroup,
   FormControlLabel,
   Radio,
+  CircularProgress,
+  Backdrop,
 } from "@mui/material";
 import { useState } from "react";
 import { useAptimusFlow, useKeylessLogin } from "aptimus-sdk-test/react";
@@ -16,6 +18,7 @@ import { AptimusNetwork } from "aptimus-sdk-test";
 import { UnityGameComponent, useUnityGame } from "../hooks/useUnityGame";
 import { MODULE_ADDRESS } from "../utils/Var";
 import { CreateRoomType } from "../type/type";
+import LoadingScreen from "../components/LoadingScreen";
 const stadiums = [
   "Old Trafford",
   "Camp Nou",
@@ -33,6 +36,7 @@ const CreateRoom: React.FC = () => {
   const handleClose = () => setShow(false);
   const { sendMessage, isLoaded } = useUnityGame();
   const [show, setShow] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const createRoomContract = async () => {
     const aptosConfig = new AptosConfig({ network: Network.TESTNET });
@@ -43,6 +47,7 @@ const CreateRoom: React.FC = () => {
     const BET_AMOUNT = bet; // Số tiền cược
 
     try {
+      setIsLoading(true);
       const transaction = await aptos.transaction.build.simple({
         sender: address ?? "",
         data: {
@@ -55,7 +60,7 @@ const CreateRoom: React.FC = () => {
         transaction,
         network: AptimusNetwork.TESTNET,
       });
-      const createRoomObj: CreateRoomType= committedTransaction.events[1].data
+      const createRoomObj: CreateRoomType = committedTransaction.events[1].data;
       console.log(createRoomObj);
       if (isLoaded === false) {
         console.log("Máy chủ chưa kết nối");
@@ -67,9 +72,13 @@ const CreateRoom: React.FC = () => {
         userId: createRoomObj.creator,
         userName: userName,
       };
+      setIsLoading(false);
+
       sendMessage("RoomPlayer", "JoinOrCreateRoom", JSON.stringify(obj));
       setShow(true);
     } catch (error) {
+      setIsLoading(false);
+
       console.error("Lỗi khi gọi hàm smart contract:", error);
     }
   };
@@ -83,10 +92,10 @@ const CreateRoom: React.FC = () => {
         justifyContent: "center",
         height: "100%",
         width: "100%",
-        background: "linear-gradient(45deg, #7ad8f5 30%, #26de57 90%)", 
+        background: "linear-gradient(45deg, #219CE2 30%,#0CBD16 90%)",
       }}
     >
-      <Box
+      {isLoading?<LoadingScreen/>:<Box
         sx={{
           display: "flex",
           flexDirection: "column",
@@ -156,6 +165,7 @@ const CreateRoom: React.FC = () => {
           Create
         </Button>
       </Box>
+      }
       {
         <Modal
           open={true}
@@ -164,28 +174,14 @@ const CreateRoom: React.FC = () => {
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
         >
-          <Box sx={style}>
-            <UnityGameComponent />
-          </Box>
+          <>
+          <UnityGameComponent />
+
+          </>
         </Modal>
       }
     </Box>
   );
-};
-
-const style = {
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: "70%",
-  height: "75%",
-  bgcolor: "background.paper",
-  boxShadow: 24,
-  p: 3,
 };
 
 export default CreateRoom;
