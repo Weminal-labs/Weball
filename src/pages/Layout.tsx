@@ -6,7 +6,6 @@ import { HomeOutlined, MeetingRoom, MeetingRoomOutlined, LeaderboardOutlined, At
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import PermanentDrawer from '../components/Side';
 import { Box } from '@mui/material';
 
 const Layout = () => {

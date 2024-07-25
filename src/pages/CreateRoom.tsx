@@ -8,8 +8,7 @@ import {
   RadioGroup,
   FormControlLabel,
   Radio,
-  CircularProgress,
-  Backdrop,
+
 } from "@mui/material";
 import { useState } from "react";
 import { useAptimusFlow, useKeylessLogin } from "aptimus-sdk-test/react";
@@ -60,6 +59,7 @@ const CreateRoom: React.FC = () => {
         transaction,
         network: AptimusNetwork.TESTNET,
       });
+      // @ts-ignore
       const createRoomObj: CreateRoomType = committedTransaction.events[1].data;
       console.log(createRoomObj);
       if (isLoaded === false) {
@@ -117,10 +117,10 @@ const CreateRoom: React.FC = () => {
           <Typography variant="h4" align="center">
             Create a room
           </Typography>
-          <Typography variant="subtitle1" align="center" opacity={0.5}>
+          <h3 className="text-center opacity-70">
             Create a room for friends to compete in a soccer match. Enjoy the
             game and have fun!
-          </Typography>
+          </h3>
         </div>
 
         <Autocomplete

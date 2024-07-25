@@ -49,6 +49,7 @@ const JoinRoom: React.FC = () => {
 
     const data = await aptos.view({ payload });
     setIsLoading(false);
+    // @ts-ignore
     setList(data[0]);
   };
 
