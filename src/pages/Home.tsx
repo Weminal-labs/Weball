@@ -5,7 +5,7 @@ import UnityModal from "../components/UnityModal";
 import "../App.css";
 import { Button } from "@mui/material";
 import { useAptimusFlow, useKeylessLogin } from "aptimus-sdk-test/react";
-import { Aptos, AptosAccount, AptosConfig, InputViewFunctionData, Network } from "@aptos-labs/ts-sdk";
+import { Aptos, AptosConfig, InputViewFunctionData, Network } from "@aptos-labs/ts-sdk";
 import { AptimusNetwork } from "aptimus-sdk-test";
 
 const Home: React.FC = () => {

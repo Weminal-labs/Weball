@@ -2,8 +2,9 @@ import React from "react";
 import styled from "styled-components";
 import { useAptimusFlow } from "aptimus-sdk-test/react";
 import useAuth from "../hooks/useAuth";
-import { Avatar, Menu, MenuItem } from "@mui/material";
+import { Menu, MenuItem } from "@mui/material";
 import { useNavigate } from 'react-router-dom';
+import Avatar from '@mui/material/Avatar';
 
 const HeaderContainer = styled.div`
   height: 60px;
@@ -70,7 +71,7 @@ const Header: React.FC = () => {
   const flow = useAptimusFlow();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
@@ -112,7 +113,7 @@ const Header: React.FC = () => {
         >
           {auth?.email}
         </WelcomeText>
-        <Avatar src={auth?.picture} onClick={handleClick} sx={{cursor:"pointer"}} />
+        <Avatar component="div"  src={auth?.picture} onClick={handleClick} sx={{cursor:"pointer"}} />
         <Menu
           id="basic-menu"
           anchorEl={anchorEl}
