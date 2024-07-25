@@ -1,8 +1,6 @@
 import { Backdrop, CircularProgress } from '@mui/material'
 import React from 'react'
-interface Prop{
-    isLoading:boolean
-}
+
 const LoadingScreen = () => {
   return (
     <Backdrop

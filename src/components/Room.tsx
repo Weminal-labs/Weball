@@ -7,7 +7,6 @@ import {
   Typography,
 } from "@mui/material";
 import { AttachMoney, People } from "@mui/icons-material";
-import useAuth from "../hooks/useAuth";
 import { RoomType } from "../type/type";
 import { shortenAddress } from "../utils/Shorten";
 import { MODULE_ADDRESS } from "../utils/Var";
@@ -23,7 +22,6 @@ interface RoomProps {
 }
 
 const RoomCard: React.FC<RoomProps> = ({ roomType, setShow, setIsLoading }) => {
-  const { auth } = useAuth();
   const flow = useAptimusFlow();
   const { address } = useKeylessLogin();
   const { sendMessage, isLoaded } = useUnityGame();
@@ -47,7 +45,7 @@ const RoomCard: React.FC<RoomProps> = ({ roomType, setShow, setIsLoading }) => {
         transaction,
         network: AptimusNetwork.TESTNET,
       });
-
+      //@ts-ignore
       console.log(committedTransaction.events[1].data);
       if (isLoaded === false) {
         console.log("Máy chủ chưa kết nối");

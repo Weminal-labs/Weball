@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-import SearchIcon from "@mui/icons-material/Search";
 import { useAptimusFlow } from "aptimus-sdk-test/react";
 import useAuth from "../hooks/useAuth";
 import { Avatar, Menu, MenuItem } from "@mui/material";
@@ -50,42 +49,8 @@ const Title = styled.h1`
   letter-spacing: 3px;
 `;
 
-const Search = styled.div`
-  width: 40%;
-  position: relative;
-  display: flex;
-  flex: 1;
-  margin-left: 40px;
-`;
 
-const SearchTerm = styled.input`
-  width: 100%;
-  border: 3px solid #00b4cc;
-  border-right: none;
-  padding: 6px 10px;
-  height: 20px;
-  border-radius: 20px 0 0 20px;
-  outline: none;
-  color: #9dbfaf;
 
-  &:focus {
-    color: #00b4cc;
-  }
-  line-height: 20px;
-`;
-
-const SearchButton = styled.button`
-  width: 40px;
-  height: 36px;
-  border: 1px solid #00b4cc;
-  background: #00b4cc;
-  text-align: center;
-  color: #fff;
-  border-radius: 0 5px 5px 0;
-  cursor: pointer;
-  font-size: 20px;
-  line-height: 20px;
-`;
 
 const RightHeader = styled.div`
   display: flex;
