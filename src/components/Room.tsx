@@ -68,7 +68,7 @@ const RoomCard: React.FC<RoomProps> = ({ roomType, setShow, setIsLoading }) => {
     <Card onClick={JoinRoom} sx={{ maxWidth: 450, cursor: "pointer" }}>
       <CardMedia
         sx={{ height: 280, width: "100%" }}
-        image="./public/stadium/stadium1.jpg"
+        image="/stadium/stadium1.jpg"
         title="Stadium"
       />
       <CardContent>

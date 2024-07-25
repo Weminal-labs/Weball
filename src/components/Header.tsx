@@ -94,7 +94,7 @@ const Header: React.FC = () => {
                 objectFit: "cover",
                 borderRadius: "50px",
               }}
-              src={"../public/logo.png"}
+              src={"/logo.png"}
               alt="logo"
             />
           </Logo>

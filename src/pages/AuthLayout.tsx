@@ -7,7 +7,7 @@ const AuthLayout = () => {
       <div className="flex  flex-col">
         <img
           className="h-[360px] w-[360px]"
-          src={"../public/logo.png"}
+          src={"/logo.png"}
           alt="logo"
         />{" "}
         <Outlet />
