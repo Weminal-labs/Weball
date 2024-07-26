@@ -1,10 +1,10 @@
 import React from "react";
 import styled from "styled-components";
 import { useAptimusFlow } from "aptimus-sdk-test/react";
-import useAuth from "../hooks/useAuth";
+import useAuth from "../../hooks/useAuth";
 import { Menu, MenuItem } from "@mui/material";
-import { useNavigate } from 'react-router-dom';
-import Avatar from '@mui/material/Avatar';
+import { useNavigate } from "react-router-dom";
+import Avatar from "@mui/material/Avatar";
 
 const HeaderContainer = styled.div`
   height: 60px;
@@ -50,9 +50,6 @@ const Title = styled.h1`
   letter-spacing: 3px;
 `;
 
-
-
-
 const RightHeader = styled.div`
   display: flex;
   justify-content: right;
@@ -77,10 +74,10 @@ const Header: React.FC = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const handleLogout = ()=>{
+  const handleLogout = () => {
     flow.logout();
     navigate("/auth/login", { replace: true });
-  }
+  };
   console.log(auth);
   return (
     <HeaderContainer>
@@ -107,13 +104,14 @@ const Header: React.FC = () => {
           <SearchIcon />
         </SearchButton>
       </Search> */}
-      <RightHeader >
-        <WelcomeText
-     
-        >
-          {auth?.email}
-        </WelcomeText>
-        <Avatar component="div"  src={auth?.picture} onClick={handleClick} sx={{cursor:"pointer"}} />
+      <RightHeader>
+        <WelcomeText>{auth?.email}</WelcomeText>
+        <Avatar
+          component="div"
+          src={auth?.picture}
+          onClick={handleClick}
+          sx={{ cursor: "pointer" }}
+        />
         <Menu
           id="basic-menu"
           anchorEl={anchorEl}

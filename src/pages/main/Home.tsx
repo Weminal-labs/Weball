@@ -1,15 +1,11 @@
 import React from "react";
 import styled from "styled-components";
-import useModal from "../hooks/useModal";
-import UnityModal from "../components/UnityModal";
-import "../App.css";
 import { Button } from "@mui/material";
 import { useAptimusFlow, useKeylessLogin } from "aptimus-sdk-test/react";
 import { Aptos, AptosConfig, InputViewFunctionData, Network } from "@aptos-labs/ts-sdk";
 import { AptimusNetwork } from "aptimus-sdk-test";
 
 const Home: React.FC = () => {
-  const { isShowing, toggle } = useModal();
   const { address } = useKeylessLogin();
   const flow = useAptimusFlow();
 

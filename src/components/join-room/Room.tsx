@@ -7,13 +7,13 @@ import {
   Typography,
 } from "@mui/material";
 import { AttachMoney, People } from "@mui/icons-material";
-import { RoomType } from "../type/type";
-import { shortenAddress } from "../utils/Shorten";
-import { MODULE_ADDRESS } from "../utils/Var";
+import { RoomType } from "../../type/type";
+import { shortenAddress } from "../../utils/Shorten";
+import { MODULE_ADDRESS } from "../../utils/Var";
 import { Aptos, AptosConfig, Network } from "@aptos-labs/ts-sdk";
 import { useAptimusFlow, useKeylessLogin } from "aptimus-sdk-test/react";
 import { AptimusNetwork } from "aptimus-sdk-test";
-import { useUnityGame } from "../hooks/useUnityGame";
+import { useUnityGame } from "../../hooks/useUnityGame";
 
 interface RoomProps {
   roomType: RoomType;
@@ -31,7 +31,7 @@ const RoomCard: React.FC<RoomProps> = ({ roomType, setShow, setIsLoading }) => {
     const aptos = new Aptos(aptosConfig);
     const FUNCTION_NAME = `${MODULE_ADDRESS}::gamev3::join_room_by_room_id`;
     const ROOM_ID = Number(roomType.room_id);
-    setIsLoading(true)
+    setIsLoading(true);
     try {
       const transaction = await aptos.transaction.build.simple({
         sender: address ?? "",
@@ -57,7 +57,7 @@ const RoomCard: React.FC<RoomProps> = ({ roomType, setShow, setIsLoading }) => {
         userId: roomType.creator,
         userName: "userName",
       };
-      setIsLoading(false)
+      setIsLoading(false);
       sendMessage("RoomPlayer", "JoinOrCreateRoom", JSON.stringify(obj));
       setShow(true);
     } catch (error) {

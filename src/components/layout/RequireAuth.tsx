@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import useAuth from '../hooks/useAuth';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
-import { User } from '../type/type';
 import { useAptimusFlow, useKeylessLogin } from 'aptimus-sdk-test/react';
+import useAuth from '../../hooks/useAuth';
+import { User } from '../../type/type';
 
 const RequireAuth = () => {
   const { auth,setAuth } = useAuth();
