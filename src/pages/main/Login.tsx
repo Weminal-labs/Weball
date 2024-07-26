@@ -1,6 +1,5 @@
 import React from "react";
 import { useAptimusFlow } from "aptimus-sdk-test/react";
-import "../index.css";
 import { FcGoogle } from "react-icons/fc";
 
 export const LoginPage = () => {

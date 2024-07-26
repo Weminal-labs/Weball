@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { Unity, useUnityContext } from "react-unity-webgl";
-import LoadingGame from "./LoadingGame";
+import LoadingGame from "./layout/LoadingGame";
 import styled from "styled-components";
 
 const ModalOverlay = styled.div`
