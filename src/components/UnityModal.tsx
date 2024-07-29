@@ -76,7 +76,7 @@ const UnityModal: React.FC<ModalProps> = ({ isShowing, hide }) => {
                 aria-label="Close"
                 onClick={hide}
               >
-                <CloseButton aria-hidden="true">&times;</CloseButton>
+                <CloseButton >&times;</CloseButton>
               </ModalCloseButton>
               {!isLoaded ? <LoadingGame progress={loadingProgression} /> : null}
               <UnityGame

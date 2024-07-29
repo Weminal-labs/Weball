@@ -20,7 +20,11 @@ import { RoomType } from "../../type/type";
 import { MODULE_ADDRESS } from "../../utils/Var";
 import LoadingScreen from "../../components/layout/LoadingScreen";
 import RoomCard from "../../components/join-room/Room";
-import { UnityGameComponent } from "../../hooks/useUnityGame";
+import UnityGameComponent, { useUnityGame } from "../../hooks/useUnityGame";
+import JoinRoomDialog from "../../components/join-room/JoinRoomDialog";
+import WaitingRoom from "../../components/create-room/WaitingRoom";
+import useAuth from "../../hooks/useAuth";
+import { useKeylessLogin } from "aptimus-sdk-test/react";
 
 const ITEMS_PER_PAGE = 6;
 
@@ -30,8 +34,13 @@ const JoinRoom: React.FC = () => {
   const [page, setPage] = useState<number>(1);
   const [show, setShow] = useState(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
-
+  const [roomObj, setRoomObj] = useState<RoomType | null>(null);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [openWaitRoom, setOpenWaitRoom] = useState(false);
+  const { sendMessage, isLoaded } = useUnityGame();
+  const { address } = useKeylessLogin();
   const handleClose = () => setShow(false);
+  const [loadGame, setLoadGame] = useState(false);
 
   useEffect(() => {
     getRooms();
@@ -73,27 +82,42 @@ const JoinRoom: React.FC = () => {
     // @ts-ignore
     setList(data[0]);
   };
+  const handleOpenWaitRoom = () => {
+    setOpenWaitRoom(true);
+    setOpenDialog(false);
+  };
+  const openGame = () => {
+    const obj = {
+      roomId: roomObj?.room_id,
+      roomName: roomObj?.room_name,
+      userId: address,
+      userName: "userName",
+    };
+    sendMessage("RoomPlayer", "JoinOrCreateRoom", JSON.stringify(obj));
 
+    setShow(true);
+    setOpenWaitRoom(false);
+  };
   return (
     <JoinRoomContainer>
       {isLoading ? (
         <LoadingScreen />
       ) : (
         <>
-          <Box sx={{
-            width:"100%",
-            display:"flex",
-            gap:"12px"
-          }}
+          <Box
+            sx={{
+              width: "100%",
+              display: "flex",
+              gap: "12px",
+            }}
           >
-            
             <TextField
               label="Search Room by ID"
               variant="outlined"
               value={searchTerm}
               onChange={handleSearchChange}
               size="small"
-              sx={{ width: "40%"}}
+              sx={{ width: "40%" }}
             />
 
             <Button variant="contained" color="primary" onClick={handleReload}>
@@ -105,14 +129,16 @@ const JoinRoom: React.FC = () => {
             {displayedRooms.map((room, index) => (
               <Grid item xs={12} sm={6} md={4} key={index}>
                 <RoomCard
-                  setShow={setShow}
+                  setRoomObj={setRoomObj}
+                  openDialog={() => {
+                    setOpenDialog(true);
+                  }}
                   roomType={room}
-                  setIsLoading={setIsLoading}
                 />
               </Grid>
             ))}
           </GridContainer>
-          <Stack spacing={4} sx={{marginBottom:"20px"}}>
+          <Stack spacing={4} sx={{ marginBottom: "20px" }}>
             <Pagination
               count={Math.ceil(filteredRooms.length / ITEMS_PER_PAGE)}
               page={page}
@@ -121,22 +147,47 @@ const JoinRoom: React.FC = () => {
           </Stack>
         </>
       )}
+      {loadGame && (
+        <Modal
+          open={true}
+          style={{ display: show ? "block" : "none" }}
+          onClose={handleClose}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <>
+            <UnityGameComponent />
+          </>
+        </Modal>
+      )}
 
-      <Modal
-        open={true}
-        style={{ display: show ? "block" : "none" }}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <>
-          <UnityGameComponent />
-        </>
-      </Modal>
+      <JoinRoomDialog
+        openWaitingRoom={() => {
+          setLoadGame(true);
+          setOpenWaitRoom(true);
+        }}
+        open={openDialog}
+        closeModal={() => {
+          setOpenDialog(false);
+        }}
+        room={roomObj}
+        setIsLoading={setIsLoading}
+      />
+      {roomObj && (
+        <WaitingRoom
+          openGame={openGame}
+          room={roomObj}
+          open={openWaitRoom}
+          closeRoom={() => {
+            setOpenWaitRoom(false);
+          }}
+          isCreator={false}
+          // handleClose={()=>{setOpenWaitRoom(false)}}
+        />
+      )}
     </JoinRoomContainer>
   );
 };
-
 
 const GridContainer = styled(Grid)`
   width: 100%;

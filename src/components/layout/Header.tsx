@@ -76,7 +76,9 @@ const Header: React.FC = () => {
   };
   const handleLogout = () => {
     flow.logout();
-    navigate("/auth/login", { replace: true });
+    window.location.reload();
+    // localStorage.clear();
+    // sessionStorage.clear();
   };
   console.log(auth);
   return (
