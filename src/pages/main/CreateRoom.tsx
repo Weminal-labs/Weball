@@ -11,7 +11,6 @@ import WaitingRoom from "../../components/create-room/WaitingRoom";
 import AlertComponent from "../../components/layout/AlertComponent";
 import CreateForm from "../../components/create-room/CreateForm";
 import { useNavigate } from "react-router-dom";
-import useCurrent from "../../hooks/useCurrent";
 import RoomCard from "../../components/join-room/Room";
 
 const CreateRoom: React.FC = () => {
@@ -42,18 +41,17 @@ const CreateRoom: React.FC = () => {
     if(data[0]){
           // @ts-ignore
       
-      const roomData: RoomType[] = data[0];
+      const roomData: RoomType= data[0].vec[0];
       // console.log(roomData.vec[0])
 
       setRoomObj({
-        bet_amount:roomData.vec[0].bet_amount,
-        creator: roomData.vec[0].creator,
-        room_id:roomData.vec[0].room_id,
-        room_name:roomData.vec[0].room_name
+        bet_amount:roomData.bet_amount,
+        creator: roomData.creator,
+        room_id:roomData.room_id,
+        room_name:roomData.room_name
 
       });
-      // console.log(roomObj)
-      if(address!==roomData.vec[0].creator){
+      if(address!==roomData.creator){
         setIsCreator(false)
 
       }else{
