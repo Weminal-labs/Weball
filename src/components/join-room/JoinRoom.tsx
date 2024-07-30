@@ -50,9 +50,6 @@ const JoinRoom: React.FC<RoomProps> = ({ roomId, apt, codeId }) => {
                 </div>
                 <Button variant="outlined" size="large" sx={{width: '120px', border: '2px solid black', color: 'black', borderRadius: '8px'}}>Join</Button>
             </Box>
-
-
-
         </Box>
     )
 };

@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { useAptimusFlow } from "aptimus-sdk-test/react";
 import useAuth from "../../hooks/useAuth";
 import { Menu, MenuItem } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import Avatar from "@mui/material/Avatar";
+import ProfileModal from "../../components/ProfileModal"; 
 
 const HeaderContainer = styled.div`
   height: 60px;
@@ -62,23 +63,38 @@ const WelcomeText = styled.p`
   font-size: 14px;
   margin-right: 20px;
 `;
+
 const Header: React.FC = () => {
   const navigate = useNavigate();
   const { auth } = useAuth();
   const flow = useAptimusFlow();
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [profileModalOpen, setProfileModalOpen] = useState(false);
+
   const open = Boolean(anchorEl);
+
   const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
+
   const handleLogout = () => {
     flow.logout();
     navigate("/auth/login", { replace: true });
   };
-  console.log(auth);
+
+  const handleProfileOpen = () => {
+    setProfileModalOpen(true);
+    handleClose();
+  };
+
+  const handleProfileClose = () => {
+    setProfileModalOpen(false);
+  };
+
   return (
     <HeaderContainer>
       <LeftHeader>
@@ -98,12 +114,6 @@ const Header: React.FC = () => {
           <Title>WEBALL</Title>
         </TitleContainer>
       </LeftHeader>
-      {/* <Search>
-        <SearchTerm type="text" placeholder="What are you looking for?" />
-        <SearchButton type="submit">
-          <SearchIcon />
-        </SearchButton>
-      </Search> */}
       <RightHeader>
         <WelcomeText>{auth?.email}</WelcomeText>
         <Avatar
@@ -121,11 +131,16 @@ const Header: React.FC = () => {
             "aria-labelledby": "basic-button",
           }}
         >
-          <MenuItem onClick={handleClose}>Profile</MenuItem>
+          <MenuItem onClick={handleProfileOpen}>Profile</MenuItem>
           <MenuItem onClick={handleClose}>My account</MenuItem>
           <MenuItem onClick={handleLogout}>Logout</MenuItem>
         </Menu>
       </RightHeader>
+      <ProfileModal
+        open={profileModalOpen}
+        handleOpen={handleProfileOpen}
+        handleClose={handleProfileClose}
+      />
     </HeaderContainer>
   );
 };
