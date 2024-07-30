@@ -1,8 +1,12 @@
-import React from 'react';
-import JoinRoom from '../../components/join-room/JoinRoom'
-import { Box } from '@mui/material';
+import React, { useState } from 'react';
+import { Box, Button } from '@mui/material';
+import WaitingRoom from '../../components/create-room/WaitingRoom';
 
 const AddBets: React.FC = () => {
+    const [open, setOpen] = useState(false);
+
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
     return (
         <Box sx={{
             height: '100vh',
@@ -12,8 +16,16 @@ const AddBets: React.FC = () => {
             justifyContent: "center",
             alignItems: "center",
         }}>
-            <JoinRoom roomId='0x123abc' apt={15} codeId='123abc'/>
+            {/* <JoinRoom roomId='0x123abc' apt={15} codeId='123abc'/> */}
         </Box>
+      //   <div>
+      //   <Button variant="contained" onClick={handleOpen}>
+      //     Open Waiting Room
+      //   </Button>
+      //   {/* <WaitingRoom open={open} handleClose={handleClose} /> */}
+      // </div>
     );
+
+
 };
 export default AddBets;
