@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { useAptimusFlow } from "aptimus-sdk-test/react";
 import useAuth from "../../hooks/useAuth";
@@ -8,6 +8,7 @@ import { shortenAddress } from "../../utils/Shorten";
 import { CopyAllRounded } from "@mui/icons-material";
 import { FaCopy } from "react-icons/fa";
 import { Aptos, AptosConfig, Network } from "@aptos-labs/ts-sdk";
+import ProfileModal from "../../components/ProfileModal"; 
 
 const HeaderContainer = styled.div`
   height: 60px;
@@ -71,7 +72,9 @@ const Header: React.FC = () => {
   const address = localStorage.getItem("address");
   const { auth } = useAuth();
   const flow = useAptimusFlow();
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [profileModalOpen, setProfileModalOpen] = useState(false);
+
   const open = Boolean(anchorEl);
   const info=async()=>{
     const aptosConfig = new AptosConfig({ network: Network.TESTNET });
@@ -84,9 +87,11 @@ const Header: React.FC = () => {
   const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
+
   const handleLogout = () => {
     localStorage.clear();
     flow.logout();
@@ -95,6 +100,14 @@ const Header: React.FC = () => {
   const handleCopy = () => {
     navigator.clipboard.writeText(address??"")
     // setTimeout(() => setCopySuccess(""), 2000); // Clear message after 2 seconds
+
+  const handleProfileOpen = () => {
+    setProfileModalOpen(true);
+    handleClose();
+  };
+
+  const handleProfileClose = () => {
+    setProfileModalOpen(false);
   };
 
   return (
@@ -117,7 +130,7 @@ const Header: React.FC = () => {
         </TitleContainer>
       </LeftHeader>
       <RightHeader>
-        <WelcomeText onClick={info}>{shortenAddress(address ?? "", 5)}  </WelcomeText>
+        <WelcomeText onClick={handleCopy}>{shortenAddress(address ?? "", 5)}  </WelcomeText>
      
 
 
@@ -136,11 +149,16 @@ const Header: React.FC = () => {
             "aria-labelledby": "basic-button",
           }}
         >
-          <MenuItem onClick={handleClose}>Profile</MenuItem>
+          <MenuItem onClick={handleProfileOpen}>Profile</MenuItem>
           <MenuItem onClick={handleClose}>My account</MenuItem>
           <MenuItem onClick={handleLogout}>Logout</MenuItem>
         </Menu>
       </RightHeader>
+      <ProfileModal
+        open={profileModalOpen}
+        handleOpen={handleProfileOpen}
+        handleClose={handleProfileClose}
+      />
     </HeaderContainer>
   );
 };
