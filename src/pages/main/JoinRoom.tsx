@@ -112,17 +112,21 @@ const JoinRoom: React.FC = () => {
           </Box>
 
           <GridContainer container spacing={4}>
-            {displayedRooms.map((room, index) => (
-              <Grid item xs={12} sm={6} md={4} key={index}>
-                <RoomCard
-                  setRoomObj={setRoomObj}
-                  openDialog={() => {
-                    setOpenDialog(true);
-                  }}
-                  roomType={room}
-                />
-              </Grid>
-            ))}
+            {displayedRooms.map((room, index) =>{
+              if(room.is_room_close===false)
+              return (
+            
+                <Grid item xs={12} sm={6} md={4} key={index}>
+                  <RoomCard
+                    setRoomObj={setRoomObj}
+                    openDialog={() => {
+                      setOpenDialog(true);
+                    }}
+                    roomType={room}
+                  />
+                </Grid>
+              )
+            })}
           </GridContainer>
           <Stack spacing={4} sx={{ marginBottom: "20px" }}>
             <Pagination
