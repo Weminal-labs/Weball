@@ -3,8 +3,11 @@ import styled from "styled-components";
 import { useAptimusFlow } from "aptimus-sdk-test/react";
 import useAuth from "../../hooks/useAuth";
 import { Menu, MenuItem } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import Avatar from "@mui/material/Avatar";
+import { shortenAddress } from "../../utils/Shorten";
+import { CopyAllRounded } from "@mui/icons-material";
+import { FaCopy } from "react-icons/fa";
+import { Aptos, AptosConfig, Network } from "@aptos-labs/ts-sdk";
 
 const HeaderContainer = styled.div`
   height: 60px;
@@ -61,13 +64,23 @@ const WelcomeText = styled.p`
   color: white;
   font-size: 14px;
   margin-right: 20px;
+  cursor:pointer
 `;
+
 const Header: React.FC = () => {
-  const navigate = useNavigate();
+  const address = localStorage.getItem("address");
   const { auth } = useAuth();
   const flow = useAptimusFlow();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+  const info=async()=>{
+    const aptosConfig = new AptosConfig({ network: Network.TESTNET });
+    const aptos = new Aptos(aptosConfig);
+     
+    const fund = await aptos.getAccountAPTAmount({ accountAddress: address??""});
+    console.log(fund/100000000)
+
+  }
   const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -75,12 +88,15 @@ const Header: React.FC = () => {
     setAnchorEl(null);
   };
   const handleLogout = () => {
+    localStorage.clear();
     flow.logout();
     window.location.reload();
-    // localStorage.clear();
-    // sessionStorage.clear();
   };
-  console.log(auth);
+  const handleCopy = () => {
+    navigator.clipboard.writeText(address??"")
+    // setTimeout(() => setCopySuccess(""), 2000); // Clear message after 2 seconds
+  };
+
   return (
     <HeaderContainer>
       <LeftHeader>
@@ -100,14 +116,11 @@ const Header: React.FC = () => {
           <Title>WEBALL</Title>
         </TitleContainer>
       </LeftHeader>
-      {/* <Search>
-        <SearchTerm type="text" placeholder="What are you looking for?" />
-        <SearchButton type="submit">
-          <SearchIcon />
-        </SearchButton>
-      </Search> */}
       <RightHeader>
-        <WelcomeText>{auth?.email}</WelcomeText>
+        <WelcomeText onClick={info}>{shortenAddress(address ?? "", 5)}  </WelcomeText>
+     
+
+
         <Avatar
           component="div"
           src={auth?.picture}

@@ -28,7 +28,7 @@ const CreateRoom: React.FC = () => {
   const [roomName, setRoomName] = useState("");
   const [userName, setUserName] = useState("");
   const [bet, setBet] = useState("");
-  const { address } = useKeylessLogin();
+  const address = localStorage.getItem("address")
   const flow = useAptimusFlow();
   const handleClose = () => setShow(false);
   const { sendMessage, isLoaded } = useUnityGame();

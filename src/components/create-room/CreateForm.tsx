@@ -1,4 +1,14 @@
-import { Autocomplete, Box, Button, FormControlLabel, IconButton, RadioGroup, TextField, Typography, Theme } from "@mui/material";
+import {
+  Autocomplete,
+  Box,
+  Button,
+  FormControlLabel,
+  IconButton,
+  RadioGroup,
+  TextField,
+  Typography,
+  Theme,
+} from "@mui/material";
 import React, { useState } from "react";
 import styled from "styled-components";
 import CloseIcon from "@mui/icons-material/Close";
@@ -28,21 +38,23 @@ interface Props {
   createRoomContract: (ROOM_NAME: string, BET_AMOUNT: string) => Promise<void>;
 }
 
-const CustomButton = styled("div")<CustomButtonProps>(({ theme, selected }) => ({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  width: "90px",
-  height: "40px",
-  backgroundColor: selected ? "green" : "grey",
-  color: selected ? "white" : "green",
-  borderRadius: "4px",
-  cursor: "pointer",
-  userSelect: "none",
-  "&:hover": {
-    backgroundColor: selected ? "blue" : "grey",
-  },
-}));
+const CustomButton = styled("div")<CustomButtonProps>(
+  ({ theme, selected }) => ({
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "90px",
+    height: "40px",
+    backgroundColor: selected ? "green" : "grey",
+    color: selected ? "white" : "green",
+    borderRadius: "4px",
+    cursor: "pointer",
+    userSelect: "none",
+    "&:hover": {
+      backgroundColor: selected ? "blue" : "grey",
+    },
+  }),
+);
 
 const CustomFormControlLabel: React.FC<CustomFormControlLabelProps> = ({
   value,
@@ -52,7 +64,10 @@ const CustomFormControlLabel: React.FC<CustomFormControlLabelProps> = ({
 }) => (
   <FormControlLabel
     control={
-      <CustomButton selected={selectedValue === value} onClick={() => onChange(value)}>
+      <CustomButton
+        selected={selectedValue === value}
+        onClick={() => onChange(value)}
+      >
         {label}
       </CustomButton>
     }
@@ -63,31 +78,10 @@ const CustomFormControlLabel: React.FC<CustomFormControlLabelProps> = ({
 
 const CreateForm: React.FC<Props> = ({ createRoomContract }) => {
   const [roomName, setRoomName] = useState("");
-  const [openWaitRoom, setOpenWaitRoom] = useState(false);
   const [bet, setBet] = useState("");
-  const { address } = useKeylessLogin();
-  const flow = useAptimusFlow();
 
   return (
-    <Box
-      sx={{
-        position: "relative",
-        display: "flex",
-        flexDirection: "column",
-        gap: 3,
-        width: "40%",
-        height: "70%",
-        justifyContent: "center",
-        alignItems: "center",
-        marginBottom: 3,
-        border: "2px solid black",
-        paddingX: 4,
-        paddingY: 3,
-        borderRadius: 5,
-        background: "white",
-        boxShadow: "4px 4px 20px rgba(0, 0, 0.1, 0.2)",
-      }}
-    >
+    <div className="relative mb-3 flex h-4/5 w-2/5 flex-col items-center justify-center gap-3 rounded-2xl bg-[#c3f0d8] px-4 py-3 shadow-lg backdrop-blur-lg">
       <IconButton
         sx={{
           position: "absolute",
@@ -105,7 +99,8 @@ const CreateForm: React.FC<Props> = ({ createRoomContract }) => {
           Create a room
         </Typography>
         <h3 className="text-center opacity-70">
-          Create a room for friends to compete in a soccer match. Enjoy the game and have fun!
+          Create a room for friends to compete in a soccer match. Enjoy the game
+          and have fun!
         </h3>
       </div>
 
@@ -182,7 +177,7 @@ const CreateForm: React.FC<Props> = ({ createRoomContract }) => {
       >
         Create
       </Button>
-    </Box>
+    </div>
   );
 };
 

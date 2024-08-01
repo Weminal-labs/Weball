@@ -15,7 +15,7 @@ import RoomCard from "../../components/join-room/Room";
 
 const CreateRoom: React.FC = () => {
   const [openWaitRoom, setOpenWaitRoom] = useState(false);
-  const { address } = useKeylessLogin();
+  const address = localStorage.getItem("address")
   const flow = useAptimusFlow();
   const handleClose = () => setShow(false);
   const { sendMessage, isLoaded } = useUnityGame();
