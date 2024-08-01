@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, forwardRef } from "react";
 import { Unity } from "react-unity-webgl";
 import styled from "styled-components";
 import UnityGameContext from "../contexts/UnityGameProvider";
@@ -12,15 +12,16 @@ const UnityGame = styled(Unity)`
   height: 500px;
 `;
 
-export const UnityGameComponent: React.FC = () => {
+const UnityGameComponent = forwardRef((props, ref) => {
   const { unityProvider } = useUnityGame();
 
   return (
     <Box sx={style}>
-      <UnityGame unityProvider={unityProvider} />
+      <UnityGame  unityProvider={unityProvider} />
     </Box>
   );
-};
+});
+
 const style = {
   display: "flex",
   alignItems: "center",
@@ -35,3 +36,5 @@ const style = {
   boxShadow: 24,
   p: 3,
 };
+
+export default UnityGameComponent;
