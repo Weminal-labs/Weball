@@ -100,7 +100,7 @@ const Header: React.FC = () => {
   const handleCopy = () => {
     navigator.clipboard.writeText(address??"")
     // setTimeout(() => setCopySuccess(""), 2000); // Clear message after 2 seconds
-
+  }
   const handleProfileOpen = () => {
     setProfileModalOpen(true);
     handleClose();
@@ -162,5 +162,6 @@ const Header: React.FC = () => {
     </HeaderContainer>
   );
 };
+
 
 export default Header;
