@@ -27,6 +27,8 @@ import { MODULE_ADDRESS } from "../../utils/Var";
 import { AptimusNetwork } from "aptimus-sdk-test";
 import AlertComponent from "../layout/AlertComponent";
 import LeaveDialog from "./LeaveDialog";
+import MessengerContainer from "../chat/MessengerContainer";
+import { Height } from "@mui/icons-material";
 
 interface Pros {
   open: boolean;
@@ -156,8 +158,13 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
   }
   return (
     <>
-      <Modal open={open} aria-hidden={false} onClose={()=>{setOpenDialog(true)}}>
+      <Modal open={open} aria-hidden={false} onClose={()=>{setOpenDialog(true)}} sx={{
+        display:"flex",
+        justifyContent:"center",
+        alignItems:"center",}}>
         <Box sx={style}>
+          <MessengerContainer roomId={room?.room_id??""}/>
+          <div className="w-[400px]">
           <Typography variant="h6" component="h2">
             Staidum: {room?.room_name ?? ""}
           </Typography>
@@ -217,6 +224,8 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
               Start
             </Button>
           </Box>
+          </div>
+        
         </Box>
       </Modal>
       <LeaveDialog openDialog={openDialog} handleCloseDialog={()=>{setOpenDialog(false)}} handleCloseRoom={handleCloseRoom}/>
@@ -227,10 +236,17 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
 
 const style = {
   position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: "40%",
+  display:"flex",
+
+
+  justifyContent:"center",
+  alignItems:"center",
+  gap:"20px",
+  // top: "50%",
+  // left: "50%",
+  // transform: "translate(-50%, -50%)",
+  // width: "40%",
+  height:"50%",
   bgcolor: "background.paper",
   border: "2px solid #000",
   boxShadow: 24,

@@ -1,29 +1,48 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import React, { createContext, useState, useEffect, ReactNode } from "react";
 import { useUnityContext, Unity } from "react-unity-webgl";
-import styled from "styled-components";
 
-// Tạo UnityGame context
+// Create UnityGame context
 const UnityGameContext = createContext<any>(null);
+
 interface GameProviderProps {
     children: ReactNode;
-  }
+}
+
 export const UnityGameProvider: React.FC<GameProviderProps> = ({ children }) => {
-  const { sendMessage, isLoaded, unityProvider } = useUnityContext({
-    loaderUrl: "build/Build/Build.loader.js",
-    dataUrl: "build/Build/Build.data",
-    frameworkUrl: "build/Build/Build.framework.js",
-    codeUrl: "build/Build/Build.wasm",
-  });
+    const { sendMessage, isLoaded, unityProvider, addEventListener, removeEventListener } = useUnityContext({
+        loaderUrl: "build/Build/Build.loader.js",
+        dataUrl: "build/Build/Build.data",
+        frameworkUrl: "build/Build/Build.framework.js",
+        codeUrl: "build/Build/Build.wasm",
+    });
 
-  const [show, setShow] = useState(false);
+    const [show, setShow] = useState(false);
+    const [onQuitCallback, setOnQuitCallback] = useState<() => void>(() => () => {});
 
-  return (
-    <UnityGameContext.Provider
-      value={{ sendMessage, isLoaded, unityProvider, show, setShow }}
-    >
-      {children}
-    </UnityGameContext.Provider>
-  );
+    useEffect(() => {
+        const handleUnityApplicationQuit = () => {
+            setShow(false);
+            if (onQuitCallback) {
+                onQuitCallback();
+            }
+        };
+
+        addEventListener("onUnityApplicationQuit", handleUnityApplicationQuit);
+
+        return () => {
+            removeEventListener("onUnityApplicationQuit", handleUnityApplicationQuit);
+        };
+    }, []);
+
+    const setQuitCallback = (callback: () => void) => {
+
+    };
+
+    return (
+        <UnityGameContext.Provider value={{ sendMessage, isLoaded, unityProvider, show, setShow, setQuitCallback }}>
+            {children}
+        </UnityGameContext.Provider>
+    );
 };
-export default UnityGameContext;
 
+export default UnityGameContext;

@@ -12,14 +12,14 @@ import AlertComponent from "../../components/layout/AlertComponent";
 import CreateForm from "../../components/create-room/CreateForm";
 import { useNavigate } from "react-router-dom";
 import RoomCard from "../../components/join-room/Room";
+import useAuth from "../../hooks/useAuth";
 
 const CreateRoom: React.FC = () => {
   const [openWaitRoom, setOpenWaitRoom] = useState(false);
   const address = localStorage.getItem("address")
   const flow = useAptimusFlow();
-  const handleClose = () => setShow(false);
-  const { sendMessage, isLoaded } = useUnityGame();
-  const [show, setShow] = useState(false);
+  const { sendMessage, isLoaded,show, setShow,setQuitCallback} = useUnityGame();
+  // const [show, setShow] = useState(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [roomObj, setRoomObj] = useState<CreateRoomType | null>(null);
   const [openAlert, setOpenAlert] = useState(false);
@@ -27,9 +27,18 @@ const CreateRoom: React.FC = () => {
   const [loadGame, setLoadGame] = useState(false);
 
   const [isCreator, setIsCreator] = useState(false);
+  const {auth}=useAuth()
   useEffect(()=>{
     getCurrentRoom()
   },[])
+//   useEffect(() => {
+//     // const handleQuitGame = () => {
+//     //   setRoomObj(null)
+//     //   setLoadGame(false)
+//     // };
+
+//     // setQuitCallback(handleQuitGame);
+// }, [setQuitCallback]);
   const getCurrentRoom =async ()=>{
     const aptosConfig = new AptosConfig({ network: Network.TESTNET });
     const aptos = new Aptos(aptosConfig);
@@ -67,7 +76,7 @@ const CreateRoom: React.FC = () => {
   const handleCloseAlert = () => {
     setOpenAlert(false);
   };
-  const createRoomContract = async (ROOM_NAME: string, BET_AMOUNT: bet) => {
+  const createRoomContract = async (ROOM_NAME: string, BET_AMOUNT: string) => {
     const aptosConfig = new AptosConfig({ network: Network.TESTNET });
     const aptos = new Aptos(aptosConfig);
     const FUNCTION_NAME = `${MODULE_ADDRESS}::gamev3::create_room`;
@@ -124,7 +133,7 @@ const CreateRoom: React.FC = () => {
       roomId: roomObj?.room_id,
       roomName: roomObj?.room_name,
       userId: roomObj?.creator,
-      userName: "userName",
+      userName: auth?.email,
     };
     sendMessage("RoomPlayer", "JoinOrCreateRoom", JSON.stringify(obj));
     setShow(true);

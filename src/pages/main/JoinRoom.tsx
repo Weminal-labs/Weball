@@ -30,14 +30,14 @@ import useGetRoom from "../../hooks/useGetRoom";
 const ITEMS_PER_PAGE = 6;
 
 const JoinRoom: React.FC = () => {
-
+  const {auth}=useAuth()
   const [page, setPage] = useState<number>(1);
   const [show, setShow] = useState(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [roomObj, setRoomObj] = useState<RoomType | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [openWaitRoom, setOpenWaitRoom] = useState(false);
-  const { sendMessage, isLoaded } = useUnityGame();
+  const { sendMessage, isLoaded,setQuitCallback } = useUnityGame();
   const address = localStorage.getItem("address")
   const handleClose = () => setShow(false);
   const [loadGame, setLoadGame] = useState(false);
@@ -45,6 +45,14 @@ const JoinRoom: React.FC = () => {
   useEffect(() => {
     getRooms();
   }, []);
+//   useEffect(() => {
+//     const handleQuitGame = () => {
+//       setRoomObj(null)
+//       setLoadGame(false)
+//     };
+
+//     setQuitCallback(handleQuitGame);
+// }, [setQuitCallback]);
   const handleReload = () => {
     getRooms();
   };
@@ -77,7 +85,7 @@ const JoinRoom: React.FC = () => {
       roomId: roomObj?.room_id,
       roomName: roomObj?.room_name,
       userId: address,
-      userName: "userName",
+      userName: auth?.email,
     };
     sendMessage("RoomPlayer", "JoinOrCreateRoom", JSON.stringify(obj));
 
