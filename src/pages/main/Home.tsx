@@ -3,26 +3,25 @@ import styled, { createGlobalStyle } from 'styled-components';
 
 const GlobalStyle = createGlobalStyle`
 
-  /* Custom scrollbar styles */
-  ::-webkit-scrollbar {
-    width: 12px; /* Width of the scrollbar */
-  }
+::-webkit-scrollbar {
+  width: 12px; /* Width of the scrollbar */
+}
 
-  ::-webkit-scrollbar-track {
-    background: #f1f1f1; /* Background of the scrollbar track */
-  }
+::-webkit-scrollbar-track {
+  background: #0cbd16; /* Background of the scrollbar track - changed to green */
+}
 
-  ::-webkit-scrollbar-thumb {
-    background-color: #1E90FF; /* Color of the scrollbar thumb */
-    border-radius: 6px; /* Roundness of the scrollbar thumb */
-    border: 3px solid #f1f1f1; /* Space around the scrollbar thumb */
-  }
+::-webkit-scrollbar-thumb {
+  background-color: #1E90FF; /* Color of the scrollbar thumb */
+  border-radius: 6px; /* Roundness of the scrollbar thumb */
+  border: 3px solid #0cbd16; /* Space around the scrollbar thumb - changed to green */
+}
 
-  /* Scrollbar styles for Firefox */
-  * {
-    scrollbar-width: thin;
-    scrollbar-color: #1E90FF #f1f1f1;
-  }
+/* Scrollbar styles for Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #1E90FF #0cbd16; /* Thumb color and track color for Firefox - changed track color to green */
+}
 `;
 
 const Home = () => {
