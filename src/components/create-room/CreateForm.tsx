@@ -1,4 +1,16 @@
-import { Autocomplete, Box, Button, FormControlLabel, IconButton, RadioGroup, TextField, Typography, Theme } from "@mui/material";
+import {
+  Autocomplete,
+  Box,
+  Button,
+  FormControlLabel,
+  IconButton,
+  RadioGroup,
+  TextField,
+  Typography,
+  Theme,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import React, { useState } from "react";
 import styled from "styled-components";
 import CloseIcon from "@mui/icons-material/Close";
@@ -63,10 +75,11 @@ const CustomFormControlLabel: React.FC<CustomFormControlLabelProps> = ({
 
 const CreateForm: React.FC<Props> = ({ createRoomContract }) => {
   const [roomName, setRoomName] = useState("");
-  const [openWaitRoom, setOpenWaitRoom] = useState(false);
   const [bet, setBet] = useState("");
   const { address } = useKeylessLogin();
   const flow = useAptimusFlow();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   return (
     <Box
@@ -74,16 +87,16 @@ const CreateForm: React.FC<Props> = ({ createRoomContract }) => {
         position: "relative",
         display: "flex",
         flexDirection: "column",
-        gap: 3,
-        width: "40%",
-        height: "70%",
+        gap: isMobile ? 2 : 3,
+        width: isMobile ? "90%" : "80%",
+        maxWidth: isMobile ? "none" : "600px",
+        height: "auto",
         justifyContent: "center",
         alignItems: "center",
-        marginBottom: 3,
+        margin: "20px auto",
+        padding: "20px",
         border: "2px solid black",
-        paddingX: 4,
-        paddingY: 3,
-        borderRadius: 5,
+        borderRadius: "8px",
         background: "white",
         boxShadow: "4px 4px 20px rgba(0, 0, 0.1, 0.2)",
       }}
@@ -100,70 +113,60 @@ const CreateForm: React.FC<Props> = ({ createRoomContract }) => {
         <CloseIcon />
       </IconButton>
 
-      <div>
-        <Typography variant="h4" align="center">
-          Create a room
-        </Typography>
-        <h3 className="text-center opacity-70">
-          Create a room for friends to compete in a soccer match. Enjoy the game and have fun!
-        </h3>
-      </div>
+      <Typography
+        variant={isMobile ? "h5" : "h4"}
+        align="center"
+        gutterBottom
+      >
+        Create a Room
+      </Typography>
+      <Typography
+        variant={isMobile ? "body2" : "body1"}
+        align="center"
+        gutterBottom
+        sx={{ opacity: 0.7 }}
+      >
+        Create a room for friends to compete in a soccer match. Enjoy the game and have fun!
+      </Typography>
 
       <Autocomplete
-        sx={{ width: "75%" }}
+        sx={{ width: "100%", maxWidth: "400px" }}
         options={stadiums}
         value={roomName}
         onChange={(event, newValue) => setRoomName(newValue ?? "")}
         renderInput={(params) => (
-          <TextField {...params} label="Stadium" variant="outlined" />
+          <TextField {...params} label="Stadium" variant="outlined" fullWidth />
         )}
       />
 
-      <div className="w-[75%]">
-        <h2
-          className="text-left"
-          style={{ color: "black", fontSize: "24px", fontWeight: "bold" }}
+      <Box sx={{ width: "100%", maxWidth: "400px" }}>
+        <Typography
+          variant="h6"
+          sx={{ textAlign: "left", color: "black", fontWeight: "bold" }}
         >
           APT
-        </h2>
+        </Typography>
         <RadioGroup
           aria-label="bet"
           name="bet"
           value={bet}
           onChange={(e) => setBet(e.target.value)}
-          sx={{
-            width: "100%",
-            display: "flex",
-            alignItems: "center",
-            flexDirection: "row",
-            justifyContent: "space-between",
-          }}
+          row
+          sx={{ justifyContent: "space-between" }}
         >
-          <CustomFormControlLabel
-            value="5"
-            label="5"
-            selectedValue={bet}
-            onChange={setBet}
-          />
-          <CustomFormControlLabel
-            value="10"
-            label="10"
-            selectedValue={bet}
-            onChange={setBet}
-          />
-          <CustomFormControlLabel
-            value="15"
-            label="15"
-            selectedValue={bet}
-            onChange={setBet}
-          />
+          <CustomFormControlLabel value="5" label="5" selectedValue={bet} onChange={setBet} />
+          <CustomFormControlLabel value="10" label="10" selectedValue={bet} onChange={setBet} />
+          <CustomFormControlLabel value="15" label="15" selectedValue={bet} onChange={setBet} />
         </RadioGroup>
-      </div>
+      </Box>
+
       <Button
         disabled
         variant="contained"
         sx={{
-          width: "75%",
+          width: "100%",
+          maxWidth: "400px",
+          marginTop: "16px",
           "&:hover": {
             backgroundColor: "initial",
             cursor: "not-allowed",
@@ -176,9 +179,7 @@ const CreateForm: React.FC<Props> = ({ createRoomContract }) => {
       <Button
         variant="contained"
         onClick={() => createRoomContract(roomName, bet)}
-        sx={{
-          width: "75%",
-        }}
+        sx={{ width: "100%", maxWidth: "400px", marginTop: "-10px" }}
       >
         Create
       </Button>
