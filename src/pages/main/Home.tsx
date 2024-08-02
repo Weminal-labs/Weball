@@ -1,71 +1,138 @@
-import React from "react";
-import styled from "styled-components";
+import React from 'react';
+import styled, { createGlobalStyle } from 'styled-components';
 
+const GlobalStyle = createGlobalStyle`
 
-const Home: React.FC = () => {
+  /* Custom scrollbar styles */
+  ::-webkit-scrollbar {
+    width: 12px; /* Width of the scrollbar */
+  }
 
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1; /* Background of the scrollbar track */
+  }
 
-  
+  ::-webkit-scrollbar-thumb {
+    background-color: #1E90FF; /* Color of the scrollbar thumb */
+    border-radius: 6px; /* Roundness of the scrollbar thumb */
+    border: 3px solid #f1f1f1; /* Space around the scrollbar thumb */
+  }
 
+  /* Scrollbar styles for Firefox */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #1E90FF #f1f1f1;
+  }
+`;
+
+const Home = () => {
   return (
-    <ContentContainer>
-      {/* <ShowModalButton onClick={toggle}>
-        <ShowModalText className="play-game">PLAY GAME</ShowModalText>
-      </ShowModalButton>
-      <UnityModal isShowing={isShowing} hide={toggle} /> */}
-    </ContentContainer>
+    <>
+    <GlobalStyle />
+    <PageContainer>
+      <ContentContainer>
+        <ImageHomeMain src="bg-gome.webp" alt="Main Image" />
+        <TextContainer>
+          <UpperBlocks>
+            <Block>Aptos</Block>
+            <Block>Sport</Block>
+          </UpperBlocks>
+          <OnchainText>ONCHAIN GAME</OnchainText>
+          <LowerBlocks>
+            <Block>Tournament</Block>
+            <Block>Start Date</Block>
+          </LowerBlocks>
+        </TextContainer>
+      </ContentContainer>
+      <GifContainer>
+        <GifMain src="game-gif.gif" alt="Game GIF" />
+      </GifContainer>
+    </PageContainer>
+    </>
   );
 };
+
+const PageContainer = styled.div`
+  width: 100%;
+  height: 100vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
 
 const ContentContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
+  height: 70vh;
+  background: linear-gradient(45deg, #219CE2 30%,#0CBD16 90%);
+  position: relative;
+  padding: 5px;
+`;
+
+const ImageHomeMain = styled.img`
+  width: 100%;
   height: 100%;
-  background: grey;
+  object-fit: cover;
+  border-radius: 10px;
 `;
 
-const ShowModalButton = styled.button`
-  background-color: #e3d7cb;
-  border: 2px solid #422800;
-  border-radius: 30px;
-  box-shadow: #422800 4px 4px 0 0;
-  color: #422800;
-  cursor: pointer;
-  display: inline-block;
-  font-weight: 600;
-  font-size: 18px;
-  padding: 0 18px;
-  line-height: 50px;
-  text-align: center;
-  text-decoration: none;
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: manipulation;
-
-  &:hover {
-    background-color: #fff;
-  }
-
-  &:active {
-    box-shadow: #422800 2px 2px 0 0;
-    transform: translate(2px, 2px);
-  }
-
-  @media (min-width: 768px) {
-    min-width: 120px;
-    padding: 0 25px;
-  }
+const GifContainer = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(45deg, #219CE2 30%,#0CBD16 90%);
+  padding: 5px;
 `;
 
-const ShowModalText = styled.span`
-  font-size: 20px;
+const GifMain = styled.img`
+  width: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+`;
+
+const TextContainer = styled.div`
+  position: absolute;
+  bottom: 70px;
+  left: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background: rgba(255, 255, 255, 0.3);
+  padding: 10px;
+  border-radius: 5px;
+`;
+
+const UpperBlocks = styled.div`
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+`;
+
+const LowerBlocks = styled.div`
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+`;
+
+const Block = styled.div`
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 14px;
   font-weight: bold;
-  color: #422800;
-  text-align: center;
-  margin: 10px 0;
-  display: block;
+`;
+
+const OnchainText = styled.h1`
+  font-size: 48px;
+  font-weight: bold;
+  color: #ffffff;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  margin: 0;
 `;
 
 export default Home;
