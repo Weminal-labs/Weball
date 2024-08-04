@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Box, Button } from '@mui/material';
 import WaitingRoom from '../../components/create-room/WaitingRoom';
 
-const AddBets: React.FC = () => {
+const FriendList: React.FC = () => {
     const [open, setOpen] = useState(false);
 
     const handleOpen = () => setOpen(true);
@@ -28,4 +28,4 @@ const AddBets: React.FC = () => {
 
 
 };
-export default AddBets;
+export default FriendList;
