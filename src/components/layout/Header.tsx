@@ -35,7 +35,6 @@ const TitleContainer = styled.header`
   width: 160px;
   background-color: #0e235e;
   padding: 4px 12px;
-
   display: flex;
   justify-content: center;
   align-items: center;
@@ -139,6 +138,7 @@ const PlayerInfoModalBox = styled(Box)`
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative;
 `;
 
 const CloseButton = styled(IconButton)`
@@ -148,43 +148,58 @@ const CloseButton = styled(IconButton)`
   color: #fff;
 `;
 
+const InfoItem = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 8px;
+`;
+
 const PlayerInfoModal = ({ open, handleClose, playerInfo }) => {
   if (!playerInfo) return null;
 
   const { username, name, points, gamesPlayed, winningGames, likesReceived, dislikesReceived, userImage } = playerInfo;
-  const winRate = (winningGames / gamesPlayed) * 100;
+  const winRate = (gamesPlayed > 0) ? (winningGames / gamesPlayed) * 100 : 0;
 
   return (
     <Modal open={open} onClose={handleClose}>
-    <PlayerInfoModalBox>
-      <CloseButton onClick={handleClose}>
-        <CloseIcon />
-      </CloseButton>
-      <h2>{username}</h2>
-      <img src={userImage} alt={`${username}'s avatar`} style={{ width: '100px', borderRadius: '50%', marginBottom: '20px' }} />
-      <Button 
-          variant="contained" 
-          color="primary" 
-          startIcon={<PersonAddIcon />}
-          style={{ marginBottom: '20px' }}
-        >
-          Add friend
+      <PlayerInfoModalBox>
+  
+        <img src={userImage} alt={`${username}'s avatar`} style={{ width: '100px', borderRadius: '50%', marginBottom: '20px' }} />
+        <Button 
+            variant="contained" 
+            color="primary" 
+            startIcon={<PersonAddIcon />}
+            style={{ marginBottom: '20px' }}
+          >
+            Add friend
         </Button>
-      <p>Name: {name}</p>
-      <p>Points: {points}</p>
-      <p>Games Played: {gamesPlayed}</p>
-      <p>Winning Games: {winningGames}</p>
-      <p>Win Rate: {winRate.toFixed(2)}%</p>
-      <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: '10px' }}>
-        <Button startIcon={<ThumbUpIcon />} variant="outlined" color="primary">
-          Like ({likesReceived})
-        </Button>
-        <Button startIcon={<ThumbDownIcon />} variant="outlined" color="secondary">
-          Dislike ({dislikesReceived})
-        </Button>
-      </div>
-    </PlayerInfoModalBox>
-  </Modal>
+        <div style={{ width: '100%', textAlign: 'left' }}>
+          <h2>{name}</h2>
+          <h4>{username}</h4>
+          <InfoItem>
+          <span>Points:</span> <span>{points}</span>
+        </InfoItem>
+        <InfoItem>
+          <span>Games Played:</span> <span>{gamesPlayed}</span>
+        </InfoItem>
+        <InfoItem>
+          <span>Winning Games:</span> <span>{winningGames}</span>
+        </InfoItem>
+        <InfoItem>
+          <span>Win Rate:</span> <span>{winRate.toFixed(2)}%</span>
+        </InfoItem>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: '10px' }}>
+          <Button startIcon={<ThumbUpIcon />} variant="outlined" color="primary">
+            Like ({likesReceived})
+          </Button>
+          <Button startIcon={<ThumbDownIcon />} variant="outlined" color="secondary">
+            Dislike ({dislikesReceived})
+          </Button>
+        </div>
+      </PlayerInfoModalBox>
+    </Modal>
   );
 };
 
@@ -237,7 +252,7 @@ const Header: React.FC = () => {
     if (chatModalOpen) {
       setLoading(true);
       fetchMessages();
-      const intervalId = setInterval(fetchMessages, 5000);
+      const intervalId = setInterval(fetchMessages, 1000);
       return () => clearInterval(intervalId);
     }
   }, [chatModalOpen]);
@@ -258,7 +273,6 @@ const Header: React.FC = () => {
       };
 
       const data = await aptos.view({ payload });
-      console.log(data);
 
       const flattenedData = data.flat();
       setMessages(flattenedData);
@@ -315,37 +329,27 @@ const Header: React.FC = () => {
     setPlayerInfo(null);
   };
 
-  const sendMessageToBlockchain = async (senderAddress, message) => {
-    try {
-      const aptosConfig = new AptosConfig({ network: Network.TESTNET });
-      const aptos = new Aptos(aptosConfig);
-
-      const payload = {
-        type: "entry_function_payload",
-        function: `${MODULE_ADDRESS}::gamev3::send_global_chat_message`,
-        type_arguments: [],
-        arguments: [message],
-      };
-
-      const transaction = await aptos.executeFunction(
-        {
-          sender: senderAddress,
-          payload: payload,
-        },
-        {
-          maxGasAmount: 2000,
-          gasUnitPrice: 1,
-        }
-      );
-
-      await aptos.waitForTransaction(transaction.hash);
-    } catch (error) {
-      console.error("Failed to send message to blockchain:", error);
-    }
+  const sendMessage = async (message) => {
+    const aptosConfig = new AptosConfig({ network: Network.TESTNET });
+    const aptos = new Aptos(aptosConfig);
+    const FUNCTION_NAME = `${MODULE_ADDRESS}::gamev3::send_global_chat_message`;
+    const transaction = await aptos.transaction.build.simple({
+      sender: address ?? "",
+      data: {
+        function: FUNCTION_NAME,
+        functionArguments: [message], // Ensure it's always an array
+      },
+    });
+    const committedTransaction = await flow.executeTransaction({
+      aptos,
+      transaction,
+      network: Network.TESTNET,
+    });
   };
 
   const handleSendMessage = async () => {
     if (message.trim() !== "") {
+      setLoading(true);
       const timestamp = Math.floor(Date.now() / 1000).toString();
       const newMessage = {
         message,
@@ -356,8 +360,9 @@ const Header: React.FC = () => {
       setMessages([...messages, newMessage]);
       setMessage("");
 
-      await sendMessageToBlockchain(address, message);
+      await sendMessage(message);
       fetchMessages();
+      setLoading(false);
     }
   };
 

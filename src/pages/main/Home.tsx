@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
+import { ClipLoader } from 'react-spinners';
+import { Box } from '@mui/material';
 
 const GlobalStyle = createGlobalStyle`
-
 ::-webkit-scrollbar {
   width: 12px; /* Width of the scrollbar */
 }
@@ -25,31 +26,62 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 const Home = () => {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <>
-    <GlobalStyle />
-    <PageContainer>
-      <ContentContainer>
-        <ImageHomeMain src="bg-gome.webp" alt="Main Image" />
-        <TextContainer>
-          <UpperBlocks>
-            <Block>Aptos</Block>
-            <Block>Sport</Block>
-          </UpperBlocks>
-          <OnchainText>ONCHAIN GAME</OnchainText>
-          <LowerBlocks>
-            <Block>Tournament</Block>
-            <Block>Start Date</Block>
-          </LowerBlocks>
-        </TextContainer>
-      </ContentContainer>
-      <GifContainer>
-        <GifMain src="game-gif.gif" alt="Game GIF" />
-      </GifContainer>
-    </PageContainer>
+      <GlobalStyle />
+      {loading ? (
+        <LoadingContainer>
+          <ClipLoader color="#00f" loading={loading} size={150} />
+        </LoadingContainer>
+      ) : (
+        <PageContainer>
+          <ContentContainer>
+            <ImageHomeMain 
+              src="bg-gome.webp" 
+              alt="Main Image" 
+              onLoad={() => setImageLoaded(true)}
+            />
+            <TextContainer>
+              <UpperBlocks>
+                <Block>Aptos</Block>
+                <Block>Sport</Block>
+              </UpperBlocks>
+              <OnchainText>ONCHAIN GAME</OnchainText>
+              <LowerBlocks>
+                <Block>Tournament</Block>
+                <Block>Start Date</Block>
+              </LowerBlocks>
+            </TextContainer>
+          </ContentContainer>
+          <GifContainer>
+            <GifMain 
+              src="game-gif.gif" 
+              alt="Game GIF" 
+              onLoad={() => setGifLoaded(true)}
+            />
+          </GifContainer>
+        </PageContainer>
+      )}
     </>
   );
 };
+
+const LoadingContainer = styled(Box)`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+`;
 
 const PageContainer = styled.div`
   width: 100%;
