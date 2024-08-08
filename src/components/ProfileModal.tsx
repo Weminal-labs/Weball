@@ -1,7 +1,11 @@
 import { Box, Button, Divider, LinearProgress, Typography, Modal, styled } from "@mui/material";
 import { useEffect, useState } from "react";
 import useAuth from "../hooks/useAuth";
-import CloseIcon from '@mui/icons-material/Close';
+import {ContentCopy} from '@mui/icons-material';
+import { Aptos, AptosConfig, InputViewFunctionData, Network } from "@aptos-labs/ts-sdk";
+import { MODULE_ADDRESS } from "../utils/Var";
+import { shortenAddress } from "../utils/Shorten";
+
 
 interface ProfileModalProps {
     open: boolean;
@@ -10,11 +14,30 @@ interface ProfileModalProps {
 }
 
 const ProfileModal: React.FC<ProfileModalProps> = ({ open, handleOpen, handleClose }) => {
-    const [userAddress, setUserAddress] = useState<string>("0x123...abc");
+    const address = localStorage.getItem("address");
     const [numOfMatches, setNumOfMatches] = useState<number>(123);
     const [numOfWins, setNumOfWins] = useState<number>(100);
     const [winRatio, setWinRatio] = useState<number>(0);
+    const [points, setPoints] = useState<number>(0);
     const { auth } = useAuth();
+
+    useEffect(()=>{
+        getProfile()
+    },[])
+
+    const getProfile = async () => {
+        const aptosConfig = new AptosConfig({ network: Network.TESTNET });
+        const aptos = new Aptos(aptosConfig);
+        const payload: InputViewFunctionData = {
+            function: `${MODULE_ADDRESS}::gamev3::get_player_info`,
+            functionArguments: [address],
+        };
+
+        const data = await aptos.view({ payload });
+        console.log(data);
+        setPoints(data[0].vec[2]);
+    };
+
 
     // Function to calculate win ratio
     useEffect(() => {
@@ -23,6 +46,11 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ open, handleOpen, handleClo
             setWinRatio(ratio);
         }
     }, [numOfWins, numOfMatches]);
+
+
+    const handleCopy = () => {
+        navigator.clipboard.writeText(address??"")
+    }
 
     const CustomLinearProgress = styled(LinearProgress)(({ theme }) => ({
         height: 15,
@@ -35,6 +63,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ open, handleOpen, handleClo
             backgroundColor: theme.palette.grey[300],
         },
     }));
+
     return (
         <Modal
             open={open}
@@ -102,7 +131,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ open, handleOpen, handleClo
                         >
                             ✉️  {auth?.email}
                             <br />
-                            🪪 {userAddress}
+                            🪪 {shortenAddress(address ?? "", 5)}  <ContentCopy style={{ fontSize: 'smaller', cursor: 'pointer' }} onClick={handleCopy} />
                         </Box>
                     </Box>
                     <div style={{ display: 'flex', justifyContent: 'flex-start', width: '100%', fontSize: '20px', paddingLeft: '5px', marginBottom: '-20px' }}>

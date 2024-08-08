@@ -40,21 +40,23 @@ interface Props {
   createRoomContract: (ROOM_NAME: string, BET_AMOUNT: string) => Promise<void>;
 }
 
-const CustomButton = styled("div")<CustomButtonProps>(({ theme, selected }) => ({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  width: "90px",
-  height: "40px",
-  backgroundColor: selected ? "green" : "grey",
-  color: selected ? "white" : "green",
-  borderRadius: "4px",
-  cursor: "pointer",
-  userSelect: "none",
-  "&:hover": {
-    backgroundColor: selected ? "blue" : "grey",
-  },
-}));
+const CustomButton = styled("div")<CustomButtonProps>(
+  ({ theme, selected }) => ({
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "90px",
+    height: "40px",
+    backgroundColor: selected ? "green" : "grey",
+    color: selected ? "white" : "green",
+    borderRadius: "4px",
+    cursor: "pointer",
+    userSelect: "none",
+    "&:hover": {
+      backgroundColor: selected ? "blue" : "grey",
+    },
+  }),
+);
 
 const CustomFormControlLabel: React.FC<CustomFormControlLabelProps> = ({
   value,
@@ -64,7 +66,10 @@ const CustomFormControlLabel: React.FC<CustomFormControlLabelProps> = ({
 }) => (
   <FormControlLabel
     control={
-      <CustomButton selected={selectedValue === value} onClick={() => onChange(value)}>
+      <CustomButton
+        selected={selectedValue === value}
+        onClick={() => onChange(value)}
+      >
         {label}
       </CustomButton>
     }

@@ -42,7 +42,7 @@ interface Player {
 
 const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
   const { auth } = useAuth();
-  const { address } = useKeylessLogin();
+  const address = localStorage.getItem("address")
   const [openDialog, setOpenDialog] = useState(false);
   const [player2, setPlayer2] = useState<Player | null>(null);
   const [player1, setPlayer1] = useState<Player | null>(null);

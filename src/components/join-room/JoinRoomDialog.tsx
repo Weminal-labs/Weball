@@ -14,7 +14,7 @@ interface Pros {
 
 }
 const JoinRoomDialog: React.FC<Pros> = ({ open, room, closeModal ,setIsLoading,openWaitingRoom}) => {
-    const { address } = useKeylessLogin();
+  const address = localStorage.getItem("address")
     const flow = useAptimusFlow();
 
     const JoinRoomHandle = async () => {
@@ -23,6 +23,7 @@ const JoinRoomDialog: React.FC<Pros> = ({ open, room, closeModal ,setIsLoading,o
         const aptos = new Aptos(aptosConfig);
         const FUNCTION_NAME = `${MODULE_ADDRESS}::gamev3::join_room_by_room_id`;
         const ROOM_ID = Number(room?.room_id);
+        console.log(ROOM_ID)
         closeModal()
         setIsLoading(true);
         try {

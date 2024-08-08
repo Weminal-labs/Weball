@@ -28,16 +28,14 @@ const RoomCard: React.FC<RoomProps> = ({
   openDialog,
   setRoomObj,
 }) => {
-  const flow = useAptimusFlow();
-  const { address } = useKeylessLogin();
-  const { sendMessage, isLoaded } = useUnityGame();
-  const test = () => {
+
+  const handleCLick = () => {
     setRoomObj(roomType);
     openDialog();
   };
 
   return (
-    <Card onClick={test} sx={{ maxWidth: 450, cursor: "pointer" }}>
+    <Card onClick={handleCLick} sx={{ maxWidth: 450, cursor: "pointer" }}>
       <CardMedia
         sx={{ height: 280, width: "100%" }}
         image="/stadium/stadium1.jpg"
