@@ -203,20 +203,28 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
     const aptosConfig = new AptosConfig({ network: Network.TESTNET });
     const aptos = new Aptos(aptosConfig);
 
-    const FUNCTION_NAME = `${MODULE_ADDRESS}::gamev3::leave_room_by_room_id`;
-    console.log(room?.room_id);
-    const transaction = await aptos.transaction.build.simple({
-      sender: address ?? "",
-      data: {
-        function: FUNCTION_NAME,
-        functionArguments: [room?.room_id],
-      },
-    });
-    await flow.executeTransaction({
-      aptos,
-      transaction,
-      network: AptimusNetwork.TESTNET,
-    });
+   
+    try {
+      const FUNCTION_NAME = `${MODULE_ADDRESS}::gamev3::leave_room_by_room_id`;
+      console.log(room?.room_id);
+      const transaction = await aptos.transaction.build.simple({
+        sender: address ?? "",
+        data: {
+          function: FUNCTION_NAME,
+          functionArguments: [room?.room_id],
+        },
+      });
+      const committedTransaction = await flow.executeTransaction({
+        aptos,
+        transaction,
+        network: AptimusNetwork.TESTNET,
+      });
+      console.log(committedTransaction)
+    } catch (error) {
+      console.error("Mã Lỗi:", error.status);
+      console.error("Lỗi khi gọi hàm smart contract:", error);
+    }
+   
     handleUnload();
     closeRoom();
     setOpenDialog(false);
@@ -291,7 +299,8 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
               </Box>
             </Box>
             <Typography sx={{ mt: 4 }}>
-              TOTAL: {room?.bet_amount} APT
+
+              TOTAL: {(Number(room?.bet_amount)/ 100000000).toFixed(2)} APT
             </Typography>
             <Box
               sx={{

@@ -22,21 +22,22 @@ export const UnityGameProvider: React.FC<GameProviderProps> = ({ children }) => 
         await unload();
 
     }
-    useEffect(() => {
-        const handleUnityApplicationQuit = () => {
-            setShow(false);
-            console.log("kkkkkkkkkkkkkkkkkkkkkkkkkkkk")
-            if (onQuitCallback) {
-                onQuitCallback();
-            }
-        };
+    const handleUnityApplicationQuit = () => {
+        setShow(false);
+        console.log("kkkkkkkkkkkkkkkkkkkkkkkkkkkk")
+        if (onQuitCallback) {
+            onQuitCallback();
+        }
+    };
 
+    useEffect(() => {
+    
         addEventListener("FinishGame", handleUnityApplicationQuit);
 
         return () => {
             removeEventListener("FinishGame", handleUnityApplicationQuit);
         };
-    }, []);
+    }, [addEventListener]);
 
     const setQuitCallback = (callback: () => void) => {
 

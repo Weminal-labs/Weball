@@ -53,7 +53,7 @@ const RoomCard: React.FC<RoomProps> = ({
           <Box className="flex gap-1" sx={{ color: "#1976d2" }}>
             <AttachMoney sx={{ color: "#1976d2" }} />
             <Typography component="span" sx={{ color: "#1976d2" }}>
-              {roomType.bet_amount} aptos
+            {(Number(roomType.bet_amount) / 100000000).toFixed(2)} APT
             </Typography>
           </Box>
         </Box>
