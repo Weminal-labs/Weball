@@ -13,7 +13,7 @@ const items = [
   { text: "Create", icon: <SportsEsportsIcon />, to: "/create-room" },
   { text: "Join", icon: <GroupIcon />, to: "/join-room" },
   { text: "Boarding", icon: <LeaderboardOutlined />, to: "/leaderboard" },
-  { text: "FriendList", icon: <AttachMoneyOutlined />, to: "/friendlist" },
+  { text: "Addbets", icon: <AttachMoneyOutlined />, to: "/addbets" },
 
 ];
 
