@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 body, html {
   margin: 0;
   padding: 0;
@@ -10,13 +11,11 @@ body, html {
   justify-content: center;
   align-items: center;
   font-family: 'Roboto', sans-serif;
-  /* overflow-x: hidden; */
   overflow: hidden;
+    cursor: url('cursor2.png'), auto;
 }
 
 #root {
   height: 100%;
   width: 100%;
 }
-
-
