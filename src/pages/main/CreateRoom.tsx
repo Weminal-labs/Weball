@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { useAptimusFlow, useKeylessLogin } from "aptimus-sdk-test/react";
 import { Aptos, AptosConfig, InputViewFunctionData, Network } from "@aptos-labs/ts-sdk";
 import { AptimusNetwork } from "aptimus-sdk-test";
-import UnityGameComponent, { useUnityGame } from "../../hooks/useUnityGame";
 import { MODULE_ADDRESS } from "../../utils/Var";
 import { CreateRoomType, RoomType } from "../../type/type";
 import LoadingScreen from "../../components/layout/LoadingScreen";
@@ -13,6 +12,7 @@ import CreateForm from "../../components/create-room/CreateForm";
 import { useNavigate } from "react-router-dom";
 import RoomCard from "../../components/join-room/Room";
 import useAuth from "../../hooks/useAuth";
+import UnityGameComponent, { useUnityGame } from "../../hooks/useUnityGame";
 
 const CreateRoom: React.FC = () => {
   const [openWaitRoom, setOpenWaitRoom] = useState(false);
@@ -39,6 +39,9 @@ const CreateRoom: React.FC = () => {
 
 //     // setQuitCallback(handleQuitGame);
 // }, [setQuitCallback]);
+useEffect(() => {
+  console.log("loadGame state updated:", loadGame);
+}, [loadGame]);
   const getCurrentRoom =async ()=>{
     const aptosConfig = new AptosConfig({ network: Network.TESTNET });
     const aptos = new Aptos(aptosConfig);
@@ -84,6 +87,7 @@ const CreateRoom: React.FC = () => {
       setIsLoading(true);
       const transaction = await aptos.transaction.build.simple({
         sender: address ?? "",
+        
         data: {
           function: FUNCTION_NAME,
           functionArguments: [ROOM_NAME, BET_AMOUNT],
@@ -166,7 +170,10 @@ const CreateRoom: React.FC = () => {
           room={roomObj}
           open={openWaitRoom}
           closeRoom={() => {
-            setLoadGame(false);
+            setLoadGame((prev)=>{
+              return false
+            });
+            setShow(false)
             setOpenWaitRoom(false);
           }}
           openGame={openGame}
@@ -181,7 +188,7 @@ const CreateRoom: React.FC = () => {
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
         >
-          <UnityGameComponent />
+          <UnityGameComponent  />
         </Modal>
       )}
       <AlertComponent

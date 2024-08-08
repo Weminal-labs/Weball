@@ -9,7 +9,7 @@ interface GameProviderProps {
 }
 
 export const UnityGameProvider: React.FC<GameProviderProps> = ({ children }) => {
-    const { sendMessage, isLoaded, unityProvider, addEventListener, removeEventListener } = useUnityContext({
+    const { sendMessage, isLoaded, unityProvider, addEventListener, removeEventListener, unload } = useUnityContext({
         loaderUrl: "build/Build/Build.loader.js",
         dataUrl: "build/Build/Build.data",
         frameworkUrl: "build/Build/Build.framework.js",
@@ -18,19 +18,23 @@ export const UnityGameProvider: React.FC<GameProviderProps> = ({ children }) => 
 
     const [show, setShow] = useState(false);
     const [onQuitCallback, setOnQuitCallback] = useState<() => void>(() => () => {});
+    const handleUnload =async ()=>{
+        await unload();
 
+    }
     useEffect(() => {
         const handleUnityApplicationQuit = () => {
             setShow(false);
+            console.log("kkkkkkkkkkkkkkkkkkkkkkkkkkkk")
             if (onQuitCallback) {
                 onQuitCallback();
             }
         };
 
-        addEventListener("onUnityApplicationQuit", handleUnityApplicationQuit);
+        addEventListener("FinishGame", handleUnityApplicationQuit);
 
         return () => {
-            removeEventListener("onUnityApplicationQuit", handleUnityApplicationQuit);
+            removeEventListener("FinishGame", handleUnityApplicationQuit);
         };
     }, []);
 
@@ -39,7 +43,7 @@ export const UnityGameProvider: React.FC<GameProviderProps> = ({ children }) => 
     };
 
     return (
-        <UnityGameContext.Provider value={{ sendMessage, isLoaded, unityProvider, show, setShow, setQuitCallback }}>
+        <UnityGameContext.Provider value={{ sendMessage, isLoaded, unityProvider, show, setShow, setQuitCallback,handleUnload }}>
             {children}
         </UnityGameContext.Provider>
     );

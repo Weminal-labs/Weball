@@ -12,6 +12,7 @@ const MessengerInput = ({roomId}:Pros) => {
     const flow = useAptimusFlow();
     const [loading, setLoading] = useState();
     const address = localStorage.getItem("address")
+    
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		if (!message) return;
@@ -22,7 +23,9 @@ const MessengerInput = ({roomId}:Pros) => {
         const aptosConfig = new AptosConfig({ network: Network.TESTNET });
         const aptos = new Aptos(aptosConfig);
         const FUNCTION_NAME = `${MODULE_ADDRESS}::gamev3::send_chat_to_room_id`;
+
         const transaction = await aptos.transaction.build.simple({
+
             sender: address ?? "",
             data: {
               function: FUNCTION_NAME,
@@ -30,6 +33,7 @@ const MessengerInput = ({roomId}:Pros) => {
             },
           });
           const committedTransaction = await flow.executeTransaction({
+
             aptos,
             transaction,
             network: AptimusNetwork.TESTNET,

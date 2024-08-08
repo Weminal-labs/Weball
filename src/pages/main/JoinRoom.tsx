@@ -20,12 +20,12 @@ import { RoomType } from "../../type/type";
 import { MODULE_ADDRESS } from "../../utils/Var";
 import LoadingScreen from "../../components/layout/LoadingScreen";
 import RoomCard from "../../components/join-room/Room";
-import UnityGameComponent, { useUnityGame } from "../../hooks/useUnityGame";
 import JoinRoomDialog from "../../components/join-room/JoinRoomDialog";
 import WaitingRoom from "../../components/create-room/WaitingRoom";
 import useAuth from "../../hooks/useAuth";
 import { useKeylessLogin } from "aptimus-sdk-test/react";
 import useGetRoom from "../../hooks/useGetRoom";
+import UnityGameComponent, { useUnityGame } from "../../hooks/useUnityGame";
 
 const ITEMS_PER_PAGE = 6;
 
@@ -67,11 +67,10 @@ const JoinRoom: React.FC = () => {
     setSearchTerm(event.target.value);
     setPage(1); // Reset to first page on search
   };
-
   const filteredRooms = rooms.filter((room) =>
-    room.room_id.toLowerCase().includes(searchTerm.toLowerCase()),
+    !room.is_room_close && room.room_id.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
+  
   const startIndex = (page - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
   const displayedRooms = filteredRooms.slice(startIndex, endIndex);
@@ -121,7 +120,7 @@ const JoinRoom: React.FC = () => {
 
           <GridContainer container spacing={4}>
             {displayedRooms.map((room, index) =>{
-              if(room.is_room_close===false)
+     
               return (
             
                 <Grid item xs={12} sm={6} md={4} key={index}>

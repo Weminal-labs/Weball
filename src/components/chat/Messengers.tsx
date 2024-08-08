@@ -3,7 +3,7 @@ import Messenger from './Messenger'
 import { Aptos, AptosConfig, InputViewFunctionData, Network } from '@aptos-labs/ts-sdk'
 import { MODULE_ADDRESS } from '../../utils/Var'
 
-interface Pros {
+interface Props {
   roomId: string
 }
 
@@ -13,13 +13,13 @@ interface MessageType {
   timestamp: string
 }
 
-const Messengers = ({ roomId }: Pros) => {
+const Messengers = ({ roomId }: Props) => {
   const [messages, setMessages] = useState<MessageType[]>([])
 
   useEffect(() => {
     const aptosConfig = new AptosConfig({ network: Network.TESTNET });
     const aptos = new Aptos(aptosConfig);
-
+    
     const getChatMessage = async () => {
       const payload: InputViewFunctionData = {
         function: `${MODULE_ADDRESS}::gamev3::get_chat_messages`,
@@ -38,9 +38,13 @@ const Messengers = ({ roomId }: Pros) => {
 
   return (
     <div className='flex-1 overflow-y-auto'>
-      {messages.map((ele, index) => (
-        <Messenger key={ele.timestamp} message={ele.message} sender={ele.sender} />
-      ))}
+      {messages.length === 0 ? (
+        <div className="text-center text-gray-500">No messages</div>
+      ) : (
+        messages.map((ele) => (
+          <Messenger key={ele.timestamp} message={ele.message} sender={ele.sender} />
+        ))
+      )}
     </div>
   )
 }

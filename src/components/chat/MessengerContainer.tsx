@@ -7,7 +7,7 @@ interface Pros{
 }
 const MessengerContainer = ({roomId}:Pros) => {
   return (
-    <div className='flex flex-col justify-around h-[100%] w-[400px]'>
+    <div className='flex flex-col justify-around h-full w-[400px]'>
       <Messengers roomId={roomId} />
       <MessengerInput  roomId={roomId}  />
     </div>
