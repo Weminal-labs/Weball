@@ -60,7 +60,11 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ open, handleOpen, handleClo
             const aptos = new Aptos(aptosConfig);
 
             const hexAddress = address.startsWith('0x') ? address : `0x${address}`;
-
+         
+             
+            const fund = await aptos.getAccountAPTAmount({ accountAddress: address??""});
+            console.log(fund/100000000)
+        
             const payload: InputViewFunctionData = {
                 function: `${MODULE_ADDRESS}::gamev3::get_player_info`,
                 functionArguments: [hexAddress],
