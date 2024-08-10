@@ -12,7 +12,6 @@ import AuthLayout from "./pages/layout/AuthLayout";
 import RequireAuth from "./components/layout/RequireAuth";
 import Home from "./pages/main/Home";
 import JoinRoom from "./pages/main/JoinRoom";
-import Profile from "./components/ProfileModal";
 
 function App() {
   return (

@@ -1,14 +1,37 @@
-// Import styled-components đã được sửa để khắc phục lỗi không tìm thấy module
-import React from 'react';
-import styled, { keyframes } from 'styled-components';
-// Định nghĩa giao diện Player
+import React, { useState, useEffect } from 'react';
+import styled, { keyframes, createGlobalStyle } from 'styled-components';
+import { Aptos, AptosConfig, Network, Secp256k1PrivateKey, Account, AccountAddress } from "@aptos-labs/ts-sdk";
+import { MODULE_ADDRESS } from "../../utils/Var";
+
+// Player Interface
 interface Player {
-  id: string;
-  username: string;
-  avatar: string;
-  score: number;
+  address: string;
+  games_played: number;
+  points: number;
+  winning_games: number;
   rank: number;
 }
+
+const GlobalStyle = createGlobalStyle`
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0cbd16;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #1E90FF;
+  border-radius: 6px;
+  border: 3px solid #0cbd16;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #1E90FF #0cbd16;
+}
+`;
 
 // Animations
 const fadeIn = keyframes`
@@ -23,7 +46,7 @@ const float = keyframes`
 `;
 
 const LeaderboardContainer = styled.div`
- background-color: #1a1a2e;
+  background-color: #1a1a2e;
   color: white;
   padding: 20px;
   border-radius: 10px;
@@ -31,15 +54,16 @@ const LeaderboardContainer = styled.div`
   max-width: 800px;
   margin: 0 auto;
   animation: ${fadeIn} 0.5s ease-in;
-`; 
+`;
+
 const TabContainer = styled.div`
   display: flex;
   justify-content: center;
   margin-bottom: 20px;
 `;
 
-const Tab = styled.button<{ active: boolean }>`
-  background-color: ${props => props.active ? '#ff2e63' : 'transparent'};
+const Tab = styled.button<{ $active: boolean }>`
+  background-color: ${props => props.$active ? '#ff2e63' : 'transparent'};
   color: white;
   border: none;
   padding: 10px 20px;
@@ -48,7 +72,7 @@ const Tab = styled.button<{ active: boolean }>`
   cursor: pointer;
   transition: all 0.3s ease;
   &:hover {
-    background-color: ${props => props.active ? '#ff2e63' : '#ff2e6350'};
+    background-color: ${props => props.$active ? '#ff2e63' : '#ff2e6350'};
   }
 `;
 
@@ -154,55 +178,191 @@ const PlayerScore = styled.div`
   color: #ff9a3c;
   font-weight: bold;
 `;
-// Component chính
+
+function uint8ArrayToHex(uint8Array: Uint8Array): string {
+  return Array.from(uint8Array, byte => byte.toString(16).padStart(2, '0')).join('');
+}
+
 const Leaderboard: React.FC = () => {
-  const [activeTab, setActiveTab] = React.useState<'daily' | 'monthly'>('daily');
+  const [activeTab, setActiveTab] = useState<'top10' | 'top50' | 'top100'>('top10');
+  const [players, setPlayers] = useState<Player[]>([]);
 
-  const topPlayers: Player[] = [
-    { id: '1', username: '@jeniffer', avatar: 'https://i.pravatar.cc/300', score: 2670, rank: 1 },
-    { id: '2', username: '@amanda', avatar: 'https://i.pravatar.cc/300', score: 156, rank: 2 },
-    { id: '3', username: '@canes', avatar: 'https://i.pravatar.cc/300', score: 1543, rank: 3 },
-  ];
+  const pickWinnerByRoomId = async () => {
+    const aptosConfig = new AptosConfig({ network: Network.TESTNET });
+    const aptos = new Aptos(aptosConfig);
 
-  const otherPlayers: Player[] = [
-    { id: '4', username: '@player', avatar: 'https://i.pravatar.cc/300', score: 34323, rank: 4 },
-    { id: '5', username: '@pineapple', avatar: 'https://i.pravatar.cc/300', score: 243553, rank: 5 },
-    { id: '6', username: '@catplayer', avatar: 'https://i.pravatar.cc/300', score: 143902, rank: 6 },
-    // Add more players as needed
-  ];
+    const privateKeyHex = "0x0cdae4b8e4a1795ffc36d89ebbbdd7bd0cb0e0d81091290096f8d92d40c1fe43";
+    const privateKeyBytes = Buffer.from(privateKeyHex.slice(2), "hex");
+    const privateKey = new Secp256k1PrivateKey(privateKeyBytes);
+    const account = await aptos.deriveAccountFromPrivateKey({ privateKey });
+
+    const accountAddress = account.address.toString();
+    console.log("Account Address (Hex):", accountAddress);
+
+    const FUNCTION_NAME = `${MODULE_ADDRESS}::gamev3::pick_winner_and_transfer_bet`;
+
+    try {
+      const payload = {
+        function: FUNCTION_NAME,
+        type_arguments: [],
+        arguments: [
+          1723050710, // Room ID
+          "0xae93702b20fa4ce18cb54c4ab9e3bcd5feb654d8053a10b197f89b4759f431d8" // Address as a string
+        ]
+      };
+
+      const txnRequest = await aptos.generateTransaction(account.address(), payload);
+      const signedTxn = await aptos.signTransaction(account, txnRequest);
+      const txnHash = await aptos.submitTransaction(signedTxn);
+
+      await aptos.waitForTransaction(txnHash);
+
+      console.log("Transaction hash:", txnHash);
+    } catch (error) {
+      console.error("Error Status:", error.status);
+      console.error("Error calling smart contract function:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === 'top10') {
+      fetchTop10Players();
+    } else if (activeTab === 'top50') {
+      fetchTop50Players();
+    } else {
+      fetchTop100Players();
+    }
+  }, [activeTab]);
+
+  const fetchTop10Players = async () => {
+    try {
+      const aptosConfig = new AptosConfig({ network: Network.TESTNET });
+      const aptos = new Aptos(aptosConfig);
+      const payload = {
+        function: `${MODULE_ADDRESS}::gamev3::get_top_10_players`,
+        functionArguments: [],
+      };
+      const data = await aptos.view({ payload });
+      console.log("Top 10 Players Data: ", data); // Debug log
+  
+      const players = data.map((entry: any, index: number) => {
+        const player = entry[0]; // Adjusting to access the object inside the array
+        return {
+          address: player.address,
+          games_played: parseInt(player.games_played, 10),
+          points: parseInt(player.points, 10),
+          winning_games: parseInt(player.winning_games, 10),
+          rank: index + 1,
+        };
+      });
+  
+      setPlayers(players);
+      console.log("Processed Top 10 Players: ", players); // Debug log
+    } catch (error) {
+      console.error("Failed to fetch top 10 players:", error);
+    }
+  };
+  
+  const fetchTop50Players = async () => {
+    try {
+      const aptosConfig = new AptosConfig({ network: Network.TESTNET });
+      const aptos = new Aptos(aptosConfig);
+      const payload = {
+        function: `${MODULE_ADDRESS}::gamev3::get_top_50_players`,
+        functionArguments: [],
+      };
+      const data = await aptos.view({ payload });
+      console.log("Top 50 Players Data: ", data); // Debug log
+  
+      const players = data.map((entry: any, index: number) => {
+        const player = entry[0]; // Adjusting to access the object inside the array
+        return {
+          address: player.address,
+          games_played: parseInt(player.games_played, 10),
+          points: parseInt(player.points, 10),
+          winning_games: parseInt(player.winning_games, 10),
+          rank: index + 1,
+        };
+      });
+  
+      setPlayers(players);
+      console.log("Processed Top 50 Players: ", players); // Debug log
+    } catch (error) {
+      console.error("Failed to fetch top 50 players:", error);
+    }
+  };
+  
+  const fetchTop100Players = async () => {
+    try {
+      const aptosConfig = new AptosConfig({ network: Network.TESTNET });
+      const aptos = new Aptos(aptosConfig);
+      const payload = {
+        function: `${MODULE_ADDRESS}::gamev3::get_top_100_players`,
+        functionArguments: [],
+      };
+      const data = await aptos.view({ payload });
+      console.log("Top 100 Players Data: ", data); // Debug log
+  
+      const players = data.map((entry: any, index: number) => {
+        const player = entry[0]; // Adjusting to access the object inside the array
+        return {
+          address: player.address,
+          games_played: parseInt(player.games_played, 10),
+          points: parseInt(player.points, 10),
+          winning_games: parseInt(player.winning_games, 10),
+          rank: index + 1,
+        };
+      });
+  
+      setPlayers(players);
+      console.log("Processed Top 100 Players: ", players); // Debug log
+    } catch (error) {
+      console.error("Failed to fetch top 100 players:", error);
+    }
+  };
+  
+
+  const topPlayers = players.slice(0, 3);
+  const otherPlayers = players.slice(3);
 
   return (
-    <LeaderboardContainer>
-      <TabContainer>
-        <Tab active={activeTab === 'daily'} onClick={() => setActiveTab('daily')}>Daily</Tab>
-        <Tab active={activeTab === 'monthly'} onClick={() => setActiveTab('monthly')}>Monthly</Tab>
-      </TabContainer>
+    <>
+      <GlobalStyle />
+      <LeaderboardContainer>
+        <TabContainer>
+          <Tab $active={activeTab === 'top10'} onClick={() => setActiveTab('top10')}>Top 10</Tab>
+          <Tab $active={activeTab === 'top50'} onClick={() => setActiveTab('top50')}>Top 50</Tab>
+          <Tab $active={activeTab === 'top100'} onClick={() => setActiveTab('top100')}>Top 100</Tab>
+        </TabContainer>
+        <button onClick={pickWinnerByRoomId}>Pick Winner</button>
 
-      <PodiumContainer>
-        {topPlayers.map((player, index) => (
-          <PodiumPlace key={player.id} place={index + 1}>
-            <Crown>{index === 0 ? '👑' : index === 1 ? '👑' : '👑'}</Crown>
-            <Avatar src={player.avatar} alt={player.username} />
-            <Username>{player.username}</Username>
-            <Score>{player.score}</Score>
-            <Pedestal place={index + 1}>{index + 1}</Pedestal>
-          </PodiumPlace>
-        ))}
-      </PodiumContainer>
 
-      <LeaderboardList>
-        {otherPlayers.map(player => (
-          <LeaderboardItem key={player.id}>
-            <Rank>{player.rank}</Rank>
-            <PlayerInfo>
-              <SmallAvatar src={player.avatar} alt={player.username} />
-              <Username>{player.username}</Username>
-            </PlayerInfo>
-            <PlayerScore>{player.score}</PlayerScore>
-          </LeaderboardItem>
-        ))}
-      </LeaderboardList>
-    </LeaderboardContainer>
+        <PodiumContainer>
+          {topPlayers.map((player, index) => (
+            <PodiumPlace key={player.address} place={index + 1}>
+              <Crown>{index === 0 ? '👑' : index === 1 ? '🥈' : '🥉'}</Crown>
+              <Avatar src={`https://avatars.dicebear.com/api/human/${player.address}.svg`} alt={player.address} />
+              <Username>{player.address}</Username>
+              <Score>{player.points}</Score>
+              <Pedestal place={index + 1}>{index + 1}</Pedestal>
+            </PodiumPlace>
+          ))}
+        </PodiumContainer>
+
+        <LeaderboardList>
+          {otherPlayers.map(player => (
+            <LeaderboardItem key={player.address}>
+              <Rank>{player.rank}</Rank>
+              <PlayerInfo>
+                <SmallAvatar src={`https://avatars.dicebear.com/api/human/${player.address}.svg`} alt={player.address} />
+                <Username>{player.address}</Username>
+              </PlayerInfo>
+              <PlayerScore>{player.points}</PlayerScore>
+            </LeaderboardItem>
+          ))}
+        </LeaderboardList>
+      </LeaderboardContainer>
+    </>
   );
 };
 
