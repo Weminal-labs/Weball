@@ -14,58 +14,28 @@ import { Aptos, AptosConfig, Network } from "@aptos-labs/ts-sdk";
 import { useAptimusFlow, useKeylessLogin } from "aptimus-sdk-test/react";
 import { AptimusNetwork } from "aptimus-sdk-test";
 import { useUnityGame } from "../../hooks/useUnityGame";
+import { useEffect } from "react";
 
 interface RoomProps {
   roomType: RoomType;
-  setShow: React.Dispatch<React.SetStateAction<boolean>>;
-  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  openDialog: () => void;
+
+  setRoomObj: React.Dispatch<React.SetStateAction<RoomType | null>>;
 }
 
-const RoomCard: React.FC<RoomProps> = ({ roomType, setShow, setIsLoading }) => {
-  const flow = useAptimusFlow();
-  const { address } = useKeylessLogin();
-  const { sendMessage, isLoaded } = useUnityGame();
+const RoomCard: React.FC<RoomProps> = ({
+  roomType,
+  openDialog,
+  setRoomObj,
+}) => {
 
-  const JoinRoom = async () => {
-    const aptosConfig = new AptosConfig({ network: Network.TESTNET });
-    const aptos = new Aptos(aptosConfig);
-    const FUNCTION_NAME = `${MODULE_ADDRESS}::gamev3::join_room_by_room_id`;
-    const ROOM_ID = Number(roomType.room_id);
-    setIsLoading(true);
-    try {
-      const transaction = await aptos.transaction.build.simple({
-        sender: address ?? "",
-        data: {
-          function: FUNCTION_NAME,
-          functionArguments: [ROOM_ID],
-        },
-      });
-      const committedTransaction = await flow.executeTransaction({
-        aptos,
-        transaction,
-        network: AptimusNetwork.TESTNET,
-      });
-      //@ts-ignore
-      console.log(committedTransaction.events[1].data);
-      if (isLoaded === false) {
-        console.log("Máy chủ chưa kết nối");
-        return;
-      }
-      const obj = {
-        roomId: roomType.room_id,
-        roomName: roomType.room_name,
-        userId: roomType.creator,
-        userName: "userName",
-      };
-      setIsLoading(false);
-      sendMessage("RoomPlayer", "JoinOrCreateRoom", JSON.stringify(obj));
-      setShow(true);
-    } catch (error) {
-      console.error("Lỗi khi gọi hàm smart contract:", error);
-    }
+  const handleCLick = () => {
+    setRoomObj(roomType);
+    openDialog();
   };
+
   return (
-    <Card onClick={JoinRoom} sx={{ maxWidth: 450, cursor: "pointer" }}>
+    <Card onClick={handleCLick} sx={{ maxWidth: 450, cursor: "pointer" }}>
       <CardMedia
         sx={{ height: 280, width: "100%" }}
         image="/stadium/stadium1.jpg"
@@ -83,7 +53,7 @@ const RoomCard: React.FC<RoomProps> = ({ roomType, setShow, setIsLoading }) => {
           <Box className="flex gap-1" sx={{ color: "#1976d2" }}>
             <AttachMoney sx={{ color: "#1976d2" }} />
             <Typography component="span" sx={{ color: "#1976d2" }}>
-              {roomType.bet_amount} aptos
+            {(Number(roomType.bet_amount) / 100000000).toFixed(2)} APT
             </Typography>
           </Box>
         </Box>

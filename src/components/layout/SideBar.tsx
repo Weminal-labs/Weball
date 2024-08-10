@@ -50,6 +50,8 @@ const SideBar = () => {
                 padding: '10px 0',
                 width: '100%'
               })}
+              aria-hidden="false" // Ensure aria-hidden is not used inappropriately
+
             >
               <ListItemIcon sx={{ display: 'flex', justifyContent: 'center', color: 'inherit' }}>
                 {React.cloneElement(item.icon, { color: 'inherit' })}
