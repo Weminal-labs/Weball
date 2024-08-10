@@ -63,7 +63,9 @@ useEffect(() => {
         room_name:roomData.room_name
 
       });
-      if(address!==roomData.creator){
+      const checkIsCreator = roomData.creator.slice(-5).toLowerCase() === address?.slice(-5).toLowerCase();
+
+      if(!checkIsCreator){
         setIsCreator(false)
 
       }else{
@@ -123,6 +125,10 @@ useEffect(() => {
         // setContentAlert("Token expired")
         // setOpenAlert(true)
       }
+            // @ts-ignore
+
+      setContentAlert(error.toString());
+        setOpenAlert(true);
       console.error("Lỗi khi gọi hàm smart contract:", error);
     }
   };

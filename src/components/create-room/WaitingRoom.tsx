@@ -49,11 +49,6 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
   const [openChat, setOpenChat] = useState(false);
   const flow = useAptimusFlow();
   const {
-    sendMessage,
-    isLoaded,
-    show,
-    setShow,
-    setQuitCallback,
     handleUnload,
   } = useUnityGame();
 
@@ -160,45 +155,7 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
       setOpenAlert(true);
     }
   };
-  // const readyHandle = async () => {
-
-  //     if (isCreator) {
-  //       if(player1?.ready){
-  //         setContentAlert("You can't cancel your ready");
-  //         setOpenAlert(true);
-  //         return ;
-  //       }
-  //     setPlayer1((prev) => {
-  //       return { ...prev, ready: !prev?.ready };
-  //     });
-  //   } else {
-  //     if(player2?.ready){
-  //       setContentAlert("You can't cancel your ready");
-  //       setOpenAlert(true);
-  //       return ;
-  //     }
-  //     setPlayer2((prev) => {
-  //       return { ...prev, ready: !prev?.ready };
-  //     });
-  //   }
-  //   const aptosConfig = new AptosConfig({ network: Network.TESTNET });
-  //   const aptos = new Aptos(aptosConfig);
-
-  //   const FUNCTION_NAME = `${MODULE_ADDRESS}::gamev3::ready_by_room_id`;
-
-  //   const transaction = await aptos.transaction.build.simple({
-  //     sender: address ?? "",
-  //     data: {
-  //       function: FUNCTION_NAME,
-  //       functionArguments: [Number(room?.room_id)],
-  //     },
-  //   });
-  //   await flow.executeTransaction({
-  //     aptos,
-  //     transaction,
-  //     network: AptimusNetwork.TESTNET,
-  //   });
-  // };
+  
   const handleCloseRoom = async () => {
     const aptosConfig = new AptosConfig({ network: Network.TESTNET });
     const aptos = new Aptos(aptosConfig);

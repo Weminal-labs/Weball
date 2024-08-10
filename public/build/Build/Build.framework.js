@@ -1976,13 +1976,13 @@ var tempI64;
 // === Body ===
 
 var ASM_CONSTS = {
-  4335372: function() {Module['emscripten_get_now_backup'] = performance.now;},  
- 4335427: function($0) {performance.now = function() { return $0; };},  
- 4335475: function($0) {performance.now = function() { return $0; };},  
- 4335523: function() {performance.now = Module['emscripten_get_now_backup'];},  
- 4335578: function() {return Module.webglContextAttributes.premultipliedAlpha;},  
- 4335639: function() {return Module.webglContextAttributes.preserveDrawingBuffer;},  
- 4335703: function() {return Module.webglContextAttributes.powerPreference;}
+  4334876: function() {Module['emscripten_get_now_backup'] = performance.now;},  
+ 4334931: function($0) {performance.now = function() { return $0; };},  
+ 4334979: function($0) {performance.now = function() { return $0; };},  
+ 4335027: function() {performance.now = Module['emscripten_get_now_backup'];},  
+ 4335082: function() {return Module.webglContextAttributes.premultipliedAlpha;},  
+ 4335143: function() {return Module.webglContextAttributes.preserveDrawingBuffer;},  
+ 4335207: function() {return Module.webglContextAttributes.powerPreference;}
 };
 
 
@@ -2128,6 +2128,10 @@ var ASM_CONSTS = {
       var js = jsStackTrace();
       if (Module['extraStackTrace']) js += '\n' + Module['extraStackTrace']();
       return demangleAll(js);
+    }
+
+  function _FinishGame(jsonString) {
+      window.dispatchReactUnityEvent("FinishGame", UTF8ToString(jsonString));
     }
 
   function _GetJSMemoryInfo(totalJSptr, usedJSptr) {
@@ -2425,18 +2429,6 @@ var ASM_CONSTS = {
   		}
   		return _JS_DOM_UnityCanvasSelector.ptr;
   	}
-
-  function _JS_Eval_EvalJS(ptr)
-  {
-  	var str = UTF8ToString(ptr);
-  	try {
-  		eval (str);
-  	}
-  	catch (exception)
-  	{
-  		console.error(exception);
-  	}
-  }
 
   function _JS_Eval_OpenURL(ptr)
   {
@@ -15957,6 +15949,7 @@ function checkIncomingModuleAPI() {
   ignoredModuleProp('fetchSettings');
 }
 var asmLibraryArg = {
+  "FinishGame": _FinishGame,
   "GetJSMemoryInfo": _GetJSMemoryInfo,
   "JS_Accelerometer_IsRunning": _JS_Accelerometer_IsRunning,
   "JS_Accelerometer_Start": _JS_Accelerometer_Start,
@@ -15965,7 +15958,6 @@ var asmLibraryArg = {
   "JS_Cursor_SetShow": _JS_Cursor_SetShow,
   "JS_DOM_MapViewportCoordinateToElementLocalCoordinate": _JS_DOM_MapViewportCoordinateToElementLocalCoordinate,
   "JS_DOM_UnityCanvasSelector": _JS_DOM_UnityCanvasSelector,
-  "JS_Eval_EvalJS": _JS_Eval_EvalJS,
   "JS_Eval_OpenURL": _JS_Eval_OpenURL,
   "JS_FileSystem_Initialize": _JS_FileSystem_Initialize,
   "JS_FileSystem_Sync": _JS_FileSystem_Sync,
@@ -16598,12 +16590,6 @@ var dynCall_iiiidii = Module["dynCall_iiiidii"] = createExportWrapper("dynCall_i
 var dynCall_iiiifii = Module["dynCall_iiiifii"] = createExportWrapper("dynCall_iiiifii");
 
 /** @type {function(...*):?} */
-var dynCall_viji = Module["dynCall_viji"] = createExportWrapper("dynCall_viji");
-
-/** @type {function(...*):?} */
-var dynCall_viiji = Module["dynCall_viiji"] = createExportWrapper("dynCall_viiji");
-
-/** @type {function(...*):?} */
 var dynCall_viiiiiii = Module["dynCall_viiiiiii"] = createExportWrapper("dynCall_viiiiiii");
 
 /** @type {function(...*):?} */
@@ -16611,6 +16597,12 @@ var dynCall_iijiii = Module["dynCall_iijiii"] = createExportWrapper("dynCall_iij
 
 /** @type {function(...*):?} */
 var dynCall_vijii = Module["dynCall_vijii"] = createExportWrapper("dynCall_vijii");
+
+/** @type {function(...*):?} */
+var dynCall_viji = Module["dynCall_viji"] = createExportWrapper("dynCall_viji");
+
+/** @type {function(...*):?} */
+var dynCall_viiji = Module["dynCall_viiji"] = createExportWrapper("dynCall_viiji");
 
 /** @type {function(...*):?} */
 var dynCall_vidi = Module["dynCall_vidi"] = createExportWrapper("dynCall_vidi");
@@ -18404,28 +18396,6 @@ function invoke_iiiijii(index,a1,a2,a3,a4,a5,a6,a7) {
   }
 }
 
-function invoke_viji(index,a1,a2,a3,a4) {
-  var sp = stackSave();
-  try {
-    dynCall_viji(index,a1,a2,a3,a4);
-  } catch(e) {
-    stackRestore(sp);
-    if (e !== e+0) throw e;
-    _setThrew(1, 0);
-  }
-}
-
-function invoke_viiji(index,a1,a2,a3,a4,a5) {
-  var sp = stackSave();
-  try {
-    dynCall_viiji(index,a1,a2,a3,a4,a5);
-  } catch(e) {
-    stackRestore(sp);
-    if (e !== e+0) throw e;
-    _setThrew(1, 0);
-  }
-}
-
 function invoke_iijiii(index,a1,a2,a3,a4,a5,a6) {
   var sp = stackSave();
   try {
@@ -18441,6 +18411,28 @@ function invoke_vijii(index,a1,a2,a3,a4,a5) {
   var sp = stackSave();
   try {
     dynCall_vijii(index,a1,a2,a3,a4,a5);
+  } catch(e) {
+    stackRestore(sp);
+    if (e !== e+0) throw e;
+    _setThrew(1, 0);
+  }
+}
+
+function invoke_viji(index,a1,a2,a3,a4) {
+  var sp = stackSave();
+  try {
+    dynCall_viji(index,a1,a2,a3,a4);
+  } catch(e) {
+    stackRestore(sp);
+    if (e !== e+0) throw e;
+    _setThrew(1, 0);
+  }
+}
+
+function invoke_viiji(index,a1,a2,a3,a4,a5) {
+  var sp = stackSave();
+  try {
+    dynCall_viiji(index,a1,a2,a3,a4,a5);
   } catch(e) {
     stackRestore(sp);
     if (e !== e+0) throw e;

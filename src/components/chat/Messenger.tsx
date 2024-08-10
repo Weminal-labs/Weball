@@ -13,10 +13,6 @@ const Messenger = ({message,sender}:Pros) => {
 	const chatClassName = fromMe ? "chat-end" : "chat-start";
 	const bubbleBgColor = fromMe ? "bg-blue-500" : "";
     console.log("sender " +sender+"a")
-// console.log("address " +address+"a")
-// console.log("sender " +sender.length)
-// console.log("address " +address?.length)
-// console.log(fromMe)
 
   return (
     <div className={`chat ${chatClassName}`}>
