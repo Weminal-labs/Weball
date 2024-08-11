@@ -132,7 +132,7 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
 
     try {
       if (isReadyUpdated) {
-        console.log(isReadyUpdated)
+        console.log(address)
 
         const FUNCTION_NAME = `${MODULE_ADDRESS}::gamev3::ready_by_room_id`;
 

@@ -1,12 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import styled from "styled-components";
-
-import {
-  Aptos,
-  AptosConfig,
-  InputViewFunctionData,
-  Network,
-} from "@aptos-labs/ts-sdk";
 import {
   Box,
   Button,
@@ -16,50 +9,52 @@ import {
   Stack,
   TextField,
 } from "@mui/material";
-import { RoomType } from "../../type/type";
-import { MODULE_ADDRESS } from "../../utils/Var";
 import LoadingScreen from "../../components/layout/LoadingScreen";
 import RoomCard from "../../components/join-room/Room";
 import JoinRoomDialog from "../../components/join-room/JoinRoomDialog";
 import WaitingRoom from "../../components/create-room/WaitingRoom";
 import useAuth from "../../hooks/useAuth";
-import { useKeylessLogin } from "aptimus-sdk-test/react";
 import useGetRoom from "../../hooks/useGetRoom";
 import UnityGameComponent, { useUnityGame } from "../../hooks/useUnityGame";
+import { RoomType } from "../../type/type";
 
 const ITEMS_PER_PAGE = 6;
 
 const JoinRoom: React.FC = () => {
-  const {auth}=useAuth()
+  const { auth } = useAuth();
   const [page, setPage] = useState<number>(1);
   const [show, setShow] = useState(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [roomObj, setRoomObj] = useState<RoomType | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [openWaitRoom, setOpenWaitRoom] = useState(false);
-  const { sendMessage, isLoaded,setQuitCallback } = useUnityGame();
-  const address = localStorage.getItem("address")
+  const { sendMessage, isLoaded } = useUnityGame();
+  const address = localStorage.getItem("address");
   const handleClose = () => setShow(false);
   const [loadGame, setLoadGame] = useState(false);
-  const {getRooms,isLoading,rooms,setIsLoading}=useGetRoom()
+  const { getRooms, isLoading, rooms, setIsLoading } = useGetRoom();
+
   useEffect(() => {
     getRooms();
   }, []);
-//   useEffect(() => {
-//     const handleQuitGame = () => {
-//       setRoomObj(null)
-//       setLoadGame(false)
-//     };
 
-//     setQuitCallback(handleQuitGame);
-// }, [setQuitCallback]);
+  useEffect(() => {
+    if(show===false){
+      console.log("Finish Game")
+      setRoomObj(null)
+      setLoadGame(false)
+    }
+
+   
+}, [show]);
+
+
+
   const handleReload = () => {
     getRooms();
   };
-  const handlePageChange = (
-    event: React.ChangeEvent<unknown>,
-    value: number,
-  ) => {
+
+  const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
   };
 
@@ -67,18 +62,17 @@ const JoinRoom: React.FC = () => {
     setSearchTerm(event.target.value);
     setPage(1); // Reset to first page on search
   };
-  const filteredRooms = rooms.filter((room) =>
-    !room.is_room_close && room.room_id.toLowerCase().includes(searchTerm.toLowerCase())
+
+  const filteredRooms = rooms.filter(
+    (room) =>
+      !room.is_room_close &&
+      room.room_id.toLowerCase().includes(searchTerm.toLowerCase())
   );
-  
+
   const startIndex = (page - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
   const displayedRooms = filteredRooms.slice(startIndex, endIndex);
 
-  // const handleOpenWaitRoom = () => {
-  //   setOpenWaitRoom(true);
-  //   setOpenDialog(false);
-  // };
   const openGame = () => {
     const obj = {
       roomId: roomObj?.room_id,
@@ -91,6 +85,7 @@ const JoinRoom: React.FC = () => {
     setShow(true);
     setOpenWaitRoom(false);
   };
+
   return (
     <JoinRoomContainer>
       {isLoading ? (
@@ -119,21 +114,17 @@ const JoinRoom: React.FC = () => {
           </Box>
 
           <GridContainer container spacing={4}>
-            {displayedRooms.map((room, index) =>{
-     
-              return (
-            
-                <Grid item xs={12} sm={6} md={4} key={index}>
-                  <RoomCard
-                    setRoomObj={setRoomObj}
-                    openDialog={() => {
-                      setOpenDialog(true);
-                    }}
-                    roomType={room}
-                  />
-                </Grid>
-              )
-            })}
+            {displayedRooms.map((room, index) => (
+              <Grid item xs={12} sm={6} md={4} key={index}>
+                <RoomCard
+                  setRoomObj={setRoomObj}
+                  openDialog={() => {
+                    setOpenDialog(true);
+                  }}
+                  roomType={room}
+                />
+              </Grid>
+            ))}
           </GridContainer>
           <Stack spacing={4} sx={{ marginBottom: "20px" }}>
             <Pagination
@@ -179,7 +170,6 @@ const JoinRoom: React.FC = () => {
             setOpenWaitRoom(false);
           }}
           isCreator={false}
-          // handleClose={()=>{setOpenWaitRoom(false)}}
         />
       )}
     </JoinRoomContainer>

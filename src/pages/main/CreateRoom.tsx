@@ -13,12 +13,13 @@ import { useNavigate } from "react-router-dom";
 import RoomCard from "../../components/join-room/Room";
 import useAuth from "../../hooks/useAuth";
 import UnityGameComponent, { useUnityGame } from "../../hooks/useUnityGame";
+import { Compare } from "../../utils/CompareAddress";
 
 const CreateRoom: React.FC = () => {
   const [openWaitRoom, setOpenWaitRoom] = useState(false);
   const address = localStorage.getItem("address")
   const flow = useAptimusFlow();
-  const { sendMessage, isLoaded,show, setShow,setQuitCallback} = useUnityGame();
+  const { sendMessage, isLoaded,show, setShow} = useUnityGame();
   // const [show, setShow] = useState(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [roomObj, setRoomObj] = useState<CreateRoomType | null>(null);
@@ -31,14 +32,15 @@ const CreateRoom: React.FC = () => {
   useEffect(()=>{
     getCurrentRoom()
   },[])
-//   useEffect(() => {
-//     // const handleQuitGame = () => {
-//     //   setRoomObj(null)
-//     //   setLoadGame(false)
-//     // };
+  useEffect(() => {
+    if(show===false){
+      console.log("Finish Game")
+      setRoomObj(null)
+      setLoadGame(false)
+    }
 
-//     // setQuitCallback(handleQuitGame);
-// }, [setQuitCallback]);
+   
+}, [show]);
 useEffect(() => {
   console.log("loadGame state updated:", loadGame);
 }, [loadGame]);
@@ -63,8 +65,8 @@ useEffect(() => {
         room_name:roomData.room_name
 
       });
-      const checkIsCreator = roomData.creator.slice(-5).toLowerCase() === address?.slice(-5).toLowerCase();
-
+      // const checkIsCreator = roomData.creator.slice(-5).toLowerCase() === address?.slice(-5).toLowerCase();
+      const checkIsCreator = Compare(roomData.creator,address!,5)
       if(!checkIsCreator){
         setIsCreator(false)
 

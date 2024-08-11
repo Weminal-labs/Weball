@@ -183,7 +183,7 @@ const CreateForm: React.FC<Props> = ({ createRoomContract }) => {
 
       <Button
         variant="contained"
-        onClick={() => createRoomContract(roomName, (parseInt(bet) * 100000000).toString())}
+        onClick={() => createRoomContract(roomName, (parseInt(bet) * 1000000).toString())}
         sx={{
           width: "75%",
         }}

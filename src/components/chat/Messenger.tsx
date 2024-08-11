@@ -1,5 +1,6 @@
 import React from 'react'
 import useAuth from '../../hooks/useAuth'
+import { Compare } from '../../utils/CompareAddress'
 interface Pros{
     message:string,
     sender:string,
@@ -9,7 +10,8 @@ interface Pros{
 const Messenger = ({message,sender}:Pros) => {
     const {auth}=useAuth()
     const address =localStorage.getItem("address")
-    const fromMe = sender.slice(-5).toLowerCase() === address?.slice(-5).toLowerCase();
+    // const fromMe = sender.slice(-5).toLowerCase() === address?.slice(-5).toLowerCase();
+	const fromMe = Compare(sender,address!,5)
 	const chatClassName = fromMe ? "chat-end" : "chat-start";
 	const bubbleBgColor = fromMe ? "bg-blue-500" : "";
     console.log("sender " +sender+"a")

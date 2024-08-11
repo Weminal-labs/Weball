@@ -1,65 +1,140 @@
-import React, { createContext, useState, useEffect, ReactNode, useCallback } from "react";
-import { useUnityContext, Unity, ReactUnityEventParameter } from "react-unity-webgl";
+import {
+  Account,
+  Aptos,
+  AptosConfig,
+  Ed25519PrivateKey,
+  Network,
+} from "@aptos-labs/ts-sdk";
+import React, {
+  createContext,
+  useState,
+  useEffect,
+  ReactNode,
+  useCallback,
+} from "react";
+import {
+  useUnityContext,
+  Unity,
+  ReactUnityEventParameter,
+} from "react-unity-webgl";
+import { MODULE_ADDRESS } from "../utils/Var";
+import { Compare } from "../utils/CompareAddress";
 
 // Create UnityGame context
 const UnityGameContext = createContext<any>(null);
 
 interface GameProviderProps {
-    children: ReactNode;
+  children: ReactNode;
 }
+interface PickWinner {
+  roomId: string;
+  userId: string;
+}
+export const UnityGameProvider: React.FC<GameProviderProps> = ({
+  children,
+}) => {
+  const {
+    sendMessage,
+    isLoaded,
+    unityProvider,
+    addEventListener,
+    removeEventListener,
+    unload,
+  } = useUnityContext({
+    loaderUrl: "build/Build/Build.loader.js",
+    dataUrl: "build/Build/Build.data",
+    frameworkUrl: "build/Build/Build.framework.js",
+    codeUrl: "build/Build/Build.wasm",
+  });
 
-export const UnityGameProvider: React.FC<GameProviderProps> = ({ children }) => {
-    const { sendMessage, isLoaded, unityProvider, addEventListener, removeEventListener, unload } = useUnityContext({
-        loaderUrl: "build/Build/Build.loader.js",
-        dataUrl: "build/Build/Build.data",
-        frameworkUrl: "build/Build/Build.framework.js",
-        codeUrl: "build/Build/Build.wasm",
-    });
+  const [show, setShow] = useState(false);
+  const address = localStorage.getItem("address")
+  const handleUnload = async () => {
+    await unload();
+  };
 
-    const [show, setShow] = useState(false);
-    const [onQuitCallback, setOnQuitCallback] = useState<() => void>(() => () => {});
+  const pickWinnerByRoomId = async (roomId: number, winner: string) => {
+    const aptosConfig = new AptosConfig({ network: Network.TESTNET });
+    const aptos = new Aptos(aptosConfig);
 
-    const handleUnload = async () => {
-        await unload();
-    };
-
-    // Handle Unity Application Quit event
-    const handleUnityApplicationQuit = useCallback((jsonData: any) => {
-        console.log(typeof jsonData)
-        // const data = JSON.parse(jsonData);
-        console.log("Data received from Unity on quit:", jsonData);
-        setShow(false);
-
-
-        // if (typeof jsonData === "string") {
-        //     try {
-        //         const data = JSON.parse(jsonData);
-        //         console.log("Data received from Unity on quit:", data);
-        //     } catch (error) {
-        //         console.error("Failed to parse JSON data from Unity:", error);
-        //     }
-        // }
-    }, []);
-
-    useEffect(() => {
-        // Add the event listener
-        addEventListener("FinishGame", handleUnityApplicationQuit);
-
-        // Clean up the event listener on unmount
-        return () => {
-            removeEventListener("FinishGame", handleUnityApplicationQuit);
-        };
-    }, [addEventListener, removeEventListener, handleUnityApplicationQuit]);
-
-    const setQuitCallback = (callback: () => void) => {
-        setOnQuitCallback(() => callback);
-    };
-
-    return (
-        <UnityGameContext.Provider value={{ sendMessage, isLoaded, unityProvider, show, setShow, setQuitCallback, handleUnload }}>
-            {children}
-        </UnityGameContext.Provider>
+    const privateKey = new Ed25519PrivateKey(
+      "0x0cdae4b8e4a1795ffc36d89ebbbdd7bd0cb0e0d81091290096f8d92d40c1fe43",
     );
+
+    const account = await Account.fromPrivateKey({ privateKey });
+
+    // Get the account address
+    const accountAddress = account.accountAddress.toString();
+
+    console.log("Account Address:", accountAddress);
+    const FUNCTION_NAME = `${MODULE_ADDRESS}::gamev3::pick_winner_and_transfer_bet`;
+
+    try {
+      const transaction = await aptos.transaction.build.simple({
+        sender: accountAddress, // Use the address as a string
+        data: {
+          function: FUNCTION_NAME,
+          functionArguments: [
+            roomId,
+            winner, // Address as a string
+          ],
+        },
+      });
+
+      // Sign and submit the transaction
+      const pendingTransaction = await aptos.signAndSubmitTransaction({
+        signer: account,
+        transaction,
+      });
+
+      // Wait for the transaction to be completed
+      const executedTransaction = await aptos.waitForTransaction({
+        transactionHash: pendingTransaction.hash,
+      });
+
+      // Log the executed transaction
+      console.log("Executed Transaction:", executedTransaction);
+    } catch (error) {
+      console.error("Mã Lỗi:", error.status);
+      console.error("Lỗi khi gọi hàm smart contract:", error);
+    }
+  };
+  const handleUnityApplicationQuit = useCallback((jsonData: any) => {
+    console.log(typeof jsonData);
+    const data: PickWinner = JSON.parse(jsonData);
+    setShow(false);
+    unload();
+    if(Compare(data.userId,address!,5)){
+        console.log("Data received from Unity on quit:", data.userId);
+        pickWinnerByRoomId(Number(data.roomId),data.userId)
+
+    }
+  }, []);
+
+  useEffect(() => {
+    // Add the event listener
+    addEventListener("FinishGame", handleUnityApplicationQuit);
+
+    // Clean up the event listener on unmount
+    return () => {
+      removeEventListener("FinishGame", handleUnityApplicationQuit);
+    };
+  }, [addEventListener, removeEventListener, handleUnityApplicationQuit]);
+
+  return (
+    <UnityGameContext.Provider
+      value={{
+        sendMessage,
+        isLoaded,
+        unityProvider,
+        show,
+        setShow,
+        handleUnload,
+      }}
+    >
+      {children}
+    </UnityGameContext.Provider>
+  );
 };
 
 export default UnityGameContext;

@@ -18,6 +18,8 @@ const AddBets: React.FC = () => {
     const aptosConfig = new AptosConfig({ network: Network.TESTNET });
     const aptos = new Aptos(aptosConfig);
 
+  }
+  
   const pickWinnerByRoomId = async () => {
     const aptosConfig = new AptosConfig({ network: Network.TESTNET });
     const aptos = new Aptos(aptosConfig);
@@ -63,7 +65,6 @@ const AddBets: React.FC = () => {
       console.error("Lỗi khi gọi hàm smart contract:", error);
     }
   };
-  }
   return (
     <Box
       sx={{
