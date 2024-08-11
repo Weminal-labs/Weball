@@ -48,7 +48,6 @@ export const UnityGameProvider: React.FC<GameProviderProps> = ({
   });
 
   const [show, setShow] = useState(false);
-  const address = localStorage.getItem("address")
   const handleUnload = async () => {
     await unload();
   };
@@ -100,8 +99,12 @@ export const UnityGameProvider: React.FC<GameProviderProps> = ({
     }
   };
   const handleUnityApplicationQuit = useCallback((jsonData: any) => {
-    console.log(typeof jsonData);
     const data: PickWinner = JSON.parse(jsonData);
+    const address = localStorage.getItem("address")
+
+    console.log(address);
+    console.log(data.userId);
+
     setShow(false);
     unload();
     if(Compare(data.userId,address!,5)){
