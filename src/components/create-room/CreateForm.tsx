@@ -4,6 +4,7 @@ import {
   Button,
   FormControlLabel,
   IconButton,
+  Modal,
   RadioGroup,
   TextField,
   Typography,
@@ -38,6 +39,8 @@ interface CustomFormControlLabelProps {
 
 interface Props {
   createRoomContract: (ROOM_NAME: string, BET_AMOUNT: string) => Promise<void>;
+  open: boolean;
+  onClose: () => void;
 }
 
 const CustomButton = styled("div")<CustomButtonProps>(
@@ -78,7 +81,7 @@ const CustomFormControlLabel: React.FC<CustomFormControlLabelProps> = ({
   />
 );
 
-const CreateForm: React.FC<Props> = ({ createRoomContract }) => {
+const CreateForm: React.FC<Props> = ({ createRoomContract, open, onClose }) => {
   const [roomName, setRoomName] = useState("");
   const [bet, setBet] = useState("");
   const { address } = useKeylessLogin();
@@ -87,110 +90,122 @@ const CreateForm: React.FC<Props> = ({ createRoomContract }) => {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   return (
-    <Box
-      sx={{
-        position: "relative",
-        display: "flex",
-        flexDirection: "column",
-        gap: isMobile ? 2 : 3,
-        width: isMobile ? "90%" : "80%",
-        maxWidth: isMobile ? "none" : "600px",
-        height: "auto",
-        justifyContent: "center",
-        alignItems: "center",
-        margin: "20px auto",
-        padding: "20px",
-        border: "2px solid black",
-        borderRadius: "8px",
-        background: "white",
-        boxShadow: "4px 4px 20px rgba(0, 0, 0.1, 0.2)",
-      }}
+    <Modal
+      open={open}
+      onClose={onClose}
+      aria-labelledby="create-room-modal-title"
+      aria-describedby="create-room-modal-description"
     >
-      <IconButton
+      <Box
         sx={{
           position: "absolute",
-          top: "10px",
-          right: "10px",
-          zIndex: 1000,
-          color: "primary",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          display: "flex",
+          flexDirection: "column",
+          gap: isMobile ? 2 : 3,
+          width: isMobile ? "90%" : "80%",
+          maxWidth: isMobile ? "none" : "600px",
+          height: "auto",
+          justifyContent: "center",
+          alignItems: "center",
+          padding: "20px",
+          border: "2px solid black",
+          borderRadius: "8px",
+          background: "white",
+          boxShadow: "4px 4px 20px rgba(0, 0, 0.1, 0.2)",
         }}
       >
-        <CloseIcon />
-      </IconButton>
+        <IconButton
+          sx={{
+            position: "absolute",
+            top: "10px",
+            right: "10px",
+            zIndex: 1000,
+            color: "primary",
+          }}
+          onClick={onClose}
+        >
+          <CloseIcon />
+        </IconButton>
 
-      <Typography
-        variant={isMobile ? "h5" : "h4"}
-        align="center"
-        gutterBottom
-      >
-        Create a Room
-      </Typography>
-      <Typography
-        variant={isMobile ? "body2" : "body1"}
-        align="center"
-        gutterBottom
-        sx={{ opacity: 0.7 }}
-      >
-        Create a room for friends to compete in a soccer match. Enjoy the game and have fun!
-      </Typography>
-
-      <Autocomplete
-        sx={{ width: "100%", maxWidth: "400px" }}
-        options={stadiums}
-        value={roomName}
-        onChange={(event, newValue) => setRoomName(newValue ?? "")}
-        renderInput={(params) => (
-          <TextField {...params} label="Stadium" variant="outlined" fullWidth />
-        )}
-      />
-
-      <Box sx={{ width: "100%", maxWidth: "400px" }}>
         <Typography
-          variant="h6"
-          sx={{ textAlign: "left", color: "black", fontWeight: "bold" }}
+          id="create-room-modal-title"
+          variant={isMobile ? "h5" : "h4"}
+          align="center"
+          gutterBottom
         >
-          APT
+          Create a Room
         </Typography>
-        <RadioGroup
-          aria-label="bet"
-          name="bet"
-          value={bet}
-          onChange={(e) => setBet(e.target.value)}
-          row
-          sx={{ justifyContent: "space-between" }}
+        <Typography
+          id="create-room-modal-description"
+          variant={isMobile ? "body2" : "body1"}
+          align="center"
+          gutterBottom
+          sx={{ opacity: 0.7 }}
         >
-          <CustomFormControlLabel value="5" label="5" selectedValue={bet} onChange={setBet} />
-          <CustomFormControlLabel value="10" label="10" selectedValue={bet} onChange={setBet} />
-          <CustomFormControlLabel value="15" label="15" selectedValue={bet} onChange={setBet} />
-        </RadioGroup>
+          Create a room for friends to compete in a soccer match. Enjoy the game and have fun!
+        </Typography>
+
+        <Autocomplete
+          sx={{ width: "100%", maxWidth: "400px" }}
+          options={stadiums}
+          value={roomName}
+          onChange={(event, newValue) => setRoomName(newValue ?? "")}
+          renderInput={(params) => (
+            <TextField {...params} label="Stadium" variant="outlined" fullWidth />
+          )}
+        />
+
+        <Box sx={{ width: "100%", maxWidth: "400px" }}>
+          <Typography
+            variant="h6"
+            sx={{ textAlign: "left", color: "black", fontWeight: "bold" }}
+          >
+            APT
+          </Typography>
+          <RadioGroup
+            aria-label="bet"
+            name="bet"
+            value={bet}
+            onChange={(e) => setBet(e.target.value)}
+            row
+            sx={{ justifyContent: "space-between" }}
+          >
+            <CustomFormControlLabel value="5" label="5" selectedValue={bet} onChange={setBet} />
+            <CustomFormControlLabel value="10" label="10" selectedValue={bet} onChange={setBet} />
+            <CustomFormControlLabel value="15" label="15" selectedValue={bet} onChange={setBet} />
+          </RadioGroup>
+        </Box>
+
+        <Button
+          disabled
+          variant="contained"
+          sx={{
+            width: "100%",
+            maxWidth: "400px",
+            marginTop: "16px",
+            "&:hover": {
+              backgroundColor: "initial",
+              cursor: "not-allowed",
+            },
+          }}
+        >
+          Password
+        </Button>
+
+        <Button
+          variant="contained"
+          onClick={() => createRoomContract(roomName, (parseInt(bet) * 1000000).toString())}
+          sx={{
+            width: "75%",
+          }}
+        >
+          Create
+        </Button>
       </Box>
-
-      <Button
-        disabled
-        variant="contained"
-        sx={{
-          width: "100%",
-          maxWidth: "400px",
-          marginTop: "16px",
-          "&:hover": {
-            backgroundColor: "initial",
-            cursor: "not-allowed",
-          },
-        }}
-      >
-        Password
-      </Button>
-
-      <Button
-        variant="contained"
-        onClick={() => createRoomContract(roomName, (parseInt(bet) * 1000000).toString())}
-        sx={{
-          width: "75%",
-        }}
-      >
-        Create
-      </Button>
-    </Box>
+    </Modal>
   );
 };
 

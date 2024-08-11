@@ -176,15 +176,18 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
         transaction,
         network: AptimusNetwork.TESTNET,
       });
+      handleUnload();
+      closeRoom();
+      setOpenDialog(false);
       console.log(committedTransaction)
     } catch (error) {
       console.error("Mã Lỗi:", error.status);
+      setContentAlert(error.toString());
+      setOpenAlert(true);
       console.error("Lỗi khi gọi hàm smart contract:", error);
     }
    
-    handleUnload();
-    closeRoom();
-    setOpenDialog(false);
+
   };
   return (
     <>

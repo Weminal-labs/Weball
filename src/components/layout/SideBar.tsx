@@ -10,8 +10,8 @@ const drawerWidth = 100;
 
 const items = [
   { text: "Home", icon: <HomeIcon />, to: "/" },
-  { text: "Create", icon: <SportsEsportsIcon />, to: "/create-room" },
-  { text: "Join", icon: <GroupIcon />, to: "/join-room" },
+  // { text: "Create", icon: <SportsEsportsIcon />, to: "/create-room" },
+  { text: "Play", icon: <SportsEsportsIcon />, to: "/playGame" },
   { text: "Boarding", icon: <LeaderboardOutlined />, to: "/leaderboard" },
   { text: "Addbets", icon: <AttachMoneyOutlined />, to: "/addbets" },
 

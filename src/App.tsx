@@ -6,12 +6,12 @@ import Layout from "./pages/layout/Layout";
 import CreateRoom from "./pages/main/CreateRoom";
 import Leaderboard from "./pages/main/Leaderboard";
 import AddBets from "./pages/main/AddBets";
-import { LoginPage } from "./pages/main/Login";
-import { CallbackPage } from "./pages/main/Callback";
+import { LoginPage } from "./pages/main/Login/Login";
+import { CallbackPage } from "./pages/layout/Callback";
 import AuthLayout from "./pages/layout/AuthLayout";
 import RequireAuth from "./components/layout/RequireAuth";
-import Home from "./pages/main/Home";
-import JoinRoom from "./pages/main/JoinRoom";
+import Home from "./pages/main/home/Home";
+import PlayGame from "./pages/main/PlayGame/PlayGamePage";
 
 function App() {
   return (
@@ -21,7 +21,7 @@ function App() {
           <Route element={<RequireAuth />}>
             <Route path="/" element={<Home />} />
             <Route path="/create-room" element={<CreateRoom />} />
-            <Route path="/join-room" element={<JoinRoom />} />
+            <Route path="/playGame" element={<PlayGame />} />
             <Route path="/leaderboard" element={<Leaderboard />} />
             <Route path="/add-bets" element={<AddBets />} />
           </Route>

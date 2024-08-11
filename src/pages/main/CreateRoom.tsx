@@ -169,7 +169,8 @@ useEffect(() => {
         <>
           {loadGame ? null : (
             // currentRoom?<RoomCard  /> :
-            <CreateForm createRoomContract={createRoomContract}></CreateForm>
+            // <CreateForm createRoomContract={createRoomContract}></CreateForm>
+            null
           )}
         </>
       )}
