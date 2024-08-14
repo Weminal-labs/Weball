@@ -30,7 +30,7 @@ import {
   FlexBox,
   GridContainer,
   JoinRoomContainer,
-} from "./PlayGame.style"
+} from "./PlayGame.style";
 import { MODULE_ADDRESS } from "../../../utils/Var";
 import { AptimusNetwork } from "aptimus-sdk-test";
 import { useAptimusFlow } from "aptimus-sdk-test/react";
@@ -65,6 +65,8 @@ const PlayGame: React.FC = () => {
       functionArguments: [address],
     };
     const data = await aptos.view({ payload });
+    // @ts-ignore
+
     if (data[0].vec[0]) {
       // @ts-ignore
       const roomData: RoomType = data[0].vec[0];
@@ -143,14 +145,14 @@ const PlayGame: React.FC = () => {
     ROOM_NAME: string,
     BET_AMOUNT: string,
     withMate: boolean,
-    mateAddress: string
+    mateAddress: string,
   ) => {
     const aptosConfig = new AptosConfig({ network: Network.TESTNET });
     const aptos = new Aptos(aptosConfig);
-  
+
     let FUNCTION_NAME = "";
     let functionArguments: any[] = [];
-  
+
     if (!withMate) {
       FUNCTION_NAME = "create_room";
       functionArguments = [ROOM_NAME, BET_AMOUNT];
@@ -158,25 +160,25 @@ const PlayGame: React.FC = () => {
       FUNCTION_NAME = "create_room_mate";
       functionArguments = [ROOM_NAME, BET_AMOUNT, mateAddress];
     }
-  
+
     try {
       setIsLoading(true);
       setOpenCreate(false);
-  
+
       const transaction = await aptos.transaction.build.simple({
         sender: address ?? "",
         data: {
-          function:  `${MODULE_ADDRESS}::gamev3::${FUNCTION_NAME}`,
+          function: `${MODULE_ADDRESS}::gamev3::${FUNCTION_NAME}`,
           functionArguments: functionArguments, // Sử dụng biến functionArguments đã xác định
         },
       });
-  
+
       const committedTransaction = await flow.executeTransaction({
         aptos,
         transaction,
         network: AptimusNetwork.TESTNET,
       });
-  
+
       // @ts-ignore
       const createRoomObj: CreateRoomType = committedTransaction.events[1].data;
       setIsLoading(false);
@@ -194,6 +196,8 @@ const PlayGame: React.FC = () => {
         setContentAlert("Exceed request limit, please wait 5 minutes");
         setOpenAlert(true);
       }
+            // @ts-ignore
+
       if (error.status === 400) {
         flow.logout();
         window.location.reload();
@@ -204,7 +208,7 @@ const PlayGame: React.FC = () => {
       console.error("Lỗi khi gọi hàm smart contract:", error);
     }
   };
-  
+
   return (
     <>
       <JoinRoomContainer>
@@ -212,10 +216,8 @@ const PlayGame: React.FC = () => {
           <LoadingScreen />
         ) : (
           <>
-            <ContainerBox   
-            >
-              <FlexBox
-              >
+            <ContainerBox>
+              <FlexBox>
                 <TextField
                   label="Search Room by ID"
                   variant="outlined"

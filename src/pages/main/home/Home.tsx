@@ -48,7 +48,7 @@ const Home = () => {
             <ImageHomeMain 
               src="bg-gome.webp" 
               alt="Main Image" 
-              onLoad={() => setImageLoaded(true)}
+              // onLoad={() => setImageLoaded(true)}
             />
             <TextContainer>
               <UpperBlocks>
@@ -66,7 +66,7 @@ const Home = () => {
             <GifMain 
               src="game-gif.gif" 
               alt="Game GIF" 
-              onLoad={() => setGifLoaded(true)}
+              // onLoad={() => setGifLoaded(true)}
             />
           </GifContainer>
         </PageContainer>

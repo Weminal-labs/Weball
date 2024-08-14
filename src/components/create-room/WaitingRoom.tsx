@@ -80,13 +80,13 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
     closeRoom();
   };
   useEffect(() => {
-    if (!isCreator) {
-      setPlayer2({ address: address ?? "", ready: false });
-      getDetailRoom();
-    } else {
-      setPlayer1({ address: address ?? "", ready: true });
-    }
-    const intervalId = setInterval(getDetailRoom, 3000);
+    // if (!isCreator) {
+    // } else {
+    //   setPlayer1({ address: address ?? "", ready: true });
+    // }
+    getDetailRoom();
+
+    const intervalId = setInterval(getDetailRoom, 1500);
     return () => clearInterval(intervalId);
   }, []);
 
@@ -101,19 +101,24 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
     const data = await aptos.view({ payload });
     // @ts-ignore
     const roomData: RoomType = data[0];
+    console.log(roomData);
+    setPlayer1({ address: roomData.creator, ready: roomData.creator_ready });
+    setPlayer2({ address: roomData.player2.vec[0] ?? "", ready: roomData.is_player2_ready });
+    // if (!isCreator) {
+    //   console.log("KKKKKKK");
 
-    if (!isCreator) {
-      setPlayer1({ address: roomData.creator, ready: roomData.creator_ready });
-      // console.log(player1);
-    } else {
-      // console.log(roomData);
-      if (roomData.is_player2_joined) {
-        setPlayer2({
-          address: roomData.player2.vec[0],
-          ready: roomData.is_player2_ready,
-        });
-      }
-    }
+      
+
+    //   // console.log(player1);
+    // } else {
+    //   if (roomData.is_player2_joined) {
+
+    //     setPlayer2({
+    //       address: roomData.player2.vec[0],
+    //       ready: roomData.is_player2_ready,
+    //     });
+    //   }
+    // }
   };
   const startGame = () => {
     if (player1?.ready && player2?.ready) {

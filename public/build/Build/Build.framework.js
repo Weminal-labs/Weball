@@ -2130,6 +2130,10 @@ var ASM_CONSTS = {
       return demangleAll(js);
     }
 
+  function _ExitGame() {
+      window.dispatchReactUnityEvent("ExitGame");
+  }
+
   function _FinishGame(jsonString) {
       window.dispatchReactUnityEvent("FinishGame", UTF8ToString(jsonString));
     }
@@ -15949,6 +15953,7 @@ function checkIncomingModuleAPI() {
   ignoredModuleProp('fetchSettings');
 }
 var asmLibraryArg = {
+  "ExitGame": _ExitGame,
   "FinishGame": _FinishGame,
   "GetJSMemoryInfo": _GetJSMemoryInfo,
   "JS_Accelerometer_IsRunning": _JS_Accelerometer_IsRunning,

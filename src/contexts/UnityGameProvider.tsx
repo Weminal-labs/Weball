@@ -98,31 +98,36 @@ export const UnityGameProvider: React.FC<GameProviderProps> = ({
       console.error("Lỗi khi gọi hàm smart contract:", error);
     }
   };
-  const handleUnityApplicationQuit = useCallback((jsonData: any) => {
-    const data: PickWinner = JSON.parse(jsonData);
-    const address = localStorage.getItem("address")
-
-    console.log(address);
-    console.log(data.userId);
+  const handleUnityApplicationQuit = useCallback(() => {
+ 
 
     setShow(false);
     unload();
+  
+  }, []);
+  const handleUnityApplicationFinish = useCallback((jsonData: any) => {
+    const data: PickWinner = JSON.parse(jsonData);
+    const address = localStorage.getItem("address")
+
+  
     if(Compare(data.userId,address!,5)){
         console.log("Data received from Unity on quit:", data.userId);
         pickWinnerByRoomId(Number(data.roomId),data.userId)
 
     }
   }, []);
-
   useEffect(() => {
     // Add the event listener
-    addEventListener("FinishGame", handleUnityApplicationQuit);
+    addEventListener("ExitGame", handleUnityApplicationQuit);
+    addEventListener("FinishGame", handleUnityApplicationFinish);
 
     // Clean up the event listener on unmount
     return () => {
-      removeEventListener("FinishGame", handleUnityApplicationQuit);
+      removeEventListener("ExitGame", handleUnityApplicationQuit);
+      removeEventListener("FinishGame", handleUnityApplicationFinish);
+
     };
-  }, [addEventListener, removeEventListener, handleUnityApplicationQuit]);
+  }, [addEventListener, removeEventListener, handleUnityApplicationQuit,handleUnityApplicationFinish]);
 
   return (
     <UnityGameContext.Provider
