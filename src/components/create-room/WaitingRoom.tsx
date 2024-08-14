@@ -6,6 +6,8 @@ import {
   Divider,
   IconButton,
   Modal,
+  Slider,
+  Stack,
   Typography,
 } from "@mui/material";
 import useAuth from "../../hooks/useAuth";
@@ -21,7 +23,12 @@ import { MODULE_ADDRESS } from "../../utils/Var";
 import AlertComponent from "../layout/AlertComponent";
 import LeaveDialog from "./LeaveDialog";
 import MessengerContainer from "../chat/MessengerContainer";
-import { ChatOutlined, Height } from "@mui/icons-material";
+import {
+  ChatOutlined,
+  Height,
+  VolumeDown,
+  VolumeUp,
+} from "@mui/icons-material";
 import "../../App.css";
 import { useUnityGame } from "../../hooks/useUnityGame";
 import { useAptimusFlow } from "aptimus-sdk-test/react";
@@ -48,9 +55,19 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
   const [contentAlert, setContentAlert] = useState("");
   const [openChat, setOpenChat] = useState(false);
   const flow = useAptimusFlow();
-  const {
-    handleUnload,
-  } = useUnityGame();
+  const [valueVol, setValueVol] = React.useState<number>(30);
+  const [openVol, setOpenVol] = React.useState<boolean>(false);
+  const { handleUnload ,sendMessage} = useUnityGame();
+
+  const handleChangeVol = (event: Event, newValue: number | number[]) => {
+    setValueVol(newValue as number);
+    console.log(newValue)
+    const obj ={
+      volumn:newValue
+    }
+    sendMessage("RoomPlayer", "SoundControl", newValue);
+
+  };
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
@@ -109,7 +126,7 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
   };
   const toggleReadyStatus = (
     player: Player | null,
-    setPlayer: React.Dispatch<React.SetStateAction<Player|null>>,
+    setPlayer: React.Dispatch<React.SetStateAction<Player | null>>,
   ): boolean => {
     if (player?.ready) {
       setContentAlert("You can't cancel your ready");
@@ -132,7 +149,7 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
 
     try {
       if (isReadyUpdated) {
-        console.log(address)
+        console.log(address);
 
         const FUNCTION_NAME = `${MODULE_ADDRESS}::gamev3::ready_by_room_id`;
 
@@ -155,12 +172,11 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
       setOpenAlert(true);
     }
   };
-  
+
   const handleCloseRoom = async () => {
     const aptosConfig = new AptosConfig({ network: Network.TESTNET });
     const aptos = new Aptos(aptosConfig);
 
-   
     try {
       const FUNCTION_NAME = `${MODULE_ADDRESS}::gamev3::leave_room_by_room_id`;
       console.log(room?.room_id);
@@ -179,15 +195,13 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
       handleUnload();
       closeRoom();
       setOpenDialog(false);
-      console.log(committedTransaction)
+      console.log(committedTransaction);
     } catch (error) {
       console.error("Mã Lỗi:", error.status);
       setContentAlert(error.toString());
       setOpenAlert(true);
       console.error("Lỗi khi gọi hàm smart contract:", error);
     }
-   
-
   };
   return (
     <>
@@ -230,7 +244,7 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
                   src={auth?.picture}
                   sx={{ cursor: "pointer", width: "60px", height: "60px" }}
                 />
-                <h1>10 Point</h1>
+                {/* <h1>10 Point</h1> */}
                 <h1>{shortenAddress(player1?.address ?? "", 5)}</h1>
                 <h1>{player1?.ready ? "ready" : ""}</h1>
               </Box>
@@ -253,14 +267,13 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
                   src={auth?.picture}
                   sx={{ cursor: "pointer", width: "60px", height: "60px" }}
                 />
-                <h1>10 Point</h1>
+                {/* <h1>10 Point</h1> */}
                 <h1>{shortenAddress(player2?.address ?? "", 5)}</h1>
                 <h1>{player2?.ready ? "ready" : ""}</h1>
               </Box>
             </Box>
             <Typography sx={{ mt: 4 }}>
-
-              TOTAL: {(Number(room?.bet_amount)/ 100000000).toFixed(2)} APT
+              TOTAL: {(Number(room?.bet_amount) / 100000000).toFixed(2)} APT
             </Typography>
             <Box
               sx={{
@@ -270,14 +283,33 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
                 gap: 2,
               }}
             >
-              <IconButton
-                color="primary"
-                onClick={() => {
-                  setOpenChat(!openChat);
-                }}
-              >
-                <ChatOutlined />
-              </IconButton>
+              <Box sx={{ display: "flex", width: "150px" }}>
+                <IconButton
+                  color="primary"
+                  onClick={() => {
+                    setOpenChat(!openChat);
+                  }}
+                >
+                  <ChatOutlined />
+                </IconButton>
+                <div className="flex grow items-center">
+                  <IconButton
+                    onClick={() => {
+                      setOpenVol(!openVol);
+                    }}
+                  >
+                    <VolumeDown color="primary" />
+                  </IconButton>
+                  {openVol && (
+                    <Slider
+                      aria-label="Volume"
+                      value={valueVol}
+                      onChange={handleChangeVol}
+                    />
+                  )}
+                </div>
+              </Box>
+
               <div className="flex gap-1">
                 <Button
                   variant="contained"

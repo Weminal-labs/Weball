@@ -11,6 +11,7 @@ import {
   Theme,
   useMediaQuery,
   useTheme,
+  Switch,
 } from "@mui/material";
 import React, { useState } from "react";
 import styled from "styled-components";
@@ -38,7 +39,7 @@ interface CustomFormControlLabelProps {
 }
 
 interface Props {
-  createRoomContract: (ROOM_NAME: string, BET_AMOUNT: string) => Promise<void>;
+  createRoomContract: (ROOM_NAME: string, BET_AMOUNT: string, withMate: boolean, mateAddress:string) => Promise<void>;
   open: boolean;
   onClose: () => void;
 }
@@ -84,6 +85,8 @@ const CustomFormControlLabel: React.FC<CustomFormControlLabelProps> = ({
 const CreateForm: React.FC<Props> = ({ createRoomContract, open, onClose }) => {
   const [roomName, setRoomName] = useState("");
   const [bet, setBet] = useState("");
+  const [mate,setMate]=useState("");
+  const [isMateEnabled, setIsMateEnabled] = useState(false);
   const { address } = useKeylessLogin();
   const flow = useAptimusFlow();
   const theme = useTheme();
@@ -145,7 +148,8 @@ const CreateForm: React.FC<Props> = ({ createRoomContract, open, onClose }) => {
           gutterBottom
           sx={{ opacity: 0.7 }}
         >
-          Create a room for friends to compete in a soccer match. Enjoy the game and have fun!
+          Create a room for friends to compete in a soccer match. Enjoy the game
+          and have fun!
         </Typography>
 
         <Autocomplete
@@ -154,7 +158,12 @@ const CreateForm: React.FC<Props> = ({ createRoomContract, open, onClose }) => {
           value={roomName}
           onChange={(event, newValue) => setRoomName(newValue ?? "")}
           renderInput={(params) => (
-            <TextField {...params} label="Stadium" variant="outlined" fullWidth />
+            <TextField
+              {...params}
+              label="Stadium"
+              variant="outlined"
+              fullWidth
+            />
           )}
         />
 
@@ -173,31 +182,52 @@ const CreateForm: React.FC<Props> = ({ createRoomContract, open, onClose }) => {
             row
             sx={{ justifyContent: "space-between" }}
           >
-            <CustomFormControlLabel value="5" label="5" selectedValue={bet} onChange={setBet} />
-            <CustomFormControlLabel value="10" label="10" selectedValue={bet} onChange={setBet} />
-            <CustomFormControlLabel value="15" label="15" selectedValue={bet} onChange={setBet} />
+            <CustomFormControlLabel
+              value="5"
+              label="5"
+              selectedValue={bet}
+              onChange={setBet}
+            />
+            <CustomFormControlLabel
+              value="10"
+              label="10"
+              selectedValue={bet}
+              onChange={setBet}
+            />
+            <CustomFormControlLabel
+              value="15"
+              label="15"
+              selectedValue={bet}
+              onChange={setBet}
+            />
           </RadioGroup>
         </Box>
 
-        <Button
-          disabled
-          variant="contained"
-          sx={{
-            width: "100%",
-            maxWidth: "400px",
-            marginTop: "16px",
-            "&:hover": {
-              backgroundColor: "initial",
-              cursor: "not-allowed",
-            },
-          }}
-        >
-          Password
-        </Button>
+        <div className="flex flex-col">
+          <FormControlLabel
+            control={
+              <Switch
+                checked={isMateEnabled}
+                onChange={(e) => setIsMateEnabled(e.target.checked)}
+              />
+            }
+            label="Mate"
+          />
+          <TextField
+            label="Your mate"
+            variant="outlined"
+            sx={{ width: "400px" }}
+            value={mate}
+            onChange={(e)=>{setMate(e.target.value)}}
+            disabled={!isMateEnabled}
+          />
+        </div>
 
         <Button
           variant="contained"
-          onClick={() => createRoomContract(roomName, (parseInt(bet) * 1000000).toString())}
+          onClick={() =>
+            createRoomContract(roomName, (parseInt(bet) * 1000000).toString(),isMateEnabled,mate)
+          }
           sx={{
             width: "75%",
           }}

@@ -139,38 +139,53 @@ const PlayGame: React.FC = () => {
     setShow(true);
     setOpenWaitRoom(false);
   };
-  const createRoomContract = async (ROOM_NAME: string, BET_AMOUNT: string) => {
+  const createRoomContract = async (
+    ROOM_NAME: string,
+    BET_AMOUNT: string,
+    withMate: boolean,
+    mateAddress: string
+  ) => {
     const aptosConfig = new AptosConfig({ network: Network.TESTNET });
     const aptos = new Aptos(aptosConfig);
-    const FUNCTION_NAME = `${MODULE_ADDRESS}::gamev3::create_room`;
+  
+    let FUNCTION_NAME = "";
+    let functionArguments: any[] = [];
+  
+    if (!withMate) {
+      FUNCTION_NAME = "create_room";
+      functionArguments = [ROOM_NAME, BET_AMOUNT];
+    } else {
+      FUNCTION_NAME = "create_room_mate";
+      functionArguments = [ROOM_NAME, BET_AMOUNT, mateAddress];
+    }
+  
     try {
       setIsLoading(true);
       setOpenCreate(false);
-
+  
       const transaction = await aptos.transaction.build.simple({
         sender: address ?? "",
-
         data: {
-          function: FUNCTION_NAME,
-          functionArguments: [ROOM_NAME, BET_AMOUNT],
+          function:  `${MODULE_ADDRESS}::gamev3::${FUNCTION_NAME}`,
+          functionArguments: functionArguments, // Sử dụng biến functionArguments đã xác định
         },
       });
+  
       const committedTransaction = await flow.executeTransaction({
         aptos,
         transaction,
         network: AptimusNetwork.TESTNET,
       });
+  
       // @ts-ignore
       const createRoomObj: CreateRoomType = committedTransaction.events[1].data;
       setIsLoading(false);
-      // console.log(createRoomObj);
       setRoomObj(createRoomObj);
       setOpenWaitRoom(true);
       setIsCreator(true);
       setLoadGame(true);
     } catch (error) {
       setOpenCreate(true);
-
       setIsLoading(false);
       // @ts-ignore
       console.error("Mã Lỗi:", error.status);
@@ -182,8 +197,6 @@ const PlayGame: React.FC = () => {
       if (error.status === 400) {
         flow.logout();
         window.location.reload();
-        // setContentAlert("Token expired")
-        // setOpenAlert(true)
       }
       // @ts-ignore
       setContentAlert(error.toString());
@@ -191,6 +204,7 @@ const PlayGame: React.FC = () => {
       console.error("Lỗi khi gọi hàm smart contract:", error);
     }
   };
+  
   return (
     <>
       <JoinRoomContainer>
