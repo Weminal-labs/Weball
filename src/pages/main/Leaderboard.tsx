@@ -1,6 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import styled, { keyframes, createGlobalStyle } from 'styled-components';
-import { Aptos, AptosConfig, Network, Secp256k1PrivateKey, Account, AccountAddress } from "@aptos-labs/ts-sdk";
+import React, { useState, useEffect } from "react";
+import styled, { keyframes, createGlobalStyle } from "styled-components";
+import {
+  Aptos,
+  AptosConfig,
+  Network,
+  Secp256k1PrivateKey,
+  Account,
+  AccountAddress,
+  InputViewFunctionData,
+} from "@aptos-labs/ts-sdk";
 import { MODULE_ADDRESS } from "../../utils/Var";
 
 // Player Interface
@@ -63,7 +71,7 @@ const TabContainer = styled.div`
 `;
 
 const Tab = styled.button<{ $active: boolean }>`
-  background-color: ${props => props.$active ? '#ff2e63' : 'transparent'};
+  background-color: ${(props) => (props.$active ? "#ff2e63" : "transparent")};
   color: white;
   border: none;
   padding: 10px 20px;
@@ -72,7 +80,7 @@ const Tab = styled.button<{ $active: boolean }>`
   cursor: pointer;
   transition: all 0.3s ease;
   &:hover {
-    background-color: ${props => props.$active ? '#ff2e63' : '#ff2e6350'};
+    background-color: ${(props) => (props.$active ? "#ff2e63" : "#ff2e6350")};
   }
 `;
 
@@ -89,7 +97,7 @@ const PodiumPlace = styled.div<{ place: number }>`
   align-items: center;
   margin: 0 10px;
   animation: ${float} 3s ease-in-out infinite;
-  animation-delay: ${props => props.place * 0.2}s;
+  animation-delay: ${(props) => props.place * 0.2}s;
 `;
 
 const Crown = styled.div`
@@ -116,7 +124,7 @@ const Score = styled.div`
 
 const Pedestal = styled.div<{ place: number }>`
   width: 100px;
-  height: ${props => 100 - (props.place - 1) * 20}px;
+  height: ${(props) => 100 - (props.place - 1) * 20}px;
   background-color: #252a34;
   display: flex;
   justify-content: center;
@@ -180,21 +188,27 @@ const PlayerScore = styled.div`
 `;
 
 function uint8ArrayToHex(uint8Array: Uint8Array): string {
-  return Array.from(uint8Array, byte => byte.toString(16).padStart(2, '0')).join('');
+  return Array.from(uint8Array, (byte) =>
+    byte.toString(16).padStart(2, "0"),
+  ).join("");
 }
 
 const Leaderboard: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'top10' | 'top50' | 'top100'>('top10');
+  const [activeTab, setActiveTab] = useState<"top10" | "top50" | "top100">(
+    "top10",
+  );
   const [players, setPlayers] = useState<Player[]>([]);
 
   const pickWinnerByRoomId = async () => {
     const aptosConfig = new AptosConfig({ network: Network.TESTNET });
     const aptos = new Aptos(aptosConfig);
 
-    const privateKeyHex = "0x0cdae4b8e4a1795ffc36d89ebbbdd7bd0cb0e0d81091290096f8d92d40c1fe43";
+    const privateKeyHex =
+      "0x0cdae4b8e4a1795ffc36d89ebbbdd7bd0cb0e0d81091290096f8d92d40c1fe43";
     const privateKeyBytes = Buffer.from(privateKeyHex.slice(2), "hex");
     const privateKey = new Secp256k1PrivateKey(privateKeyBytes);
     const account = await aptos.deriveAccountFromPrivateKey({ privateKey });
+    // @ts-ignore
 
     const accountAddress = account.address.toString();
     console.log("Account Address (Hex):", accountAddress);
@@ -202,32 +216,44 @@ const Leaderboard: React.FC = () => {
     const FUNCTION_NAME = `${MODULE_ADDRESS}::gamev3::pick_winner_and_transfer_bet`;
 
     try {
-      const payload = {
+      const payload: InputViewFunctionData = {
         function: FUNCTION_NAME,
-        type_arguments: [],
-        arguments: [
+        // type_arguments: [],
+        functionArguments: [
           1723050710, // Room ID
-          "0xae93702b20fa4ce18cb54c4ab9e3bcd5feb654d8053a10b197f89b4759f431d8" // Address as a string
-        ]
+          "0xae93702b20fa4ce18cb54c4ab9e3bcd5feb654d8053a10b197f89b4759f431d8", // Address as a string
+        ],
       };
+      // @ts-ignore
 
-      const txnRequest = await aptos.generateTransaction(account.address(), payload);
+      const txnRequest = await aptos.generateTransaction(
+            // @ts-ignore
+
+        account.address(),
+        payload,
+      );
+      // @ts-ignore
+
       const signedTxn = await aptos.signTransaction(account, txnRequest);
+      // @ts-ignore
+
       const txnHash = await aptos.submitTransaction(signedTxn);
 
       await aptos.waitForTransaction(txnHash);
 
       console.log("Transaction hash:", txnHash);
     } catch (error) {
+          // @ts-ignore
+
       console.error("Error Status:", error.status);
       console.error("Error calling smart contract function:", error);
     }
   };
 
   useEffect(() => {
-    if (activeTab === 'top10') {
+    if (activeTab === "top10") {
       fetchTop10Players();
-    } else if (activeTab === 'top50') {
+    } else if (activeTab === "top50") {
       fetchTop50Players();
     } else {
       fetchTop100Players();
@@ -238,13 +264,13 @@ const Leaderboard: React.FC = () => {
     try {
       const aptosConfig = new AptosConfig({ network: Network.TESTNET });
       const aptos = new Aptos(aptosConfig);
-      const payload = {
+      const payload : InputViewFunctionData= {
         function: `${MODULE_ADDRESS}::gamev3::get_top_10_players`,
         functionArguments: [],
       };
       const data = await aptos.view({ payload });
       console.log("Top 10 Players Data: ", data); // Debug log
-  
+
       const players = data.map((entry: any, index: number) => {
         const player = entry[0]; // Adjusting to access the object inside the array
         return {
@@ -255,25 +281,25 @@ const Leaderboard: React.FC = () => {
           rank: index + 1,
         };
       });
-  
+
       setPlayers(players);
       console.log("Processed Top 10 Players: ", players); // Debug log
     } catch (error) {
       console.error("Failed to fetch top 10 players:", error);
     }
   };
-  
+
   const fetchTop50Players = async () => {
     try {
       const aptosConfig = new AptosConfig({ network: Network.TESTNET });
       const aptos = new Aptos(aptosConfig);
-      const payload = {
+      const payload: InputViewFunctionData = {
         function: `${MODULE_ADDRESS}::gamev3::get_top_50_players`,
         functionArguments: [],
       };
       const data = await aptos.view({ payload });
       console.log("Top 50 Players Data: ", data); // Debug log
-  
+
       const players = data.map((entry: any, index: number) => {
         const player = entry[0]; // Adjusting to access the object inside the array
         return {
@@ -284,25 +310,25 @@ const Leaderboard: React.FC = () => {
           rank: index + 1,
         };
       });
-  
+
       setPlayers(players);
       console.log("Processed Top 50 Players: ", players); // Debug log
     } catch (error) {
       console.error("Failed to fetch top 50 players:", error);
     }
   };
-  
+
   const fetchTop100Players = async () => {
     try {
       const aptosConfig = new AptosConfig({ network: Network.TESTNET });
       const aptos = new Aptos(aptosConfig);
-      const payload = {
+      const payload: InputViewFunctionData = {
         function: `${MODULE_ADDRESS}::gamev3::get_top_100_players`,
         functionArguments: [],
       };
       const data = await aptos.view({ payload });
       console.log("Top 100 Players Data: ", data); // Debug log
-  
+
       const players = data.map((entry: any, index: number) => {
         const player = entry[0]; // Adjusting to access the object inside the array
         return {
@@ -313,14 +339,13 @@ const Leaderboard: React.FC = () => {
           rank: index + 1,
         };
       });
-  
+
       setPlayers(players);
       console.log("Processed Top 100 Players: ", players); // Debug log
     } catch (error) {
       console.error("Failed to fetch top 100 players:", error);
     }
   };
-  
 
   const topPlayers = players.slice(0, 3);
   const otherPlayers = players.slice(3);
@@ -330,18 +355,35 @@ const Leaderboard: React.FC = () => {
       <GlobalStyle />
       <LeaderboardContainer>
         <TabContainer>
-          <Tab $active={activeTab === 'top10'} onClick={() => setActiveTab('top10')}>Top 10</Tab>
-          <Tab $active={activeTab === 'top50'} onClick={() => setActiveTab('top50')}>Top 50</Tab>
-          <Tab $active={activeTab === 'top100'} onClick={() => setActiveTab('top100')}>Top 100</Tab>
+          <Tab
+            $active={activeTab === "top10"}
+            onClick={() => setActiveTab("top10")}
+          >
+            Top 10
+          </Tab>
+          <Tab
+            $active={activeTab === "top50"}
+            onClick={() => setActiveTab("top50")}
+          >
+            Top 50
+          </Tab>
+          <Tab
+            $active={activeTab === "top100"}
+            onClick={() => setActiveTab("top100")}
+          >
+            Top 100
+          </Tab>
         </TabContainer>
         <button onClick={pickWinnerByRoomId}>Pick Winner</button>
-
 
         <PodiumContainer>
           {topPlayers.map((player, index) => (
             <PodiumPlace key={player.address} place={index + 1}>
-              <Crown>{index === 0 ? '👑' : index === 1 ? '🥈' : '🥉'}</Crown>
-              <Avatar src={`https://avatars.dicebear.com/api/human/${player.address}.svg`} alt={player.address} />
+              <Crown>{index === 0 ? "👑" : index === 1 ? "🥈" : "🥉"}</Crown>
+              <Avatar
+                src={`https://avatars.dicebear.com/api/human/${player.address}.svg`}
+                alt={player.address}
+              />
               <Username>{player.address}</Username>
               <Score>{player.points}</Score>
               <Pedestal place={index + 1}>{index + 1}</Pedestal>
@@ -350,11 +392,14 @@ const Leaderboard: React.FC = () => {
         </PodiumContainer>
 
         <LeaderboardList>
-          {otherPlayers.map(player => (
+          {otherPlayers.map((player) => (
             <LeaderboardItem key={player.address}>
               <Rank>{player.rank}</Rank>
               <PlayerInfo>
-                <SmallAvatar src={`https://avatars.dicebear.com/api/human/${player.address}.svg`} alt={player.address} />
+                <SmallAvatar
+                  src={`https://avatars.dicebear.com/api/human/${player.address}.svg`}
+                  alt={player.address}
+                />
                 <Username>{player.address}</Username>
               </PlayerInfo>
               <PlayerScore>{player.points}</PlayerScore>

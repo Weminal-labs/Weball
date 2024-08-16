@@ -15,7 +15,6 @@ import React, {
 import {
   useUnityContext,
   Unity,
-  ReactUnityEventParameter,
 } from "react-unity-webgl";
 import { MODULE_ADDRESS } from "../utils/Var";
 import { Compare } from "../utils/CompareAddress";
@@ -57,7 +56,7 @@ export const UnityGameProvider: React.FC<GameProviderProps> = ({
     const aptos = new Aptos(aptosConfig);
 
     const privateKey = new Ed25519PrivateKey(
-      "0x0cdae4b8e4a1795ffc36d89ebbbdd7bd0cb0e0d81091290096f8d92d40c1fe43",
+      "0xfd55742f39ce6a3ca12536e49dfb80e79a0f140657098f1279e9d7e1d5af0ca3",
     );
 
     const account = await Account.fromPrivateKey({ privateKey });
@@ -94,6 +93,8 @@ export const UnityGameProvider: React.FC<GameProviderProps> = ({
       // Log the executed transaction
       console.log("Executed Transaction:", executedTransaction);
     } catch (error) {
+          // @ts-ignore
+
       console.error("Mã Lỗi:", error.status);
       console.error("Lỗi khi gọi hàm smart contract:", error);
     }

@@ -119,6 +119,8 @@ const CreateRoom: React.FC = () => {
         setContentAlert("Exceed request limit, please wait 5 minutes");
         setOpenAlert(true);
       }
+          // @ts-ignore
+
       if (error.status === 400) {
         flow.logout();
         window.location.reload();

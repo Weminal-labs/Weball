@@ -205,7 +205,11 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
       setOpenDialog(false);
       console.log(committedTransaction);
     } catch (error) {
+          // @ts-ignore
+
       console.error("Mã Lỗi:", error.status);
+    // @ts-ignore
+
       setContentAlert(error.toString());
       setOpenAlert(true);
       console.error("Lỗi khi gọi hàm smart contract:", error);
