@@ -43,6 +43,8 @@ interface Pros {
 interface Player {
   address: string;
   ready: boolean;
+  // avatar: string;
+
 }
 
 const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
@@ -57,16 +59,15 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
   const flow = useAptimusFlow();
   const [valueVol, setValueVol] = React.useState<number>(30);
   const [openVol, setOpenVol] = React.useState<boolean>(false);
-  const { handleUnload ,sendMessage} = useUnityGame();
-
+  const { handleUnload, sendMessage } = useUnityGame();
+  const [roomDetail, setRoomDetail] =useState<RoomType>()
   const handleChangeVol = (event: Event, newValue: number | number[]) => {
     setValueVol(newValue as number);
-    console.log(newValue)
-    const obj ={
-      volumn:newValue
-    }
+    console.log(newValue);
+    const obj = {
+      volumn: newValue,
+    };
     sendMessage("RoomPlayer", "SoundControl", newValue);
-
   };
 
   const handleCloseDialog = () => {
@@ -102,12 +103,14 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
     // @ts-ignore
     const roomData: RoomType = data[0];
     console.log(roomData);
+    setRoomDetail(roomData)
     setPlayer1({ address: roomData.creator, ready: roomData.creator_ready });
-    setPlayer2({ address: roomData.player2.vec[0] ?? "", ready: roomData.is_player2_ready });
+    setPlayer2({
+      address: roomData.player2.vec[0] ?? "",
+      ready: roomData.is_player2_ready,
+    });
     // if (!isCreator) {
     //   console.log("KKKKKKK");
-
-      
 
     //   // console.log(player1);
     // } else {
@@ -183,13 +186,13 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
     const aptos = new Aptos(aptosConfig);
 
     try {
-      const FUNCTION_NAME = `${MODULE_ADDRESS}::gamev3::leave_room_by_room_id`;
+      const FUNCTION_NAME = `${MODULE_ADDRESS}::gamev3::leave_room`;
       console.log(room?.room_id);
       const transaction = await aptos.transaction.build.simple({
         sender: address ?? "",
         data: {
           function: FUNCTION_NAME,
-          functionArguments: [room?.room_id],
+          functionArguments: [],
         },
       });
       const committedTransaction = await flow.executeTransaction({
@@ -259,7 +262,7 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
                 sx={{ borderColor: "black" }}
                 flexItem
               />
-              <Box
+              {roomDetail?.is_player2_joined && <Box
                 sx={{
                   display: "flex",
                   flexDirection: "column",
@@ -275,7 +278,8 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
                 {/* <h1>10 Point</h1> */}
                 <h1>{shortenAddress(player2?.address ?? "", 5)}</h1>
                 <h1>{player2?.ready ? "ready" : ""}</h1>
-              </Box>
+              </Box>}
+             
             </Box>
             <Typography sx={{ mt: 4 }}>
               TOTAL: {(Number(room?.bet_amount) / 100000000).toFixed(2)} APT

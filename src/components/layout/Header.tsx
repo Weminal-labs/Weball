@@ -4,7 +4,7 @@ import { useAptimusFlow } from "aptimus-sdk-test/react";
 import useAuth from "../../hooks/useAuth";
 import { Menu, MenuItem, Modal, Box, TextField, Button, Avatar, Tooltip, IconButton } from "@mui/material";
 import { shortenAddress } from "../../utils/Shorten";
-import { Aptos, AptosConfig, Network } from "@aptos-labs/ts-sdk";
+import { Aptos, AptosConfig, InputViewFunctionData, Network } from "@aptos-labs/ts-sdk";
 import ProfileModal from "../../components/ProfileModal";
 import { ClipLoader } from "react-spinners";
 import CloseIcon from '@mui/icons-material/Close';
@@ -12,6 +12,7 @@ import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import { MODULE_ADDRESS } from "../../utils/Var";
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import { AptimusNetwork } from "aptimus-sdk-test";
 
 const HeaderContainer = styled.div`
   height: 60px;
@@ -203,12 +204,12 @@ const PlayerInfoModal = ({ open, handleClose, playerInfo }) => {
   );
 };
 
-const fetchPlayerInfo = async (address) => {
+const fetchPlayerInfo = async (address: string) => {
   try {
     const aptosConfig = new AptosConfig({ network: Network.TESTNET });
     const aptos = new Aptos(aptosConfig);
 
-    const payload = {
+    const payload: InputViewFunctionData = {
       function: `${MODULE_ADDRESS}::gamev3::get_player_info`,
       functionArguments: [address],
     };
@@ -241,7 +242,7 @@ const Header: React.FC = () => {
   const [chatModalOpen, setChatModalOpen] = useState(false);
   const [playerInfoModalOpen, setPlayerInfoModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState<string>("");
   const [messages, setMessages] = useState<Array<{ message: string; sender: string; timestamp: string; username: string }>>([]);
   const [playerInfo, setPlayerInfo] = useState(null);
   const messageListRef = useRef<HTMLDivElement>(null);
@@ -329,7 +330,7 @@ const Header: React.FC = () => {
     setPlayerInfo(null);
   };
 
-  const sendMessage = async (message) => {
+  const sendMessage = async (message: string) => {
     const aptosConfig = new AptosConfig({ network: Network.TESTNET });
     const aptos = new Aptos(aptosConfig);
     const FUNCTION_NAME = `${MODULE_ADDRESS}::gamev3::send_global_chat_message`;
@@ -343,7 +344,7 @@ const Header: React.FC = () => {
     const committedTransaction = await flow.executeTransaction({
       aptos,
       transaction,
-      network: Network.TESTNET,
+      network: AptimusNetwork.TESTNET,
     });
   };
 
@@ -373,7 +374,7 @@ const Header: React.FC = () => {
     }
   };
 
-  const handleCopyAddress = (address) => {
+  const handleCopyAddress = (address: string) => {
     navigator.clipboard.writeText(address);
   };
 

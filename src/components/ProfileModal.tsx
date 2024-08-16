@@ -17,6 +17,7 @@ import {
   import { shortenAddress } from "../utils/Shorten";
   import { useAptimusFlow } from "aptimus-sdk-test/react";
   import { AptimusNetwork } from "aptimus-sdk-test";
+import { PlayerInfo } from "../type/type";
   
   interface ProfileModalProps {
     open: boolean;
@@ -52,6 +53,7 @@ import {
     const [editingImageLink, setEditingImageLink] = useState<string>("");
     const [usernameTaken, setUsernameTaken] = useState(false);
     const [loading, setLoading] = useState<boolean>(false);
+    const [player,setPlayer]=useState<PlayerInfo|null>(null)
     const flow = useAptimusFlow();
   
     useEffect(() => {
@@ -97,41 +99,47 @@ import {
         const response = await aptos.view({ payload });
   
         if (response && Array.isArray(response) && response.length > 0) {
-          const playerData = response[0];
-          if (
-            playerData &&
-            typeof playerData === "object" &&
-            "data" in playerData &&
-            Array.isArray(playerData.data)
-          ) {
-            const dataArray = playerData.data;
+                      // @ts-ignore
+
+          const playerData: PlayerInfo = response[0];
+          setPlayer(playerData)
+          console.log(playerData)
+          // if (
+          //   playerData &&
+          //   typeof playerData === "object" &&
+          //   "data" in playerData &&
+          //   Array.isArray(playerData.data)
+          // ) {
+            // const dataArray = playerData.data;
   
-            const playerInfo: Record<string, unknown> = {};
-            dataArray.forEach((item) => {
-              if (item && typeof item === "object" && "key" in item && "value" in item)
-                playerInfo[item.key as string] = item.value;
-              else console.error("Invalid item format:", item);
-            });
+            // const playerInfo: Record<string, unknown> = {};
+            // dataArray.forEach((item) => {
+            //   if (item && typeof item === "object" && "key" in item && "value" in item)
+            //     playerInfo[item.key as string] = item.value;
+            //   else console.error("Invalid item format:", item);
+            // });
   
-            setUsername((playerInfo.username as string) || "");
-            setName((playerInfo.name as string) || "");
-            setPoint(Number(playerInfo.points) || 0);
-            setGamesPlayed(Number(playerInfo.games_played) || 0);
-            setWinningGames(Number(playerInfo.winning_games) || 0);
-            setLikesReceived(Number(playerInfo.likes_received) || 0);
-            setDislikesReceived(Number(playerInfo.dislikes_received) || 0);
-            setUserImage((playerInfo.user_image as string) || "");
+            // setUsername((playerInfo.username as string) || "");
+            // setName((playerInfo.name as string) || "");
+            // setPoint(Number(playerInfo.points) || 0);
+            // setGamesPlayed(Number(playerInfo.games_played) || 0);
+            // setWinningGames(Number(playerInfo.winning_games) || 0);
+            // setLikesReceived(Number(playerInfo.likes_received) || 0);
+            // setDislikesReceived(Number(playerInfo.dislikes_received) || 0);
+            // setUserImage((playerInfo.user_image as string) || "");
   
-            // Update edit states
-            setEditingName((playerInfo.name as string) || "");
-            setEditingUsername((playerInfo.username as string) || "");
-          } else {
-            console.error("Unexpected playerData format:", playerData);
-          }
+            // // Update edit states
+            // setEditingName((playerInfo.name as string) || "");
+            // setEditingUsername((playerInfo.username as string) || "");
+          // } else {
+          //   console.error("Unexpected playerData format:", playerData);
+          // }
         } else {
           console.error("Unexpected response format or empty array:", response);
         }
       } catch (error) {
+        console.error("Failed to fetch player info:", error.status);
+
         console.error("Failed to fetch player info:", error);
       } finally {
         setLoading(false);
@@ -333,7 +341,7 @@ import {
                   <TextField
                     label="Name"
                     variant="outlined"
-                    value={editingName}
+                    value={player?.name}
                     onChange={(e) => setEditingName(e.target.value)}
                     fullWidth
                   />

@@ -39,7 +39,12 @@ interface CustomFormControlLabelProps {
 }
 
 interface Props {
-  createRoomContract: (ROOM_NAME: string, BET_AMOUNT: string, withMate: boolean, mateAddress:string) => Promise<void>;
+  createRoomContract: (
+    ROOM_NAME: string,
+    bet_amount: string,
+    withMate: boolean,
+    mateAddress: string,
+  ) => Promise<void>;
   open: boolean;
   onClose: () => void;
 }
@@ -85,7 +90,7 @@ const CustomFormControlLabel: React.FC<CustomFormControlLabelProps> = ({
 const CreateForm: React.FC<Props> = ({ createRoomContract, open, onClose }) => {
   const [roomName, setRoomName] = useState("");
   const [bet, setBet] = useState("");
-  const [mate,setMate]=useState("");
+  const [mate, setMate] = useState("");
   const [isMateEnabled, setIsMateEnabled] = useState(false);
   const { address } = useKeylessLogin();
   const flow = useAptimusFlow();
@@ -218,7 +223,9 @@ const CreateForm: React.FC<Props> = ({ createRoomContract, open, onClose }) => {
             variant="outlined"
             sx={{ width: "400px" }}
             value={mate}
-            onChange={(e)=>{setMate(e.target.value)}}
+            onChange={(e) => {
+              setMate(e.target.value);
+            }}
             disabled={!isMateEnabled}
           />
         </div>
@@ -226,7 +233,12 @@ const CreateForm: React.FC<Props> = ({ createRoomContract, open, onClose }) => {
         <Button
           variant="contained"
           onClick={() =>
-            createRoomContract(roomName, (parseInt(bet) * 1000000).toString(),isMateEnabled,mate)
+            createRoomContract(
+              roomName,
+              (parseInt(bet) * 1000000).toString(),
+              isMateEnabled,
+              mate,
+            )
           }
           sx={{
             width: "75%",
