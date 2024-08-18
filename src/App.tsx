@@ -12,6 +12,7 @@ import AuthLayout from "./pages/layout/AuthLayout";
 import RequireAuth from "./components/layout/RequireAuth";
 import Home from "./pages/main/home/Home";
 import PlayGame from "./pages/main/PlayGame/PlayGamePage";
+import UpdateAccount from "./components/layout/UpdateAccount";
 
 function App() {
   return (
@@ -28,6 +29,8 @@ function App() {
         </Route>
         <Route path="/auth" element={<AuthLayout />}>
           <Route path="login" element={<LoginPage />} />
+          <Route path="update" element={<UpdateAccount />} />
+
         </Route>
         <Route path="callback" element={<CallbackPage />} />
       </Routes>

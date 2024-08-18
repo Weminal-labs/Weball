@@ -7,6 +7,7 @@ export const CallbackPage = () => {
 
   useEffect(() => {
     if (handled) {
+      
       window.location.href = "/";
     }
   }, [handled]);

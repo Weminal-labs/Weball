@@ -13,7 +13,7 @@ const MessengerInput = ({roomId}:Pros) => {
     const [loading, setLoading] = useState();
     const address = localStorage.getItem("address")
     
-	const handleSubmit = async (e) => {
+	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		if (!message) return;
 		await sendMessage(message);

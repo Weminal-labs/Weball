@@ -25,14 +25,13 @@ import LeaveDialog from "./LeaveDialog";
 import MessengerContainer from "../chat/MessengerContainer";
 import {
   ChatOutlined,
-  Height,
   VolumeDown,
-  VolumeUp,
 } from "@mui/icons-material";
 import "../../App.css";
 import { useUnityGame } from "../../hooks/useUnityGame";
 import { useAptimusFlow } from "aptimus-sdk-test/react";
 import { AptimusNetwork } from "aptimus-sdk-test";
+import useGetPlayer from "../../hooks/useGetPlayer";
 interface Pros {
   open: boolean;
   room: CreateRoomType | null;
@@ -43,6 +42,10 @@ interface Pros {
 interface Player {
   address: string;
   ready: boolean;
+  avatar: string;
+  point:string
+
+
 }
 
 const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
@@ -57,16 +60,17 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
   const flow = useAptimusFlow();
   const [valueVol, setValueVol] = React.useState<number>(30);
   const [openVol, setOpenVol] = React.useState<boolean>(false);
-  const { handleUnload ,sendMessage} = useUnityGame();
+  const { handleUnload, sendMessage } = useUnityGame();
+  const [roomDetail, setRoomDetail] =useState<RoomType>()
+  const {fetchPlayer, loadingFetch}= useGetPlayer()
 
   const handleChangeVol = (event: Event, newValue: number | number[]) => {
     setValueVol(newValue as number);
-    console.log(newValue)
-    const obj ={
-      volumn:newValue
-    }
+    console.log(newValue);
+    const obj = {
+      volumn: newValue,
+    };
     sendMessage("RoomPlayer", "SoundControl", newValue);
-
   };
 
   const handleCloseDialog = () => {
@@ -102,12 +106,22 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
     // @ts-ignore
     const roomData: RoomType = data[0];
     console.log(roomData);
-    setPlayer1({ address: roomData.creator, ready: roomData.creator_ready });
-    setPlayer2({ address: roomData.player2.vec[0] ?? "", ready: roomData.is_player2_ready });
+    setRoomDetail(roomData)
+    const p1 = await fetchPlayer(roomData.creator)
+    setPlayer1({ address: roomData.creator, ready: roomData.creator_ready,avatar:p1?.user_image??"",point: p1?.points??"" });
+    if(roomData.is_player2_joined){
+      const p2 = await fetchPlayer(roomData.player2.vec[0])
+
+      setPlayer2({
+        address: roomData.player2.vec[0] ?? "",
+        ready: roomData.is_player2_ready,
+        avatar: p2?.user_image??"",
+        point: p2?.points??""
+      });
+    }
+ 
     // if (!isCreator) {
     //   console.log("KKKKKKK");
-
-      
 
     //   // console.log(player1);
     // } else {
@@ -183,13 +197,13 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
     const aptos = new Aptos(aptosConfig);
 
     try {
-      const FUNCTION_NAME = `${MODULE_ADDRESS}::gamev3::leave_room_by_room_id`;
+      const FUNCTION_NAME = `${MODULE_ADDRESS}::gamev3::leave_room`;
       console.log(room?.room_id);
       const transaction = await aptos.transaction.build.simple({
         sender: address ?? "",
         data: {
           function: FUNCTION_NAME,
-          functionArguments: [room?.room_id],
+          functionArguments: [],
         },
       });
       const committedTransaction = await flow.executeTransaction({
@@ -202,7 +216,11 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
       setOpenDialog(false);
       console.log(committedTransaction);
     } catch (error) {
+          // @ts-ignore
+
       console.error("Mã Lỗi:", error.status);
+    // @ts-ignore
+
       setContentAlert(error.toString());
       setOpenAlert(true);
       console.error("Lỗi khi gọi hàm smart contract:", error);
@@ -249,7 +267,7 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
                   src={auth?.picture}
                   sx={{ cursor: "pointer", width: "60px", height: "60px" }}
                 />
-                {/* <h1>10 Point</h1> */}
+                <h1>{player1?.point} Point</h1>
                 <h1>{shortenAddress(player1?.address ?? "", 5)}</h1>
                 <h1>{player1?.ready ? "ready" : ""}</h1>
               </Box>
@@ -259,7 +277,7 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
                 sx={{ borderColor: "black" }}
                 flexItem
               />
-              <Box
+              {roomDetail?.is_player2_joined && <Box
                 sx={{
                   display: "flex",
                   flexDirection: "column",
@@ -269,13 +287,14 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
               >
                 <Avatar
                   component="div"
-                  src={auth?.picture}
+                  src={player2?.avatar}
                   sx={{ cursor: "pointer", width: "60px", height: "60px" }}
                 />
-                {/* <h1>10 Point</h1> */}
+                <h1>{player2?.point} Point</h1>
                 <h1>{shortenAddress(player2?.address ?? "", 5)}</h1>
                 <h1>{player2?.ready ? "ready" : ""}</h1>
-              </Box>
+              </Box>}
+             
             </Box>
             <Typography sx={{ mt: 4 }}>
               TOTAL: {(Number(room?.bet_amount) / 100000000).toFixed(2)} APT

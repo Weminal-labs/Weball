@@ -143,7 +143,7 @@ const PlayGame: React.FC = () => {
   };
   const createRoomContract = async (
     ROOM_NAME: string,
-    BET_AMOUNT: string,
+    bet_amount: string,
     withMate: boolean,
     mateAddress: string,
   ) => {
@@ -155,10 +155,10 @@ const PlayGame: React.FC = () => {
 
     if (!withMate) {
       FUNCTION_NAME = "create_room";
-      functionArguments = [ROOM_NAME, BET_AMOUNT];
+      functionArguments = [ROOM_NAME, bet_amount];
     } else {
       FUNCTION_NAME = "create_room_mate";
-      functionArguments = [ROOM_NAME, BET_AMOUNT, mateAddress];
+      functionArguments = [ROOM_NAME, bet_amount, mateAddress];
     }
 
     try {
@@ -180,12 +180,13 @@ const PlayGame: React.FC = () => {
       });
 
       // @ts-ignore
-      const createRoomObj: CreateRoomType = committedTransaction.events[1].data;
+      const createRoomObj: CreateRoomType = committedTransaction.events[0].data;
       setIsLoading(false);
       setRoomObj(createRoomObj);
       setOpenWaitRoom(true);
       setIsCreator(true);
       setLoadGame(true);
+      console.log(roomObj?.room_id);
     } catch (error) {
       setOpenCreate(true);
       setIsLoading(false);
@@ -196,7 +197,7 @@ const PlayGame: React.FC = () => {
         setContentAlert("Exceed request limit, please wait 5 minutes");
         setOpenAlert(true);
       }
-            // @ts-ignore
+      // @ts-ignore
 
       if (error.status === 400) {
         flow.logout();
@@ -247,17 +248,21 @@ const PlayGame: React.FC = () => {
             </ContainerBox>
 
             <GridContainer container spacing={4}>
-              {displayedRooms.map((room, index) => (
-                <Grid item xs={12} sm={6} md={4} key={index}>
-                  <RoomCard
-                    setRoomObj={setRoomObj}
-                    openDialog={() => {
-                      setOpenDialog(true);
-                    }}
-                    roomType={room}
-                  />
-                </Grid>
-              ))}
+              {displayedRooms.map((room, index) => {
+                if(!Compare(room.creator,address!,5))
+                return (
+                
+                  <Grid item xs={12} sm={6} md={4} key={index}>
+                    <RoomCard
+                      setRoomObj={setRoomObj}
+                      openDialog={() => {
+                        setOpenDialog(true);
+                      }}
+                      roomType={room}
+                    />
+                  </Grid>
+                )
+              })}
             </GridContainer>
             <Stack spacing={4} sx={{ marginBottom: "20px" }}>
               <Pagination

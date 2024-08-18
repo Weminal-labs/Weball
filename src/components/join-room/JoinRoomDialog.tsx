@@ -9,69 +9,71 @@ interface Pros {
   open: boolean;
   room: RoomType | null;
   closeModal: () => void;
-  openWaitingRoom: ()=>void;
+  openWaitingRoom: () => void;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
-
 }
-const JoinRoomDialog: React.FC<Pros> = ({ open, room, closeModal ,setIsLoading,openWaitingRoom}) => {
-  const address = localStorage.getItem("address")
-    const flow = useAptimusFlow();
+const JoinRoomDialog: React.FC<Pros> = ({
+  open,
+  room,
+  closeModal,
+  setIsLoading,
+  openWaitingRoom,
+}) => {
+  const address = localStorage.getItem("address");
+  const flow = useAptimusFlow();
 
-    const JoinRoomHandle = async () => {
-    
-        const aptosConfig = new AptosConfig({ network: Network.TESTNET });
-        const aptos = new Aptos(aptosConfig);
-        const FUNCTION_NAME = `${MODULE_ADDRESS}::gamev3::join_room_by_room_id`;
-        const ROOM_ID = Number(room?.room_id);
-        console.log(ROOM_ID)
-        closeModal()
-        setIsLoading(true);
-        try {
-          const transaction = await aptos.transaction.build.simple({
-            sender: address ?? "",
-            data: {
-              function: FUNCTION_NAME,
-              functionArguments: [ROOM_ID],
-            },
-          });
-                // @ts-ignore
-    
-          const committedTransaction = await flow.executeTransaction({
-            aptos,
-            transaction,
-            network: AptimusNetwork.TESTNET,
-          });
-          //@ts-ignore
-          console.log(committedTransaction.events[1].data);
-          setIsLoading(false);
-          openWaitingRoom()
-          // if (isLoaded === false) {
-          //   console.log("Máy chủ chưa kết nối");
-          //   return;
-          // }
-          // const obj = {
-          //   roomId: roomType.room_id,
-          //   roomName: roomType.room_name,
-          //   userId: roomType.creator,
-          //   userName: "userName",
-          // };
-          // setIsLoading(false);
-          // sendMessage("RoomPlayer", "JoinOrCreateRoom", JSON.stringify(obj));
-          // setShow(true);
-        } catch (error) {
-          console.error("Lỗi khi gọi hàm smart contract:", error);
-        }
-      };
-    return (
+  const JoinRoomHandle = async () => {
+    const aptosConfig = new AptosConfig({ network: Network.TESTNET });
+    const aptos = new Aptos(aptosConfig);
+    const FUNCTION_NAME = `${MODULE_ADDRESS}::gamev3::join_room_by_room_id`;
+    const ROOM_ID = Number(room?.room_id);
+    console.log(ROOM_ID);
+    closeModal();
+    setIsLoading(true);
+    try {
+      const transaction = await aptos.transaction.build.simple({
+        sender: address ?? "",
+        data: {
+          function: FUNCTION_NAME,
+          functionArguments: [ROOM_ID],
+        },
+      });
+      // @ts-ignore
+
+      const committedTransaction = await flow.executeTransaction({
+        aptos,
+        transaction,
+        network: AptimusNetwork.TESTNET,
+      });
+      //@ts-ignore
+      console.log(committedTransaction);
+      setIsLoading(false);
+      openWaitingRoom();
+      // if (isLoaded === false) {
+      //   console.log("Máy chủ chưa kết nối");
+      //   return;
+      // }
+      // const obj = {
+      //   roomId: roomType.room_id,
+      //   roomName: roomType.room_name,
+      //   userId: roomType.creator,
+      //   userName: "userName",
+      // };
+      // setIsLoading(false);
+      // sendMessage("RoomPlayer", "JoinOrCreateRoom", JSON.stringify(obj));
+      // setShow(true);
+    } catch (error) {
+      console.error("Lỗi khi gọi hàm smart contract:", error);
+    }
+  };
+  return (
     <Modal
       open={open}
       aria-labelledby="waiting-room-title"
       aria-describedby="waiting-room-description"
       onClose={closeModal}
     >
-      <Box
-        sx={style}
-      >
+      <Box sx={style}>
         <Typography variant="h4" align="center">
           Are You Ready?
         </Typography>
@@ -121,7 +123,6 @@ const JoinRoomDialog: React.FC<Pros> = ({ open, room, closeModal ,setIsLoading,o
             size="large"
             sx={{
               width: "100px",
-             
             }}
             onClick={JoinRoomHandle}
           >
@@ -133,19 +134,19 @@ const JoinRoomDialog: React.FC<Pros> = ({ open, room, closeModal ,setIsLoading,o
   );
 };
 const style = {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: "40%",
-    bgcolor: "background.paper",
-    boxShadow: 24,
-    p: 4,
-    borderRadius: "10px",
-    textAlign: "center",
-    display:"flex",
-    flexDirection:"column",
-    gap:"12px",
-    alignItems:"center"
-  };
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: "40%",
+  bgcolor: "background.paper",
+  boxShadow: 24,
+  p: 4,
+  borderRadius: "10px",
+  textAlign: "center",
+  display: "flex",
+  flexDirection: "column",
+  gap: "12px",
+  alignItems: "center",
+};
 export default JoinRoomDialog;
