@@ -71,12 +71,14 @@ const UpdateAccount = () => {
       alert("Username is already taken. Please choose another one.");
       return;
     }
+    console.log("Info")
 
     try {
       setLoading(true);
       const aptosConfig = new AptosConfig({ network: Network.TESTNET });
       const aptos = new Aptos(aptosConfig);
       const FUNCTION_NAME = `${MODULE_ADDRESS}::gamev3::update_account`;
+ 
 
       const transaction = await aptos.transaction.build.simple({
         sender: address ?? "",
@@ -100,7 +102,7 @@ const UpdateAccount = () => {
       }
     } catch (error) {
       console.error("Error updating profile:", error);
-      alert("An error occurred while updating the profile.");
+    //   alert("An error occurred while updating the profile.");
     } finally {
       setLoading(false);
     }
