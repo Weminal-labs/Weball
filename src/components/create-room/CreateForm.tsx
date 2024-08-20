@@ -42,8 +42,8 @@ interface Props {
   createRoomContract: (
     ROOM_NAME: string,
     bet_amount: string,
-    withMate: boolean,
-    mateAddress: string,
+    // withMate: boolean,
+    // mateAddress: string,
   ) => Promise<void>;
   open: boolean;
   onClose: () => void;
@@ -208,36 +208,13 @@ const CreateForm: React.FC<Props> = ({ createRoomContract, open, onClose }) => {
           </RadioGroup>
         </Box>
 
-        <div className="flex flex-col">
-          <FormControlLabel
-            control={
-              <Switch
-                checked={isMateEnabled}
-                onChange={(e) => setIsMateEnabled(e.target.checked)}
-              />
-            }
-            label="Mate"
-          />
-          <TextField
-            label="Your mate"
-            variant="outlined"
-            sx={{ width: "400px" }}
-            value={mate}
-            onChange={(e) => {
-              setMate(e.target.value);
-            }}
-            disabled={!isMateEnabled}
-          />
-        </div>
-
         <Button
           variant="contained"
           onClick={() =>
             createRoomContract(
               roomName,
               (parseInt(bet) * 1000000).toString(),
-              isMateEnabled,
-              mate,
+
             )
           }
           sx={{
