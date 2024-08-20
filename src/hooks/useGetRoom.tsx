@@ -9,17 +9,20 @@ const useGetRoom = () => {
   
     const getRooms = async () => {
       setIsLoading(true);
-  
       const aptosConfig = new AptosConfig({ network: Network.TESTNET });
       const aptos = new Aptos(aptosConfig);
       const payload: InputViewFunctionData = {
         function: `${MODULE_ADDRESS}::gamev3::get_all_rooms`,
       };
-  
-      const data = await aptos.view({ payload });
-      setIsLoading(false);
-      // @ts-ignore
-      setRooms(data[0]);
+      try {
+        const data = await aptos.view({ payload });
+        setIsLoading(false);
+        // @ts-ignore
+        setRooms(data[0]);
+      } catch (error) {
+        console.log(error)
+      }
+
     };
   
     useEffect(() => {

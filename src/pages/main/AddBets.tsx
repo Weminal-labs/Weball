@@ -66,6 +66,23 @@ const AddBets: React.FC = () => {
   //     console.error("Lỗi khi gọi hàm smart contract:", error);
   //   }
   // };
+  // async function callFaucet(amount: number, address: string): Promise<string []> {
+  //   const faucetClient = new AptosFaucetClient({
+  //     BASE: "https://faucet.devnet.aptoslabs.com",
+  //   });
+  //   const request: FundRequest= {
+  //     amount,
+  //     address,
+  //   };
+  //   // @ts-ignore
+  //   const response = await faucetClient.fund({ requestBody: request });
+  //   return response.txn_hashes;
+  // }
+  const testFunction = async()=>{
+    const address = localStorage.getItem("address")
+    // const a = await callFaucet(1,address!)
+    // console.log(a)
+  }
   return (
     <Box
       sx={{
@@ -77,9 +94,9 @@ const AddBets: React.FC = () => {
         alignItems: "center",
       }}
     >
-      {/* <Button variant="contained" onClick={createRoomContract}>
+      <Button variant="contained" onClick={testFunction}>
         Test contract
-      </Button> */}
+      </Button>
     </Box>
   );
 };

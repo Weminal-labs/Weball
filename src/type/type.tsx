@@ -20,13 +20,17 @@ export interface RoomType {
   create_time: string;
   creator: string;
   creator_ready: boolean;
+  invited_friend_username: { vec: string[] }; // Assuming `vec` is an array of strings
+  is_creator_joined: boolean;
   is_player2_joined: boolean;
   is_player2_ready: boolean;
   is_room_close: boolean;
-  player2: { vec: Array<string> };
+  player2: { vec: any[] }; // Assuming `vec` is an array of strings
   room_id: string;
   room_name: string;
+  winner: { vec: any[] }; // Assuming `vec` is an array of strings
 }
+
 export type CreateRoomType = {
   bet_amount: string;
   creator: string;
