@@ -1,237 +1,16 @@
 import React, { useState, useRef, useEffect } from "react";
-import styled from "styled-components";
 import { useAptimusFlow } from "aptimus-sdk-test/react";
-import useAuth from "../../hooks/useAuth";
-import { Menu, MenuItem, Modal, Box, TextField, Button, Avatar, Tooltip, IconButton } from "@mui/material";
-import { shortenAddress } from "../../utils/Shorten";
+import useAuth from "../../../hooks/useAuth";
+import { Menu, MenuItem, Modal, Box, TextField, Button, Avatar, Tooltip } from "@mui/material";
+import { shortenAddress } from "../../../utils/Shorten";
 import { Aptos, AptosConfig, InputViewFunctionData, Network } from "@aptos-labs/ts-sdk";
-import ProfileModal from "../../components/ProfileModal";
+import ProfileModal from "../../ProfileModal/ProfileModal";
 import { ClipLoader } from "react-spinners";
-import CloseIcon from '@mui/icons-material/Close';
-import ThumbUpIcon from '@mui/icons-material/ThumbUp';
-import ThumbDownIcon from '@mui/icons-material/ThumbDown';
-import { MODULE_ADDRESS } from "../../utils/Var";
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import { MODULE_ADDRESS } from "../../../utils/Var";
 import { AptimusNetwork } from "aptimus-sdk-test";
-
-const HeaderContainer = styled.div`
-  height: 60px;
-  padding: 20px;
-  text-align: left;
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
-  background-color: #181733;
-`;
-
-const LeftHeader = styled.div`
-  display: flex;
-  justify-content: left;
-  align-items: center;
-  flex: 1;
-`;
-
-const TitleContainer = styled.header`
-  background: linear-gradient(180deg, #885bff 0%, #5977d6 100%);
-  width: 160px;
-  background-color: #0e235e;
-  padding: 4px 12px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 50px;
-  cursor: pointer;
-`;
-
-const Logo = styled.div`
-  width: 40px;
-  height: 40px;
-  border-radius: 50px;
-  margin-right: 5px;
-`;
-
-const Title = styled.h1`
-  color: #fff;
-  font-size: 20px;
-  font-weight: bold;
-  letter-spacing: 3px;
-`;
-
-const RightHeader = styled.div`
-  display: flex;
-  justify-content: right;
-  align-items: center;
-  flex: 1;
-`;
-
-const WelcomeText = styled.p`
-  color: white;
-  font-size: 14px;
-  margin-right: 20px;
-  cursor: pointer;
-`;
-
-const ChatModalBox = styled(Box)`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 1000px;
-  height: 85vh;
-  background-color: rgba(255, 255, 255, 0.2);
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(10px);
-  display: flex;
-  flex-direction: column;
-`;
-
-const MessageList = styled.div`
-  flex: 1;
-  overflow-y: auto;
-  margin-bottom: 20px;
-  padding: 10px;
-  background-color: rgba(255, 255, 255, 0.2);
-  border-radius: 10px;
-`;
-
-const MessageItem = styled.div`
-  padding: 10px;
-  background-color: rgba(255, 255, 255, 0.4);
-  margin-bottom: 10px;
-  border-radius: 5px;
-  display: flex;
-  justify-content: space-between;
-`;
-
-const MessageInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const MessageText = styled.span`
-  font-size: 16px;
-`;
-
-const MessageMeta = styled.span`
-  font-size: 12px;
-  color: #555;
-`;
-
-const MessageUsername = styled.span`
-  font-size: 12px;
-  color: #555;
-  cursor: pointer;
-`;
-
-const PlayerInfoModalBox = styled(Box)`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 400px;
-  background-color: #181733;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
-  color: #fff;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-`;
-
-const CloseButton = styled(IconButton)`
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  color: #fff;
-`;
-
-const InfoItem = styled.div`
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  margin-bottom: 8px;
-`;
-
-const PlayerInfoModal = ({ open, handleClose, playerInfo }) => {
-  if (!playerInfo) return null;
-
-  const { username, name, points, gamesPlayed, winningGames, likesReceived, dislikesReceived, userImage } = playerInfo;
-  const winRate = (gamesPlayed > 0) ? (winningGames / gamesPlayed) * 100 : 0;
-
-  return (
-    <Modal open={open} onClose={handleClose}>
-      <PlayerInfoModalBox>
-  
-        <img src={userImage} alt={`${username}'s avatar`} style={{ width: '100px', borderRadius: '50%', marginBottom: '20px' }} />
-        <Button 
-            variant="contained" 
-            color="primary" 
-            startIcon={<PersonAddIcon />}
-            style={{ marginBottom: '20px' }}
-          >
-            Add friend
-        </Button>
-        <div style={{ width: '100%', textAlign: 'left' }}>
-          <h2>{name}</h2>
-          <h4>{username}</h4>
-          <InfoItem>
-          <span>Points:</span> <span>{points}</span>
-        </InfoItem>
-        <InfoItem>
-          <span>Games Played:</span> <span>{gamesPlayed}</span>
-        </InfoItem>
-        <InfoItem>
-          <span>Winning Games:</span> <span>{winningGames}</span>
-        </InfoItem>
-        <InfoItem>
-          <span>Win Rate:</span> <span>{winRate.toFixed(2)}%</span>
-        </InfoItem>
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: '10px' }}>
-          <Button startIcon={<ThumbUpIcon />} variant="outlined" color="primary">
-            Like ({likesReceived})
-          </Button>
-          <Button startIcon={<ThumbDownIcon />} variant="outlined" color="secondary">
-            Dislike ({dislikesReceived})
-          </Button>
-        </div>
-      </PlayerInfoModalBox>
-    </Modal>
-  );
-};
-
-const fetchPlayerInfo = async (address: string) => {
-  try {
-    const aptosConfig = new AptosConfig({ network: Network.TESTNET });
-    const aptos = new Aptos(aptosConfig);
-
-    const payload: InputViewFunctionData = {
-      function: `${MODULE_ADDRESS}::gamev3::get_player_info`,
-      functionArguments: [address],
-    };
-
-    const data = await aptos.view({ payload });
-
-    // Assuming the data returned matches the structure [username, name, points, gamesPlayed, winningGames, _, likesReceived, dislikesReceived, userImage]
-    return {
-      username: data[0],
-      name: data[1],
-      points: data[2],
-      gamesPlayed: data[3],
-      winningGames: data[4],
-      likesReceived: data[6],
-      dislikesReceived: data[7],
-      userImage: data[8],
-    };
-  } catch (error) {
-    console.error("Failed to fetch player info:", error);
-    return null;
-  }
-};
+import { HeaderContainer, LeftHeader, TitleContainer, Logo, Title, RightHeader, WelcomeText, ChatModalBox, MessageList, MessageItem, MessageInfo, MessageText, MessageMeta, MessageUsername } from "./Header.style";
+import PlayerInfoModal from "./PlayerInfoModal";
+import { PlayerInfo } from "../../../type/type";
 
 const Header: React.FC = () => {
   const address = localStorage.getItem("address");
@@ -244,10 +23,35 @@ const Header: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string>("");
   const [messages, setMessages] = useState<Array<{ message: string; sender: string; timestamp: string; username: string }>>([]);
-  const [playerInfo, setPlayerInfo] = useState(null);
+  const [playerInfo, setPlayerInfo] = useState<PlayerInfo | null>(null);
   const messageListRef = useRef<HTMLDivElement>(null);
 
   const open = Boolean(anchorEl);
+
+  const fetchPlayerInfo = async (address: string) => {
+    try {
+      const aptosConfig = new AptosConfig({ network: Network.TESTNET });
+      const aptos = new Aptos(aptosConfig);
+  
+      const payload: InputViewFunctionData = {
+        function: `${MODULE_ADDRESS}::gamev3::get_player_info`,
+        functionArguments: [address],
+      };
+  
+      const response = await aptos.view({ payload });
+  
+        if (response && Array.isArray(response) && response.length > 0) {
+          const playerData = response[0];
+          const parsedPlayerData: PlayerInfo = typeof playerData === "string" ? JSON.parse(playerData) : playerData;
+  
+          setPlayerInfo(parsedPlayerData);
+        } else {
+          console.error("Unexpected response format or empty array:", response);
+        }
+    } catch (error) {
+      console.error("Failed to fetch player info:", error);
+    }
+  };
 
   useEffect(() => {
     if (chatModalOpen) {
@@ -268,7 +72,7 @@ const Header: React.FC = () => {
     try {
       const aptosConfig = new AptosConfig({ network: Network.TESTNET });
       const aptos = new Aptos(aptosConfig);
-      const payload = {
+      const payload: InputViewFunctionData = {
         function: `${MODULE_ADDRESS}::gamev3::get_global_chat_messages`,
         functionArguments: [],
       };
@@ -276,7 +80,16 @@ const Header: React.FC = () => {
       const data = await aptos.view({ payload });
 
       const flattenedData = data.flat();
-      setMessages(flattenedData);
+      const formattedMessages = flattenedData.map((msg) => {
+        const messageObj = msg as { message: string; sender: string; timestamp: string; username: string };
+        return {
+          message: messageObj.message,
+          sender: messageObj.sender,
+          timestamp: messageObj.timestamp,
+          username: messageObj.username,
+        };
+      });
+      setMessages(formattedMessages);
     } catch (error) {
       console.error("Failed to fetch messages:", error);
     } finally {
@@ -319,9 +132,9 @@ const Header: React.FC = () => {
     setChatModalOpen(false);
   };
 
-  const handlePlayerInfoOpen = async (playerAddress) => {
-    const info = await fetchPlayerInfo(playerAddress);
-    setPlayerInfo(info);
+  const handlePlayerInfoOpen = async (playerAddress: string) => {
+    await fetchPlayerInfo(playerAddress);
+
     setPlayerInfoModalOpen(true);
   };
 
@@ -356,7 +169,7 @@ const Header: React.FC = () => {
         message,
         sender: address ?? "unknown",
         timestamp,
-        username: auth?.username ?? "unknown",
+        username: auth?.name ?? "unknown",
       };
       setMessages([...messages, newMessage]);
       setMessage("");
