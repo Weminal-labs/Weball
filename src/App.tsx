@@ -12,7 +12,7 @@ import AuthLayout from "./pages/layout/AuthLayout";
 import RequireAuth from "./components/layout/RequireAuth";
 import Home from "./pages/main/home/Home";
 import PlayGame from "./pages/main/PlayGame/PlayGamePage";
-import UpdateAccount from "./components/layout/UpdateAccount";
+import UpdateAccount from "./components/layout/UpdateAccout/UpdateAccount";
 
 function App() {
   return (

@@ -1,11 +1,13 @@
 import { Cancel, CheckCircle } from "@mui/icons-material";
 import { Avatar, Box, Button, CircularProgress, Grid, Modal, TextField, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import useAuth from "../../hooks/useAuth";
 import { Aptos, AptosConfig, InputViewFunctionData, Network } from "@aptos-labs/ts-sdk";
-import { MODULE_ADDRESS } from "../../utils/Var";
 import { AptimusNetwork } from "aptimus-sdk-test";
 import { useAptimusFlow, useKeylessLogin } from "aptimus-sdk-test/react";
+import { ButtonLogout } from "./UpdateAccount.styled";
+import useAuth from "../../../hooks/useAuth";
+import { MODULE_ADDRESS } from "../../../utils/Var";
+import { SendButton } from "../../SendButton/SendButton";
 
 const UpdateAccount = () => {
   const [editingImageLink, setEditingImageLink] = useState<string>("");
@@ -30,10 +32,10 @@ const UpdateAccount = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-        console.log(address)
+      console.log(address)
       if (address) {
         try {
-            setLoadingFetch(true)
+          setLoadingFetch(true)
           const aptosConfig = new AptosConfig({ network: Network.TESTNET });
           const aptos = new Aptos(aptosConfig);
           const payload: InputViewFunctionData = {
@@ -41,13 +43,15 @@ const UpdateAccount = () => {
             functionArguments: [address],
           };
           const response = await aptos.view({ payload });
+          console.log("Check data:", response);
+
           // Handle the response as needed (e.g., set user data)
           window.location.href = "/";
         } catch (error) {
-            setLoadingFetch(false)
+          setLoadingFetch(false)
 
-        //   console.error("Error fetching player info:", error);
-        //   window.location.href = "/auth/login";
+          //   console.error("Error fetching player info:", error);
+          //   window.location.href = "/auth/login";
         }
       } else {
         window.location.href = "/auth/login";
@@ -78,7 +82,7 @@ const UpdateAccount = () => {
       const aptosConfig = new AptosConfig({ network: Network.TESTNET });
       const aptos = new Aptos(aptosConfig);
       const FUNCTION_NAME = `${MODULE_ADDRESS}::gamev3::update_account`;
- 
+
 
       const transaction = await aptos.transaction.build.simple({
         sender: address ?? "",
@@ -102,15 +106,37 @@ const UpdateAccount = () => {
       }
     } catch (error) {
       console.error("Error updating profile:", error);
-    //   alert("An error occurred while updating the profile.");
+      //   alert("An error occurred while updating the profile.");
     } finally {
       setLoading(false);
     }
   };
-  if(loadingFetch){
+  if (loadingFetch) {
     <CircularProgress />
 
   }
+
+  const handleLogout = () => {
+    localStorage.clear()
+    flow.logout()
+    window.location.reload("/")
+  }
+
+  // async function callFaucet(amount: number, address: string): Promise<string[]> {
+  //   const faucetClient = new AptosFaucetClient({
+  //     BASE: "https://faucet.testnet.aptoslabs.com",
+  //   });
+  //   const request: FundRequest = {
+  //     amount,
+  //     address,
+  //   };
+  //   const response = await faucetClient.fund({ requestBody: request });
+  //   console.log("check faucet:", response.txn_hashes);
+  //
+  //   return response.txn_hashes;
+  // }
+
+
   return (
     <Modal
       open={true}
@@ -135,9 +161,14 @@ const UpdateAccount = () => {
         }}
       >
         <Box display="flex" flexDirection="column" gap={2} width="100%">
-          <Typography variant="h5" sx={{ mb: 2 }}>
-            Create Your Account
-          </Typography>
+          <Box display="flex" flexDirection="row" gap={2} width="100%" justifyContent="space-between" alignItems="center" textAlign="center">
+
+            <Typography variant="h5" sx={{ color: "Black" }} >
+              Create Your Account
+            </Typography>
+
+            <ButtonLogout onClick={handleLogout}>Logout</ButtonLogout>
+          </Box>
 
           <TextField
             label="Name"
@@ -195,10 +226,13 @@ const UpdateAccount = () => {
             sx={{ mt: 2 }}
           />
 
+          <SendButton walletAddress={address || ""} type={Network.TESTNET}>
+            Faucet
+          </SendButton>
+
           <Button
             variant="contained"
             color="primary"
-            sx={{ mt: 3 }}
             onClick={handleUpdate}
             disabled={loading} // Disable button during loading
           >
