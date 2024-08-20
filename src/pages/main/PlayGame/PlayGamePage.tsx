@@ -60,7 +60,6 @@ const PlayGame: React.FC = () => {
     getCurrentRoom();
   }, []);
   const getCurrentRoom = async () => {
-    console.log("akkdkda")
     const aptosConfig = new AptosConfig({ network: Network.TESTNET });
     const aptos = new Aptos(aptosConfig);
     const payload: InputViewFunctionData = {
@@ -147,8 +146,7 @@ const PlayGame: React.FC = () => {
   const createRoomContract = async (
     ROOM_NAME: string,
     bet_amount: string,
-    withMate: boolean,
-    mateAddress: string,
+
   ) => {
     setOpenCreate(false);
 
@@ -177,13 +175,7 @@ const PlayGame: React.FC = () => {
           setContentAlert("Exceed request limit, please wait 5 minutes");
           setOpenAlert(true);
         }
-        // @ts-ignore
-
-        if (error.status === 400) {
-          flow.logout();
-          localStorage.clear();
-          window.location.reload();
-        }
+        
         // @ts-ignore
         setContentAlert(error.toString());
         setOpenAlert(true);

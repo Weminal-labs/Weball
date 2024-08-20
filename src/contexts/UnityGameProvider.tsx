@@ -96,7 +96,7 @@ export const UnityGameProvider: React.FC<GameProviderProps> = ({
       console.log("Executed Transaction:", executedTransaction);
       const alertContent = 
         <>
-          txHash:{" "}
+          Transaction:{" "}
           <a
             href={`https://explorer.aptoslabs.com/txn/${executedTransaction.hash}?network=testnet`}
             target="_blank"

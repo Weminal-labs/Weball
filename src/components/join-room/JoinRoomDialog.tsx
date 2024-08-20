@@ -17,8 +17,7 @@ const JoinRoomDialog: React.FC<Pros> = ({
   setIsLoading,
   openWaitingRoom,
 }) => {
-  const address = localStorage.getItem("address");
-  const flow = useAptimusFlow();
+
   const { callContract, loading, error } = useContract();
 
   const JoinRoomHandle = async () => {
@@ -52,15 +51,7 @@ const JoinRoomDialog: React.FC<Pros> = ({
         <Typography variant="h4" align="center">
           Are You Ready?
         </Typography>
-        <TextField
-          id="outlined-basic"
-          label="Code Id"
-          variant="outlined"
-          sx={{
-            width: "80%",
-            outline: "120px",
-          }}
-        />
+       
         <Box
           sx={{
             fontSize: 24,

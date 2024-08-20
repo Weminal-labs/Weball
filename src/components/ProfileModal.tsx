@@ -322,7 +322,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ open, handleOpen, handleClo
               <br />
               🪪 {shortenAddress(address, 5)}{" "}
               <br />
-                  {balance}
+                  {parseFloat(balance)/1000000000}
               <ContentCopy
                 style={{ fontSize: "smaller", cursor: "pointer" }}
                 onClick={handleCopy}
