@@ -10,6 +10,8 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
+import PersonRemoveAlt1Icon from '@mui/icons-material/PersonRemoveAlt1';
+
 import useAuth from "../../hooks/useAuth";
 import { CreateRoomType, RoomType } from "../../type/type";
 import { shortenAddress } from "../../utils/Shorten";
@@ -29,6 +31,8 @@ import { useUnityGame } from "../../hooks/useUnityGame";
 import { useAptimusFlow } from "aptimus-sdk-test/react";
 import { AptimusNetwork } from "aptimus-sdk-test";
 import useGetPlayer from "../../hooks/useGetPlayer";
+import useContract from "../../hooks/useContract";
+import { useAlert } from "../../contexts/AlertProvider";
 interface Pros {
   open: boolean;
   room: CreateRoomType | null;
@@ -44,13 +48,12 @@ interface Player {
 }
 
 const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
-  const { auth } = useAuth();
-  const address = localStorage.getItem("address");
+  const { setAlert } = useAlert();
   const [openDialog, setOpenDialog] = useState(false);
   const [player2, setPlayer2] = useState<Player | null>(null);
   const [player1, setPlayer1] = useState<Player | null>(null);
-  const [openAlert, setOpenAlert] = useState(false);
-  const [contentAlert, setContentAlert] = useState("");
+  // const [openAlert, setOpenAlert] = useState(false);
+  // const [contentAlert, setContentAlert] = useState("");
   const [openChat, setOpenChat] = useState(false);
   const flow = useAptimusFlow();
   const [valueVol, setValueVol] = React.useState<number>(30);
@@ -59,6 +62,8 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
   const [roomDetail, setRoomDetail] = useState<RoomType|null>(null);
   const { fetchPlayer, loadingFetch } = useGetPlayer();
   const [countDown,setCountDown] = useState<number|null>(null)
+  const { callContract, loading, error } = useContract();
+
   const handleChangeVol = (event: Event, newValue: number | number[]) => {
     setValueVol(newValue as number);
     sendMessage("RoomPlayer", "SoundControl", newValue);
@@ -67,9 +72,9 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
   const handleCloseDialog = () => {
     setOpenDialog(false);
   };
-  const handleCloseAlert = () => {
-    setOpenAlert(false);
-  };
+  // const handleCloseAlert = () => {
+  //   setOpenAlert(false);
+  // };
 
   useEffect(() => {
     const fetchInitialPlayerData = async () => {
@@ -84,10 +89,12 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
           point: p1?.points ?? "",
         });
       }
-
+      if(!isCreator && roomDetail?.is_player2_joined===false){
+        console.log("adsdasdsa: "+roomDetail?.is_player2_joined)
+        closeRoom()
+      }
       if (roomDetail?.is_player2_joined) {
         const p2 = await fetchPlayer(roomDetail.player2.vec[0]);
-        console.log(":s")
 
         setPlayer2({
           address: roomDetail.player2.vec[0] ?? "",
@@ -97,9 +104,16 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
         });
 
       }
+      if(!roomDetail?.is_player2_joined){
+        const intervalId = setInterval(() => {
+          getDetailRoom(intervalId);
+        }, 1500);
+      
+        return () => clearInterval(intervalId); 
+      }
     };
     fetchInitialPlayerData();
-  }, [roomDetail?.is_player2_joined,roomDetail?.creator]);
+  }, [roomDetail?.is_player2_joined,roomDetail?.creator,roomDetail?.is_player2_ready,roomDetail?.creator_ready]);
 
   useEffect(() => {
     console.log(roomDetail?.creator_ready)
@@ -124,12 +138,8 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
         }
         return prev
       } );
-
-  
-
     }
  
-
   }, [roomDetail?.is_player2_ready,roomDetail?.creator_ready]);
   useEffect(() => {
  
@@ -153,15 +163,11 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
     try {
 
       const roomData = await fetchRoomDetail();
-      setRoomDetail(roomData)
-      console.log(roomData)
+      // setRoomDetail(roomData)
 
       if (roomData.creator_ready && roomData.is_player2_ready) {
-        console.log(roomDetail)
-
+        console.log("exit")
         clearInterval(intervalId); // Dừng interval khi cả hai player sẵn sàng
-       
-       
         
       }
     } catch (error) {
@@ -216,8 +222,7 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
       console.log("start");
       openGame();
     } else {
-      setContentAlert("Player not ready");
-      setOpenAlert(true);
+      setAlert("Player not ready",'error')
     }
   };
   const toggleReadyStatus = (
@@ -225,82 +230,74 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
     setPlayer: React.Dispatch<React.SetStateAction<Player | null>>,
   ): boolean => {
     if (player?.ready) {
-      setContentAlert("You can't cancel your ready");
-      setOpenAlert(true);
+      setAlert("Player not ready",'error')
       return false;
     } else {
       setPlayer((prev) => (prev ? { ...prev, ready: !prev.ready } : null));
       return true;
     }
   };
-  const readyHandle = async (address: string): Promise<void> => {
-    const aptosConfig = new AptosConfig({ network: Network.TESTNET });
-    const aptos = new Aptos(aptosConfig);
+  const readyHandle = async (): Promise<void> => {
+    
 
     const isReadyUpdated = isCreator
       ? toggleReadyStatus(player1, setPlayer1)
       : toggleReadyStatus(player2, setPlayer2);
 
     if (!isReadyUpdated) return;
-
-    try {
-      if (isReadyUpdated) {
-        console.log(address);
-
-        const FUNCTION_NAME = `${MODULE_ADDRESS}::gamev3::ready_by_room_id`;
-
-        const transaction = await aptos.transaction.build.simple({
-          sender: address ?? "",
-          data: {
-            function: FUNCTION_NAME,
-            functionArguments: [Number(room?.room_id)],
-          },
-        });
-        await flow.executeTransaction({
-          aptos,
-          transaction,
-          network: AptimusNetwork.TESTNET,
-        });
-      }
-    } catch (error) {
-      console.error("Error executing transaction:", error);
-      setContentAlert("Transaction failed. Please try again.");
-      setOpenAlert(true);
+    if (isReadyUpdated) {
+      await callContract({
+        functionName: "ready_by_room_id",
+        functionArgs:[Number(room?.room_id)],
+        onSuccess(result) {
+       
+        },
+        onError(error) {
+          console.error("Error executing transaction:", error);
+          setAlert("Transaction failed. Please try again.","error");
+        },
+      })
     }
+    
   };
 
   const handleCloseRoom = async () => {
-    const aptosConfig = new AptosConfig({ network: Network.TESTNET });
-    const aptos = new Aptos(aptosConfig);
-
-    try {
-      const FUNCTION_NAME = `${MODULE_ADDRESS}::gamev3::leave_room`;
-      console.log(room?.room_id);
-      const transaction = await aptos.transaction.build.simple({
-        sender: address ?? "",
-        data: {
-          function: FUNCTION_NAME,
-          functionArguments: [],
-        },
-      });
-      const committedTransaction = await flow.executeTransaction({
-        aptos,
-        transaction,
-        network: AptimusNetwork.TESTNET,
-      });
-      handleUnload();
-      closeRoom();
-      setOpenDialog(false);
-      console.log(committedTransaction);
-    } catch (error) {
+    await callContract({
+      functionName: "leave_room",
+      functionArgs:[],
+      onError(error) {
+             // @ts-ignore
+      console.error("Mã Lỗi:", error.status);
+      // @ts-ignore
+      setAlert(error);
+      console.error("Lỗi khi gọi hàm smart contract:", error);
+      },
+      onSuccess(result) {
+        handleUnload();
+        closeRoom();
+        setOpenDialog(false);
+      },
+    })
+    
+  };
+  const handleKickPlayer= async()=>{
+    await callContract({
+      functionName: "kick_player2_in_room_now",
+      functionArgs:[],
+      onError(error) {
       // @ts-ignore
       console.error("Mã Lỗi:", error.status);
       // @ts-ignore
-      setContentAlert(error.toString());
-      setOpenAlert(true);
+     
       console.error("Lỗi khi gọi hàm smart contract:", error);
-    }
-  };
+      },
+      onSuccess(result) {
+        fetchRoomDetail()
+
+      },
+    })
+
+  }
   return (
     <>
       <Modal
@@ -368,7 +365,7 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
                     sx={{ cursor: "pointer", width: "60px", height: "60px" }}
                   />
                   <h1>{player2?.point} Point</h1>
-                  <h1>{shortenAddress(player2?.address ?? "", 5)}</h1>
+                  <h1>{shortenAddress(player2?.address ?? "", 5)} {isCreator&&<IconButton onClick={handleKickPlayer}><PersonRemoveAlt1Icon/></IconButton>}  </h1>
                   <h1>{player2?.ready ? "ready" : ""}</h1>
                 </Box>
               )}
@@ -415,12 +412,9 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
                 <Button
                   variant="contained"
                   color="primary"
-                  onClick={()=>{readyHandle(address!)}}
+                  onClick={()=>{readyHandle()}}
                 >
                   ready
-                </Button>
-                <Button variant="contained" color="success" onClick={startGame}>
-                  Start
                 </Button>
               </div>
             </Box>
@@ -434,11 +428,6 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
         }}
         handleCloseRoom={handleCloseRoom}
       />
-      <AlertComponent
-        handleCloseAlert={handleCloseAlert}
-        openAlert={openAlert}
-        content={contentAlert}
-      />
     </>
   );
 };
@@ -446,15 +435,10 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
 const style = {
   position: "absolute",
   display: "flex",
-
   justifyContent: "center",
   alignItems: "center",
   gap: "20px",
-  // top: "50%",
-  // left: "50%",
-  // transform: "translate(-50%, -50%)",
-  // width: "40%",
-  height: "50%",
+  height: "55%",
   bgcolor: "background.paper",
   border: "2px solid #000",
   boxShadow: 24,

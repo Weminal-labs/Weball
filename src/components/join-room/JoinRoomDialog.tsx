@@ -1,9 +1,7 @@
 import { Box, Button, Modal, TextField, Typography } from "@mui/material";
 import { CreateRoomType, RoomType } from "../../type/type";
 import { useAptimusFlow, useKeylessLogin } from "aptimus-sdk-test/react";
-import { Aptos, AptosConfig, Network } from "@aptos-labs/ts-sdk";
-import { MODULE_ADDRESS } from "../../utils/Var";
-import { AptimusNetwork } from "aptimus-sdk-test";
+import useContract from "../../hooks/useContract";
 
 interface Pros {
   open: boolean;
@@ -21,37 +19,27 @@ const JoinRoomDialog: React.FC<Pros> = ({
 }) => {
   const address = localStorage.getItem("address");
   const flow = useAptimusFlow();
+  const { callContract, loading, error } = useContract();
 
   const JoinRoomHandle = async () => {
-    const aptosConfig = new AptosConfig({ network: Network.TESTNET });
-    const aptos = new Aptos(aptosConfig);
-    const FUNCTION_NAME = `${MODULE_ADDRESS}::gamev3::join_room_by_room_id`;
-    const ROOM_ID = Number(room?.room_id);
-    console.log(ROOM_ID);
     closeModal();
     setIsLoading(true);
-    try {
-      const transaction = await aptos.transaction.build.simple({
-        sender: address ?? "",
-        data: {
-          function: FUNCTION_NAME,
-          functionArguments: [ROOM_ID],
-        },
-      });
-      // @ts-ignore
+    await callContract({
+      functionName:"join_room_by_room_id",
+      functionArgs: [Number(room?.room_id)],
+      onSuccess(result) {
+        setIsLoading(false);
+        openWaitingRoom();
+      },
+      onError(error) {
+        console.error("Lỗi khi:", error.status);
 
-      const committedTransaction = await flow.executeTransaction({
-        aptos,
-        transaction,
-        network: AptimusNetwork.TESTNET,
-      });
-      //@ts-ignore
-      console.log(committedTransaction);
-      setIsLoading(false);
-      openWaitingRoom();
-    } catch (error) {
-      console.error("Lỗi khi gọi hàm smart contract:", error);
-    }
+        console.error("Lỗi khi gọi hàm smart contract:", error);
+      },
+      onFinally() {
+          
+      },
+    })
   };
   return (
     <Modal

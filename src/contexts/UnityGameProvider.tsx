@@ -18,6 +18,7 @@ import {
 } from "react-unity-webgl";
 import { MODULE_ADDRESS } from "../utils/Var";
 import { Compare } from "../utils/CompareAddress";
+import { useAlert } from "./AlertProvider";
 
 // Create UnityGame context
 const UnityGameContext = createContext<any>(null);
@@ -45,6 +46,7 @@ export const UnityGameProvider: React.FC<GameProviderProps> = ({
     frameworkUrl: "build/Build/Build.framework.js",
     codeUrl: "build/Build/Build.wasm",
   });
+  const { setAlert } = useAlert();
 
   const [show, setShow] = useState(false);
   const handleUnload = async () => {
@@ -56,7 +58,7 @@ export const UnityGameProvider: React.FC<GameProviderProps> = ({
     const aptos = new Aptos(aptosConfig);
 
     const privateKey = new Ed25519PrivateKey(
-      "0xfd55742f39ce6a3ca12536e49dfb80e79a0f140657098f1279e9d7e1d5af0ca3",
+      "0xaa1ce17df0313c67ccd1db30a81587f0af3d6c88b12eeb2e30e550c4f7e75421",
     );
 
     const account = await Account.fromPrivateKey({ privateKey });
@@ -92,6 +94,20 @@ export const UnityGameProvider: React.FC<GameProviderProps> = ({
 
       // Log the executed transaction
       console.log("Executed Transaction:", executedTransaction);
+      const alertContent = 
+        <>
+          txHash:{" "}
+          <a
+            href={`https://explorer.aptoslabs.com/txn/${executedTransaction.hash}?network=testnet`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {executedTransaction.hash}
+          </a>
+        </>
+    
+      
+      setAlert(alertContent, "success"); 
     } catch (error) {
           // @ts-ignore
 
