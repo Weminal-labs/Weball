@@ -23,10 +23,7 @@ import { MODULE_ADDRESS } from "../../utils/Var";
 import AlertComponent from "../layout/AlertComponent";
 import LeaveDialog from "./LeaveDialog";
 import MessengerContainer from "../chat/MessengerContainer";
-import {
-  ChatOutlined,
-  VolumeDown,
-} from "@mui/icons-material";
+import { ChatOutlined, VolumeDown } from "@mui/icons-material";
 import "../../App.css";
 import { useUnityGame } from "../../hooks/useUnityGame";
 import { useAptimusFlow } from "aptimus-sdk-test/react";
@@ -43,9 +40,7 @@ interface Player {
   address: string;
   ready: boolean;
   avatar: string;
-  point:string
-
-
+  point: string;
 }
 
 const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
@@ -61,15 +56,11 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
   const [valueVol, setValueVol] = React.useState<number>(30);
   const [openVol, setOpenVol] = React.useState<boolean>(false);
   const { handleUnload, sendMessage } = useUnityGame();
-  const [roomDetail, setRoomDetail] =useState<RoomType>()
-  const {fetchPlayer, loadingFetch}= useGetPlayer()
-
+  const [roomDetail, setRoomDetail] = useState<RoomType|null>(null);
+  const { fetchPlayer, loadingFetch } = useGetPlayer();
+  const [countDown,setCountDown] = useState<number|null>(null)
   const handleChangeVol = (event: Event, newValue: number | number[]) => {
     setValueVol(newValue as number);
-    console.log(newValue);
-    const obj = {
-      volumn: newValue,
-    };
     sendMessage("RoomPlayer", "SoundControl", newValue);
   };
 
@@ -79,25 +70,117 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
   const handleCloseAlert = () => {
     setOpenAlert(false);
   };
-  const closeModal = () => {
-    handleCloseDialog();
-    closeRoom();
+
+  useEffect(() => {
+    const fetchInitialPlayerData = async () => {
+      if(roomDetail?.creator){
+        const p1 = await fetchPlayer(roomDetail?.creator);
+        console.log(":a")
+
+        setPlayer1({
+          address: roomDetail?.creator??"",
+          ready: roomDetail?.creator_ready??false,
+          avatar: p1?.user_image ?? "",
+          point: p1?.points ?? "",
+        });
+      }
+
+      if (roomDetail?.is_player2_joined) {
+        const p2 = await fetchPlayer(roomDetail.player2.vec[0]);
+        console.log(":s")
+
+        setPlayer2({
+          address: roomDetail.player2.vec[0] ?? "",
+          ready: roomDetail.is_player2_ready,
+          avatar: p2?.user_image ?? "",
+          point: p2?.points ?? "",
+        });
+
+      }
+    };
+    fetchInitialPlayerData();
+  }, [roomDetail?.is_player2_joined,roomDetail?.creator]);
+
+  useEffect(() => {
+    console.log(roomDetail?.creator_ready)
+    if(roomDetail?.creator_ready){
+      setPlayer1((prev: Player | null) =>{
+        if(prev){
+          ({
+            ...prev,
+            ready: roomDetail.creator_ready,
+          })
+        }
+        return prev
+      } );
+    }
+    if (roomDetail?.is_player2_joined) {
+      setPlayer2((prev: Player | null) =>{
+        if(prev){
+          ({
+            ...prev,
+            ready: roomDetail.is_player2_ready,
+          })
+        }
+        return prev
+      } );
+
+  
+
+    }
+ 
+
+  }, [roomDetail?.is_player2_ready,roomDetail?.creator_ready]);
+  useEffect(() => {
+ 
+      const intervalId = setInterval(() => {
+        getDetailRoom(intervalId);
+      }, 1500);
+    
+      return () => clearInterval(intervalId); // Clear interval khi component unmount
+    
+  }, []);
+  useEffect(()=>{
+    if (player1?.ready && player2?.ready) {
+      console.log(player1)
+      console.log(player2)
+      setCountDown(5)
+   
+
+    }
+  },[player1,player2])
+  const getDetailRoom = async (intervalId: NodeJS.Timeout) => {
+    try {
+
+      const roomData = await fetchRoomDetail();
+      setRoomDetail(roomData)
+      console.log(roomData)
+
+      if (roomData.creator_ready && roomData.is_player2_ready) {
+        console.log(roomDetail)
+
+        clearInterval(intervalId); // Dừng interval khi cả hai player sẵn sàng
+       
+       
+        
+      }
+    } catch (error) {
+      console.error("Error fetching room details:", error);
+    }
   };
   useEffect(() => {
-    // if (!isCreator) {
-    // } else {
-    //   setPlayer1({ address: address ?? "", ready: true });
-    // }
-    getDetailRoom();
+    if (countDown) {
+      console.log(countDown);
 
-    const intervalId = setInterval(getDetailRoom, 1500);
-    return () => clearInterval(intervalId);
-  }, []);
-
-  const getDetailRoom = async () => {
+      const countDownvalId = setInterval(() => {
+        countDownHandle(countDownvalId);
+      }, 1000);
+      return () => clearInterval(countDownvalId); // Clear interval when component unmounts or countDown changes
+    }
+  }, [countDown]);
+  const fetchRoomDetail = async (): Promise<RoomType> => {
     const aptosConfig = new AptosConfig({ network: Network.TESTNET });
     const aptos = new Aptos(aptosConfig);
-    console.log(Number(room?.room_id));
     const payload: InputViewFunctionData = {
       function: `${MODULE_ADDRESS}::gamev3::room_detail_by_room_id`,
       functionArguments: [Number(room?.room_id ?? 0)],
@@ -105,36 +188,30 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
     const data = await aptos.view({ payload });
     // @ts-ignore
     const roomData: RoomType = data[0];
-    console.log(roomData);
-    setRoomDetail(roomData)
-    const p1 = await fetchPlayer(roomData.creator)
-    setPlayer1({ address: roomData.creator, ready: roomData.creator_ready,avatar:p1?.user_image??"",point: p1?.points??"" });
-    if(roomData.is_player2_joined){
-      const p2 = await fetchPlayer(roomData.player2.vec[0])
+    setRoomDetail(roomData);
+    return roomData;
+  };
+  const countDownHandle = (intervalId: NodeJS.Timeout) => {
+    console.log(countDown);
+  
+    if (countDown === 1) {
+      startGame(); // Khi countdown về 0, bắt đầu game
+      clearTimeout(intervalId);
+    } else {
+      setCountDown((prev: number | null) => {
 
-      setPlayer2({
-        address: roomData.player2.vec[0] ?? "",
-        ready: roomData.is_player2_ready,
-        avatar: p2?.user_image??"",
-        point: p2?.points??""
+        if (prev && prev >= -1) {
+
+          return prev - 1; // Giảm giá trị countdown
+        }
+        return prev;
       });
     }
- 
-    // if (!isCreator) {
-    //   console.log("KKKKKKK");
-
-    //   // console.log(player1);
-    // } else {
-    //   if (roomData.is_player2_joined) {
-
-    //     setPlayer2({
-    //       address: roomData.player2.vec[0],
-    //       ready: roomData.is_player2_ready,
-    //     });
-    //   }
-    // }
   };
+  
+  
   const startGame = () => {
+    console.log(player1?.ready +" "+ player2?.ready)
     if (player1?.ready && player2?.ready) {
       console.log("start");
       openGame();
@@ -156,7 +233,7 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
       return true;
     }
   };
-  const readyHandle = async (): Promise<void> => {
+  const readyHandle = async (address: string): Promise<void> => {
     const aptosConfig = new AptosConfig({ network: Network.TESTNET });
     const aptos = new Aptos(aptosConfig);
 
@@ -216,11 +293,9 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
       setOpenDialog(false);
       console.log(committedTransaction);
     } catch (error) {
-          // @ts-ignore
-
+      // @ts-ignore
       console.error("Mã Lỗi:", error.status);
-    // @ts-ignore
-
+      // @ts-ignore
       setContentAlert(error.toString());
       setOpenAlert(true);
       console.error("Lỗi khi gọi hàm smart contract:", error);
@@ -251,6 +326,7 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
             <Typography variant="caption" component="p">
               Room ID: {room?.room_id ?? ""}
             </Typography>
+            <h2>{countDown}</h2>
             <Box
               sx={{ display: "flex", justifyContent: "space-around", mt: 4 }}
             >
@@ -264,7 +340,7 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
               >
                 <Avatar
                   component="div"
-                  src={auth?.picture}
+                  src={player1?.avatar}
                   sx={{ cursor: "pointer", width: "60px", height: "60px" }}
                 />
                 <h1>{player1?.point} Point</h1>
@@ -277,24 +353,25 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
                 sx={{ borderColor: "black" }}
                 flexItem
               />
-              {roomDetail?.is_player2_joined && <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  gap: "8px",
-                }}
-              >
-                <Avatar
-                  component="div"
-                  src={player2?.avatar}
-                  sx={{ cursor: "pointer", width: "60px", height: "60px" }}
-                />
-                <h1>{player2?.point} Point</h1>
-                <h1>{shortenAddress(player2?.address ?? "", 5)}</h1>
-                <h1>{player2?.ready ? "ready" : ""}</h1>
-              </Box>}
-             
+              {roomDetail?.is_player2_joined && (
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    gap: "8px",
+                  }}
+                >
+                  <Avatar
+                    component="div"
+                    src={player2?.avatar}
+                    sx={{ cursor: "pointer", width: "60px", height: "60px" }}
+                  />
+                  <h1>{player2?.point} Point</h1>
+                  <h1>{shortenAddress(player2?.address ?? "", 5)}</h1>
+                  <h1>{player2?.ready ? "ready" : ""}</h1>
+                </Box>
+              )}
             </Box>
             <Typography sx={{ mt: 4 }}>
               TOTAL: {(Number(room?.bet_amount) / 100000000).toFixed(2)} APT
@@ -338,7 +415,7 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
                 <Button
                   variant="contained"
                   color="primary"
-                  onClick={readyHandle}
+                  onClick={()=>{readyHandle(address!)}}
                 >
                   ready
                 </Button>

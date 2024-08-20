@@ -49,19 +49,6 @@ const JoinRoomDialog: React.FC<Pros> = ({
       console.log(committedTransaction);
       setIsLoading(false);
       openWaitingRoom();
-      // if (isLoaded === false) {
-      //   console.log("Máy chủ chưa kết nối");
-      //   return;
-      // }
-      // const obj = {
-      //   roomId: roomType.room_id,
-      //   roomName: roomType.room_name,
-      //   userId: roomType.creator,
-      //   userName: "userName",
-      // };
-      // setIsLoading(false);
-      // sendMessage("RoomPlayer", "JoinOrCreateRoom", JSON.stringify(obj));
-      // setShow(true);
     } catch (error) {
       console.error("Lỗi khi gọi hàm smart contract:", error);
     }

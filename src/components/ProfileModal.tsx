@@ -18,6 +18,7 @@ import { shortenAddress } from "../utils/Shorten";
 import { useAptimusFlow } from "aptimus-sdk-test/react";
 import { AptimusNetwork } from "aptimus-sdk-test";
 import { PlayerInfo } from "../type/type";
+type Coin = { coin: { value: string } };
 
 interface ProfileModalProps {
   open: boolean;
@@ -54,6 +55,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ open, handleOpen, handleClo
   const [usernameTaken, setUsernameTaken] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [player, setPlayer] = useState<PlayerInfo | null>(null)
+  const [balance,setBalance]=useState<string>("")
   const flow = useAptimusFlow();
 
   useEffect(() => {
@@ -94,7 +96,14 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ open, handleOpen, handleClo
         function: `${MODULE_ADDRESS}::gamev3::get_player_info`,
         functionArguments: [hexAddress],
       };
-  
+      const resource =await aptos.getAccountResource<Coin>({
+        accountAddress: address,
+        resourceType: "0x1::coin::CoinStore<0x1::aptos_coin::AptosCoin>",
+      });
+       
+      // Now you have access to the response type property
+      const value = resource.coin.value;
+      setBalance(value)
       const response = await aptos.view({ payload });
   
       if (response && Array.isArray(response) && response.length > 0) {
@@ -312,6 +321,8 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ open, handleOpen, handleClo
               ✉️ {auth?.email}
               <br />
               🪪 {shortenAddress(address, 5)}{" "}
+              <br />
+                  {balance}
               <ContentCopy
                 style={{ fontSize: "smaller", cursor: "pointer" }}
                 onClick={handleCopy}

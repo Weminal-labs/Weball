@@ -288,6 +288,8 @@ const PlayGame: React.FC = () => {
 
         <JoinRoomDialog
           openWaitingRoom={() => {
+            setIsCreator(false)
+
             setLoadGame(true);
             setOpenWaitRoom(true);
           }}
