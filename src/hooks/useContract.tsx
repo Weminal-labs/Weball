@@ -50,7 +50,7 @@ const useContract = () => {
       if (onSuccess) {
         onSuccess(committedTransaction);
       }
-    } catch (error) {
+    } catch (error: any) { 
       console.log(error.message)
       if (error.status === 400) {
         flow.logout();

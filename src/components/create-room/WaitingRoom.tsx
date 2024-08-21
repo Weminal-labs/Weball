@@ -55,7 +55,6 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
   // const [openAlert, setOpenAlert] = useState(false);
   // const [contentAlert, setContentAlert] = useState("");
   const [openChat, setOpenChat] = useState(false);
-  const flow = useAptimusFlow();
   const [valueVol, setValueVol] = React.useState<number>(30);
   const [openVol, setOpenVol] = React.useState<boolean>(false);
   const { handleUnload, sendMessage } = useUnityGame();
