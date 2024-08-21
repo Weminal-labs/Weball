@@ -31,7 +31,7 @@ const MessengerInput = ({roomId}:Pros) => {
           onSuccess(result) {
           },
           onError(error) {
-            setAlert("Please send message after 5s","warning")
+            setAlert("Please re-send message after 5s","warning")
             console.error("Lỗi khi gọi hàm smart contract:", error);
           },
 
