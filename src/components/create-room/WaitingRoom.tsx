@@ -162,7 +162,6 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
     try {
 
       const roomData = await fetchRoomDetail();
-      // setRoomDetail(roomData)
 
       if (roomData.creator_ready && roomData.is_player2_ready) {
         console.log("exit")
@@ -268,7 +267,7 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
              // @ts-ignore
       console.error("Mã Lỗi:", error.status);
       // @ts-ignore
-      setAlert(error);
+      setAlert(error.toString(),"error");
       console.error("Lỗi khi gọi hàm smart contract:", error);
       },
       onSuccess(result) {

@@ -320,9 +320,8 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ open, handleOpen, handleClo
             >
               ✉️ {auth?.email}
               <br />
-              🪪 {shortenAddress(address, 5)}{" "}
+              {parseFloat(balance)/1000000000}
               <br />
-                  {parseFloat(balance)/1000000000}
               <ContentCopy
                 style={{ fontSize: "smaller", cursor: "pointer" }}
                 onClick={handleCopy}
