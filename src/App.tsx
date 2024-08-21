@@ -24,7 +24,7 @@ function App() {
             <Route path="/create-room" element={<CreateRoom />} />
             <Route path="/playGame" element={<PlayGame />} />
             <Route path="/leaderboard" element={<Leaderboard />} />
-            <Route path="/add-bets" element={<AddBets />} />
+            <Route path="/addbets" element={<AddBets />} />
           </Route>
         </Route>
         <Route path="/auth" element={<AuthLayout />}>

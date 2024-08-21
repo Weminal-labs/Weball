@@ -18,17 +18,20 @@ const networkWithFaucet = {
   },
 };
 
-export const useSendAptos = (
-  walletAddress: string,
-  network: "devnet" | "testnet"
-) => {
-  return (
-    async () => {
-      const NODE_URL = networkWithFaucet[network].NODE_URL;
-      const FAUCET_URL = networkWithFaucet[network].FAUCET_URL;
+export const useSendAptos = (walletAddress: string, network: "devnet" | "testnet") => {
+  return async () => {
+    const sanitizedAddress = sanitizeAddress(walletAddress);
+    const NODE_URL = networkWithFaucet[network].NODE_URL;
+    const FAUCET_URL = networkWithFaucet[network].FAUCET_URL;
 
+    try {
       const faucetClient = new FaucetClient(NODE_URL, FAUCET_URL);
-
-      return await faucetClient.fundAccount(walletAddress, 1e9 * Number(1));
-    });
+      const response = await faucetClient.fundAccount(walletAddress, 1e9);
+      console.log("Faucet response:", response);
+      return response;
+    } catch (error) {
+      console.error("Error funding account:", error);
+      throw error;
+    }
+  };
 };

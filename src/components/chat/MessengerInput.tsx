@@ -29,18 +29,13 @@ const MessengerInput = ({roomId}:Pros) => {
           functionName:"send_chat_to_room_id",
           functionArgs: [roomId, message],
           onSuccess(result) {
-            
           },
           onError(error) {
-            // console.error("Lỗi khi:", error.E_CHAT_COOLDOWN);
             setAlert("Please send message after 5s","warning")
             console.error("Lỗi khi gọi hàm smart contract:", error);
           },
 
         })
- 
-
-
     }
 	return (
 		<form className='px-4 my-3' onSubmit={handleSubmit}>

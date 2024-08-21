@@ -3,6 +3,7 @@ import { Box, Button } from "@mui/material";
 import { Account, Aptos, AptosConfig, Ed25519PrivateKey, Network, Secp256k1PrivateKey } from "@aptos-labs/ts-sdk";
 import { MODULE_ADDRESS } from "../../utils/Var";
 import { Buffer } from "buffer";
+import { SendButton } from "../../components/SendButton/SendButton";
 
 const AddBets: React.FC = () => {
   const [open, setOpen] = useState(false);
@@ -19,7 +20,7 @@ const AddBets: React.FC = () => {
     const aptos = new Aptos(aptosConfig);
 
   }
-  
+  const address = localStorage.getItem("address")
   // const pickWinnerByRoomId = async () => {
   //   const aptosConfig = new AptosConfig({ network: Network.TESTNET });
   //   const aptos = new Aptos(aptosConfig);
@@ -94,9 +95,9 @@ const AddBets: React.FC = () => {
         alignItems: "center",
       }}
     >
-      <Button variant="contained" onClick={testFunction}>
-        Test contract
-      </Button>
+       <SendButton walletAddress={address || ""} type={Network.TESTNET}>
+            Faucet
+          </SendButton>
     </Box>
   );
 };
