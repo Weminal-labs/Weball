@@ -27,6 +27,8 @@ const Messengers = ({ roomId }: Props) => {
       };
 
       const data = await aptos.view({ payload });
+          // @ts-ignore
+
       setMessages(data[0])
     }
 

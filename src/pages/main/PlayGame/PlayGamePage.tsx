@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import styled from "styled-components";
 import {
-  Box,
+ 
   Button,
   Grid,
   Modal,
@@ -32,9 +32,9 @@ import {
   JoinRoomContainer,
 } from "./PlayGame.style";
 import { MODULE_ADDRESS } from "../../../utils/Var";
-import { AptimusNetwork } from "aptimus-sdk-test";
 import { useAptimusFlow } from "aptimus-sdk-test/react";
 import { Compare } from "../../../utils/CompareAddress";
+import useContract from "../../../hooks/useContract";
 
 const ITEMS_PER_PAGE = 6;
 
@@ -53,6 +53,8 @@ const PlayGame: React.FC = () => {
   const [contentAlert, setContentAlert] = useState("");
   const [isCreator, setIsCreator] = useState(false);
   const [openCreate, setOpenCreate] = useState(false);
+  const { callContract, loading, error } = useContract();
+
   const flow = useAptimusFlow();
   useEffect(() => {
     getCurrentRoom();
@@ -66,14 +68,14 @@ const PlayGame: React.FC = () => {
     };
     const data = await aptos.view({ payload });
     // @ts-ignore
+    console.log(data);
+    // @ts-ignore
 
     if (data[0].vec[0]) {
       // @ts-ignore
       const roomData: RoomType = data[0].vec[0];
-      console.log(data[0]);
 
       setRoomObj(roomData);
-      // const checkIsCreator = roomData.creator.slice(-5).toLowerCase() === address?.slice(-5).toLowerCase();
       const checkIsCreator = Compare(roomData.creator, address!, 5);
       if (!checkIsCreator) {
         setIsCreator(false);
@@ -144,76 +146,48 @@ const PlayGame: React.FC = () => {
   const createRoomContract = async (
     ROOM_NAME: string,
     bet_amount: string,
-    withMate: boolean,
-    mateAddress: string,
+
   ) => {
-    const aptosConfig = new AptosConfig({ network: Network.TESTNET });
-    const aptos = new Aptos(aptosConfig);
+    setOpenCreate(false);
 
-    let FUNCTION_NAME = "";
-    let functionArguments: any[] = [];
+    await callContract({
+      functionName: "create_room",
+      functionArgs: [ROOM_NAME, bet_amount],
+      onSuccess: (result) => {
+        // @ts-ignore
 
-    if (!withMate) {
-      FUNCTION_NAME = "create_room";
-      functionArguments = [ROOM_NAME, bet_amount];
-    } else {
-      FUNCTION_NAME = "create_room_mate";
-      functionArguments = [ROOM_NAME, bet_amount, mateAddress];
-    }
+        const createRoomObj: CreateRoomType = result.events[0].data;
+        setIsLoading(false);
+        setRoomObj(createRoomObj);
+        setOpenWaitRoom(true);
+        setIsCreator(true);
+        setLoadGame(true);
 
-    try {
-      setIsLoading(true);
-      setOpenCreate(false);
-
-      const transaction = await aptos.transaction.build.simple({
-        sender: address ?? "",
-        data: {
-          function: `${MODULE_ADDRESS}::gamev3::${FUNCTION_NAME}`,
-          functionArguments: functionArguments, // Sử dụng biến functionArguments đã xác định
-        },
-      });
-
-      const committedTransaction = await flow.executeTransaction({
-        aptos,
-        transaction,
-        network: AptimusNetwork.TESTNET,
-      });
-
-      // @ts-ignore
-      const createRoomObj: CreateRoomType = committedTransaction.events[0].data;
-      setIsLoading(false);
-      setRoomObj(createRoomObj);
-      setOpenWaitRoom(true);
-      setIsCreator(true);
-      setLoadGame(true);
-      console.log(roomObj?.room_id);
-    } catch (error) {
-      setOpenCreate(true);
-      setIsLoading(false);
-      // @ts-ignore
-      console.error("Mã Lỗi:", error.status);
-      // @ts-ignore
-      if (error.status === 429) {
-        setContentAlert("Exceed request limit, please wait 5 minutes");
+        console.log(createRoomObj);
+      },
+      onError: (error) => {
+        setOpenCreate(true);
+        setIsLoading(false);
+        // @ts-ignore
+        console.error("Mã Lỗi:", error.status);
+        // @ts-ignore
+        if (error.status === 429) {
+          setContentAlert("Exceed request limit, please wait 5 minutes");
+          setOpenAlert(true);
+        }
+        
+        // @ts-ignore
+        setContentAlert(error.toString());
         setOpenAlert(true);
-      }
-      // @ts-ignore
-
-      if (error.status === 400) {
-        flow.logout();
-        window.location.reload();
-      }
-      // @ts-ignore
-      setContentAlert(error.toString());
-      setOpenAlert(true);
-      console.error("Lỗi khi gọi hàm smart contract:", error);
-    }
+        console.error("Lỗi khi gọi hàm smart contract:", error);
+      },
+    });
   };
 
   return (
     <>
       <JoinRoomContainer>
-        {isLoading ? (
+        {loading ? (
           <LoadingScreen />
         ) : (
           <>
@@ -249,19 +223,18 @@ const PlayGame: React.FC = () => {
 
             <GridContainer container spacing={4}>
               {displayedRooms.map((room, index) => {
-                if(!Compare(room.creator,address!,5))
-                return (
-                
-                  <Grid item xs={12} sm={6} md={4} key={index}>
-                    <RoomCard
-                      setRoomObj={setRoomObj}
-                      openDialog={() => {
-                        setOpenDialog(true);
-                      }}
-                      roomType={room}
-                    />
-                  </Grid>
-                )
+                if (!Compare(room.creator, address!, 5))
+                  return (
+                    <Grid item xs={12} sm={6} md={4} key={index}>
+                      <RoomCard
+                        setRoomObj={setRoomObj}
+                        openDialog={() => {
+                          setOpenDialog(true);
+                        }}
+                        roomType={room}
+                      />
+                    </Grid>
+                  );
               })}
             </GridContainer>
             <Stack spacing={4} sx={{ marginBottom: "20px" }}>
@@ -288,6 +261,8 @@ const PlayGame: React.FC = () => {
 
         <JoinRoomDialog
           openWaitingRoom={() => {
+            setIsCreator(false);
+
             setLoadGame(true);
             setOpenWaitRoom(true);
           }}

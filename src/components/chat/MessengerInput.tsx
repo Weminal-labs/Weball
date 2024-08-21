@@ -4,6 +4,8 @@ import { MODULE_ADDRESS } from '../../utils/Var';
 import { AptimusNetwork } from 'aptimus-sdk-test';
 import { useAptimusFlow } from 'aptimus-sdk-test/react';
 import { BsSend } from 'react-icons/bs';
+import useContract from '../../hooks/useContract';
+import { useAlert } from '../../contexts/AlertProvider';
 interface Pros{
     roomId:string
 }
@@ -12,32 +14,33 @@ const MessengerInput = ({roomId}:Pros) => {
     const flow = useAptimusFlow();
     const [loading, setLoading] = useState();
     const address = localStorage.getItem("address")
-    
-	const handleSubmit = async (e) => {
+    const { callContract, error } = useContract();
+  const{setAlert} =useAlert()
+	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		if (!message) return;
 		await sendMessage(message);
-		setMessage("");
 	};
+  
     const sendMessage =async (message:string)=>{
-        const aptosConfig = new AptosConfig({ network: Network.TESTNET });
-        const aptos = new Aptos(aptosConfig);
-        const FUNCTION_NAME = `${MODULE_ADDRESS}::gamev3::send_chat_to_room_id`;
+      setMessage("");
 
-        const transaction = await aptos.transaction.build.simple({
+        await callContract({
+          functionName:"send_chat_to_room_id",
+          functionArgs: [roomId, message],
+          onSuccess(result) {
+            
+          },
+          onError(error) {
+            // console.error("Lỗi khi:", error.E_CHAT_COOLDOWN);
+            setAlert("Please send message after 5s","warning")
+            console.error("Lỗi khi gọi hàm smart contract:", error);
+          },
 
-            sender: address ?? "",
-            data: {
-              function: FUNCTION_NAME,
-              functionArguments: [roomId, message],
-            },
-          });
-          const committedTransaction = await flow.executeTransaction({
+        })
+ 
 
-            aptos,
-            transaction,
-            network: AptimusNetwork.TESTNET,
-          });
+
     }
 	return (
 		<form className='px-4 my-3' onSubmit={handleSubmit}>

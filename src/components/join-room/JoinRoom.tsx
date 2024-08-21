@@ -35,12 +35,7 @@ const JoinRoom: React.FC<RoomProps> = ({ roomId, apt, codeId }) => {
             }} />
             <Box sx={{ fontSize: 24, fontWeight: "bold", border: '2px solid black', width: '80%', height: '100px', display: 'flex',  alignItems: 'center', justifyContent: 'space-evenly', flexDirection: 'row', borderRadius: '16px'}}>
                 <div style={{display: 'flex', gap: '8px', flexDirection: 'column'}}>
-                    <Typography sx={{
-                        fontSize: "20px",       
-                        fontWeight: "bold",   
-                    }}>
-                        room id: {roomId}
-                    </Typography>
+                
                     <Typography sx={{
                         fontSize: "20px",       
                         fontWeight: "bold",     

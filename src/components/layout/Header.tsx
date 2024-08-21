@@ -13,6 +13,7 @@ import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import { MODULE_ADDRESS } from "../../utils/Var";
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { AptimusNetwork } from "aptimus-sdk-test";
+import { PlayerInfo } from "../../type/type";
 
 const HeaderContainer = styled.div`
   height: 60px;
@@ -155,18 +156,22 @@ const InfoItem = styled.div`
   width: 100%;
   margin-bottom: 8px;
 `;
-
-const PlayerInfoModal = ({ open, handleClose, playerInfo }) => {
+interface PlayerModalPros{
+  open: boolean,
+  handleClose: () => void,
+  playerInfo: null|PlayerInfo
+}
+const PlayerInfoModal = ({ open, handleClose, playerInfo }:PlayerModalPros) => {
   if (!playerInfo) return null;
 
-  const { username, name, points, gamesPlayed, winningGames, likesReceived, dislikesReceived, userImage } = playerInfo;
-  const winRate = (gamesPlayed > 0) ? (winningGames / gamesPlayed) * 100 : 0;
+  const { username, name, points, games_played, winning_games, likes_received, dislikes_received, user_image } = playerInfo;
+  const winRate = (Number(games_played) > 0) ? (Number(winning_games) / Number(games_played)) * 100 : 0;
 
   return (
     <Modal open={open} onClose={handleClose}>
       <PlayerInfoModalBox>
   
-        <img src={userImage} alt={`${username}'s avatar`} style={{ width: '100px', borderRadius: '50%', marginBottom: '20px' }} />
+        <img src={user_image} alt={`${username}'s avatar`} style={{ width: '100px', borderRadius: '50%', marginBottom: '20px' }} />
         <Button 
             variant="contained" 
             color="primary" 
@@ -182,10 +187,10 @@ const PlayerInfoModal = ({ open, handleClose, playerInfo }) => {
           <span>Points:</span> <span>{points}</span>
         </InfoItem>
         <InfoItem>
-          <span>Games Played:</span> <span>{gamesPlayed}</span>
+          <span>Games Played:</span> <span>{games_played}</span>
         </InfoItem>
         <InfoItem>
-          <span>Winning Games:</span> <span>{winningGames}</span>
+          <span>Winning Games:</span> <span>{winning_games}</span>
         </InfoItem>
         <InfoItem>
           <span>Win Rate:</span> <span>{winRate.toFixed(2)}%</span>
@@ -193,10 +198,10 @@ const PlayerInfoModal = ({ open, handleClose, playerInfo }) => {
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: '10px' }}>
           <Button startIcon={<ThumbUpIcon />} variant="outlined" color="primary">
-            Like ({likesReceived})
+            Like ({likes_received})
           </Button>
           <Button startIcon={<ThumbDownIcon />} variant="outlined" color="secondary">
-            Dislike ({dislikesReceived})
+            Dislike ({dislikes_received})
           </Button>
         </div>
       </PlayerInfoModalBox>
@@ -215,18 +220,11 @@ const fetchPlayerInfo = async (address: string) => {
     };
 
     const data = await aptos.view({ payload });
+    // @ts-ignore
 
-    // Assuming the data returned matches the structure [username, name, points, gamesPlayed, winningGames, _, likesReceived, dislikesReceived, userImage]
-    return {
-      username: data[0],
-      name: data[1],
-      points: data[2],
-      gamesPlayed: data[3],
-      winningGames: data[4],
-      likesReceived: data[6],
-      dislikesReceived: data[7],
-      userImage: data[8],
-    };
+    const info: PlayerInfo = data[0];
+    // Assuming the data returned matches the structure [username, name, points, games_played, winning_games, _, likes_received, dislikes_received, user_image]
+    return info;
   } catch (error) {
     console.error("Failed to fetch player info:", error);
     return null;
@@ -244,7 +242,7 @@ const Header: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string>("");
   const [messages, setMessages] = useState<Array<{ message: string; sender: string; timestamp: string; username: string }>>([]);
-  const [playerInfo, setPlayerInfo] = useState(null);
+  const [playerInfo, setPlayerInfo] = useState<PlayerInfo|null>(null);
   const messageListRef = useRef<HTMLDivElement>(null);
 
   const open = Boolean(anchorEl);
@@ -268,7 +266,7 @@ const Header: React.FC = () => {
     try {
       const aptosConfig = new AptosConfig({ network: Network.TESTNET });
       const aptos = new Aptos(aptosConfig);
-      const payload = {
+      const payload : InputViewFunctionData = {
         function: `${MODULE_ADDRESS}::gamev3::get_global_chat_messages`,
         functionArguments: [],
       };
@@ -276,6 +274,8 @@ const Header: React.FC = () => {
       const data = await aptos.view({ payload });
 
       const flattenedData = data.flat();
+                  // @ts-ignore
+
       setMessages(flattenedData);
     } catch (error) {
       console.error("Failed to fetch messages:", error);
@@ -319,7 +319,7 @@ const Header: React.FC = () => {
     setChatModalOpen(false);
   };
 
-  const handlePlayerInfoOpen = async (playerAddress) => {
+  const handlePlayerInfoOpen = async (playerAddress: string) => {
     const info = await fetchPlayerInfo(playerAddress);
     setPlayerInfo(info);
     setPlayerInfoModalOpen(true);
@@ -356,7 +356,7 @@ const Header: React.FC = () => {
         message,
         sender: address ?? "unknown",
         timestamp,
-        username: auth?.username ?? "unknown",
+        username: auth?.email ?? "unknown",
       };
       setMessages([...messages, newMessage]);
       setMessage("");

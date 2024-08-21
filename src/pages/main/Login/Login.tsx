@@ -10,7 +10,7 @@ export const LoginPage = () => {
     const url = await flow.createAuthorizationURL({
       provider: "google",
       clientId:
-        "898060815188-os2kha196hocdsuqpjhao3r52d4k9tkk.apps.googleusercontent.com",
+        "556302451277-tipnsth9rm9grmkpige3pus8kske73pc.apps.googleusercontent.com",
       redirectUrl: `${window.location.origin}/callback`,
     });
     window.location.href = url.toString();
