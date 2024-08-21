@@ -20,13 +20,12 @@ const networkWithFaucet = {
 
 export const useSendAptos = (walletAddress: string, network: "devnet" | "testnet") => {
   return async () => {
-    const sanitizedAddress = sanitizeAddress(walletAddress);
     const NODE_URL = networkWithFaucet[network].NODE_URL;
     const FAUCET_URL = networkWithFaucet[network].FAUCET_URL;
 
     try {
       const faucetClient = new FaucetClient(NODE_URL, FAUCET_URL);
-      const response = await faucetClient.fundAccount(walletAddress, 1e9);
+      const response = await faucetClient.fundAccount(walletAddress, 1e10 * Number(1));
       console.log("Faucet response:", response);
       return response;
     } catch (error) {

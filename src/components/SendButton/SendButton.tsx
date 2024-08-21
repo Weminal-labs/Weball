@@ -1,6 +1,7 @@
 import { PropsWithChildren } from "react";
 import { useSendAptos } from "../../hooks/useSendAptos";
 import { ButtonFaucet } from "../layout/UpdateAccout/UpdateAccount.styled";
+import { useAlert } from "../../contexts/AlertProvider";
 
 type SendButtonProps = {
   walletAddress: string;
@@ -12,12 +13,14 @@ export const SendButton = (props: PropsWithChildren<SendButtonProps>) => {
   console.log(
     "Walet", walletAddress + " Type" + type
   );
+  const {setAlert} = useAlert()
 
   const sendApt = useSendAptos(walletAddress, type);
   console.log("CHeck sendApt", sendApt);
 
   const onSubmit = async () => {
     await sendApt();
+    setAlert("You get 1 aptos","success")
   };
 
   return (

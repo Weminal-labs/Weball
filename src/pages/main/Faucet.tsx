@@ -4,17 +4,19 @@ import { Account, Aptos, AptosConfig, Ed25519PrivateKey, Network, Secp256k1Priva
 import { MODULE_ADDRESS } from "../../utils/Var";
 import { Buffer } from "buffer";
 import { SendButton } from "../../components/SendButton/SendButton";
+import { useAlert } from "../../contexts/AlertProvider";
 
-const AddBets: React.FC = () => {
+const Faucet: React.FC = () => {
   const [open, setOpen] = useState(false);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const {setAlert} = useAlert()
   const hexToUint8Array = (hex: string): Uint8Array => {
     return Uint8Array.from(Buffer.from(hex.slice(2), "hex"));
   };
   
-
+  
   const createRoomContract = async () => {
     const aptosConfig = new AptosConfig({ network: Network.TESTNET });
     const aptos = new Aptos(aptosConfig);
@@ -103,4 +105,4 @@ const AddBets: React.FC = () => {
 };
 
 
-export default AddBets;
+export default Faucet;
