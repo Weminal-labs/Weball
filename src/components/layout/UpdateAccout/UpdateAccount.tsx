@@ -1,13 +1,29 @@
 import { Cancel, CheckCircle } from "@mui/icons-material";
-import { Avatar, Box, Button, CircularProgress, Grid, Modal, TextField, Typography } from "@mui/material";
+import {
+  Avatar,
+  Box,
+  Button,
+  CircularProgress,
+  Grid,
+  Modal,
+  TextField,
+  Typography,
+} from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { Aptos, AptosConfig, InputViewFunctionData, Network } from "@aptos-labs/ts-sdk";
+import {
+  Aptos,
+  AptosConfig,
+  InputViewFunctionData,
+  Network,
+} from "@aptos-labs/ts-sdk";
 import { AptimusNetwork } from "aptimus-sdk-test";
 import { useAptimusFlow, useKeylessLogin } from "aptimus-sdk-test/react";
 import { ButtonLogout } from "./UpdateAccount.styled";
 import useAuth from "../../../hooks/useAuth";
 import { MODULE_ADDRESS } from "../../../utils/Var";
 import { SendButton } from "../../SendButton/SendButton";
+import { useAlert } from "../../../contexts/AlertProvider";
+import useContract from "../../../hooks/useContract";
 
 const UpdateAccount = () => {
   const [editingImageLink, setEditingImageLink] = useState<string>("");
@@ -20,7 +36,8 @@ const UpdateAccount = () => {
   const { auth } = useAuth();
   const flow = useAptimusFlow();
   const { address } = useKeylessLogin();
-
+  const { callContract } = useContract();
+  const { setAlert } = useAlert();
   const existingImages = [
     // `${auth?.picture}`,
     "https://i.pinimg.com/564x/08/13/41/08134115f47ccd166886b40f36485721.jpg",
@@ -32,10 +49,10 @@ const UpdateAccount = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      console.log(address)
+      console.log(address);
       if (address) {
         try {
-          setLoadingFetch(true)
+          setLoadingFetch(true);
           const aptosConfig = new AptosConfig({ network: Network.TESTNET });
           const aptos = new Aptos(aptosConfig);
           const payload: InputViewFunctionData = {
@@ -43,12 +60,11 @@ const UpdateAccount = () => {
             functionArguments: [address],
           };
           const response = await aptos.view({ payload });
-          console.log("Check data:", response);
 
           // Handle the response as needed (e.g., set user data)
           window.location.href = "/";
         } catch (error) {
-          setLoadingFetch(false)
+          setLoadingFetch(false);
 
           //   console.error("Error fetching player info:", error);
           //   window.location.href = "/auth/login";
@@ -72,70 +88,39 @@ const UpdateAccount = () => {
 
   const handleUpdate = async () => {
     if (usernameTaken) {
-      alert("Username is already taken. Please choose another one.");
+      setAlert("Username is already taken. Please choose another one.", "info");
+
       return;
     }
-    console.log("Info")
 
-    try {
-      setLoading(true);
-      const aptosConfig = new AptosConfig({ network: Network.TESTNET });
-      const aptos = new Aptos(aptosConfig);
-      const FUNCTION_NAME = `${MODULE_ADDRESS}::gamev3::update_account`;
-
-
-      const transaction = await aptos.transaction.build.simple({
-        sender: address ?? "",
-        data: {
-          function: FUNCTION_NAME,
-          functionArguments: [editingName, editingUsername, editingImageLink],
-        },
-      });
-
-      const committedTransaction = await flow.executeTransaction({
-        aptos,
-        transaction,
-        network: AptimusNetwork.TESTNET,
-      });
-
-      if (committedTransaction?.success) {
-        alert("Profile updated successfully!");
+    setLoading(true);
+    await callContract({
+      functionName: "update_account",
+      functionArgs: [editingName, editingUsername, editingImageLink],
+      onSuccess(result) {
         window.location.href = "/";
-      } else {
-        alert("Failed to update profile. Please try again.");
-      }
-    } catch (error) {
-      console.error("Error updating profile:", error);
-      //   alert("An error occurred while updating the profile.");
-    } finally {
-      setLoading(false);
-    }
+        // setAlert("Create account successfully!", "success");
+      },
+      onError(error) {
+        console.error("Lỗi khi:", error.status);
+
+        console.error("Lỗi khi gọi hàm smart contract:", error);
+        setAlert("You need to faucet your account!", "info");
+      },
+      onFinally() {
+        setLoading(false);
+      },
+    });
   };
   if (loadingFetch) {
-    <CircularProgress />
-
+    <CircularProgress />;
   }
 
   const handleLogout = () => {
-    localStorage.clear()
-    flow.logout()
-    window.location.reload("/")
-  }
-
-  // async function callFaucet(amount: number, address: string): Promise<string[]> {
-  //   const faucetClient = new AptosFaucetClient({
-  //     BASE: "https://faucet.testnet.aptoslabs.com",
-  //   });
-  //   const request: FundRequest = {
-  //     amount,
-  //     address,
-  //   };
-  //   const response = await faucetClient.fund({ requestBody: request });
-  //   console.log("check faucet:", response.txn_hashes);
-  //
-  //   return response.txn_hashes;
-  // }
-
+    localStorage.clear();
+    flow.logout();
+    window.location.href = "/";
+  };
 
   return (
     <Modal
@@ -161,9 +146,16 @@ const UpdateAccount = () => {
         }}
       >
         <Box display="flex" flexDirection="column" gap={2} width="100%">
-          <Box display="flex" flexDirection="row" gap={2} width="100%" justifyContent="space-between" alignItems="center" textAlign="center">
-
-            <Typography variant="h5" sx={{ color: "Black" }} >
+          <Box
+            display="flex"
+            flexDirection="row"
+            gap={2}
+            width="100%"
+            justifyContent="space-between"
+            alignItems="center"
+            textAlign="center"
+          >
+            <Typography variant="h5" sx={{ color: "Black" }}>
               Create Your Account
             </Typography>
 
