@@ -37,10 +37,6 @@ const PlayerInfoModal: React.FC<PlayerInfoModalProps> = ({ open, handleClose, pl
     const { username, name, points, games_played, winning_games, likes_received, dislikes_received, user_image } = playerInfo;
     const winRate = (Number(games_played) > 0) ? (Number(winning_games) / Number(games_played)) * 100 : 0;
 
-    useEffect(() => {
-        setLikes(Number(likes_received));
-        setDislikes(Number(dislikes_received));
-    }, [likes_received, dislikes_received]);
 
     const handleLike = async () => {
         await callContract({
