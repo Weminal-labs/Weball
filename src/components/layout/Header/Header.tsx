@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
+import { AttachMoney } from "@mui/icons-material";
 import { useAptimusFlow } from "aptimus-sdk-test/react";
 import { Aptos, AptosConfig, InputViewFunctionData, Network } from "@aptos-labs/ts-sdk";
 import useAuth from "../../../hooks/useAuth";
-import { Menu, MenuItem, Modal, Box, TextField, Button, Avatar, Tooltip } from "@mui/material";
+import { Menu, MenuItem, Modal, Box, TextField, Button, Avatar, Tooltip, Typography } from "@mui/material";
 import { HeaderContainer, LeftHeader, TitleContainer, Logo, Title, RightHeader, WelcomeText, ChatModalBox, MessageList, MessageItem, MessageInfo, MessageText, MessageMeta, MessageUsername } from "./Header.style";
 import ProfileModal from "../../ProfileModal/ProfileModal";
 import PlayerInfoModal from "./PlayerInfoModal";
@@ -13,6 +14,14 @@ import { PlayerInfo } from "../../../type/type";
 import useGetPlayer from "../../../hooks/useGetPlayer";
 import useContract from "../../../hooks/useContract";
 import { BsSend } from 'react-icons/bs';
+
+interface CoinStoreResource {
+  data: {
+    coin: {
+      value: string;
+    };
+  };
+}
 
 const Header: React.FC = () => {
   const address = localStorage.getItem("address");
@@ -28,7 +37,7 @@ const Header: React.FC = () => {
   const [playerInfo, setPlayerInfo] = useState<PlayerInfo | null>(null);
   const messageListRef = useRef<HTMLDivElement>(null);
   const [playerAddress, setPlayerAddress] = useState<string | null>(null);
-
+  const [balance, setBalance] = useState<string>("");
   const open = Boolean(anchorEl);
 
   const { fetchPlayer } = useGetPlayer();
@@ -40,6 +49,29 @@ const Header: React.FC = () => {
     if (player) setPlayerInfo(player);
     setLoading(false);
   };
+
+  
+  const fetchBalance = async (address: string) => {
+    setLoading(true);
+    const player = await fetchPlayer(address);
+    const aptosConfig = new AptosConfig({ network: Network.TESTNET });
+    const aptos = new Aptos(aptosConfig);
+    const resource =await aptos.getAccountResource<Coin>({
+      accountAddress: address,
+      resourceType: "0x1::coin::CoinStore<0x1::aptos_coin::AptosCoin>",
+    });
+     
+    // Now you have access to the response type property
+    const value = resource.coin.value;
+    setBalance(value)
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (address) {
+      fetchBalance(address);
+    }
+  }, [address]);
 
   useEffect(() => {
     if (chatModalOpen) {
@@ -170,6 +202,12 @@ const Header: React.FC = () => {
       </LeftHeader>
       <RightHeader>
         <Button onClick={() => setChatModalOpen(true)} sx={{ color: "white" }}>Chat</Button>
+        <Box sx={{ display: 'flex', alignItems: 'center', mr: 2 }}>
+          <AttachMoney color="action" />
+          <Typography variant="body2" sx={{ color: 'white' }}>
+            {parseFloat(balance) / 100000000} APT
+          </Typography>
+        </Box>
         <WelcomeText onClick={() => navigator.clipboard.writeText(address ?? "")}>{shortenAddress(address ?? "", 5)}</WelcomeText>
         <Avatar
           component="div"
