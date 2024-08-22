@@ -6,7 +6,6 @@ import { PlayerInfo, User } from '../../type/type';
 import { jwtDecode} from 'jwt-decode';
 import { Aptos, AptosConfig, InputViewFunctionData, Network } from '@aptos-labs/ts-sdk';
 import { MODULE_ADDRESS } from '../../utils/Var';
-import UpdateAccount from './UpdateAccount';
 
 const RequireAuth = () => {
   const { auth, setAuth } = useAuth();
@@ -84,7 +83,7 @@ const RequireAuth = () => {
         setCheckUpdate(true);
       } catch (error) {
         console.log(error);
-        navigate("/auth/update");
+        navigate("/update");
         setCheckUpdate(false);
       }
     }

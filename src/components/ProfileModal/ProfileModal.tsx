@@ -10,7 +10,9 @@ import { ModalContainer, ModalContent, Header, ImageUpload, InfoBox, StatBox, St
 import { Box, Button, Divider, LinearProgress, Typography, TextField, Grid } from "@mui/material";
 import { shortenAddress } from '../../utils/Shorten';
 import { ContentCopy } from "@mui/icons-material";
-import { Cancel, CheckCircle, Star } from "@mui/icons-material";
+import { Cancel, CheckCircle, Star, AttachMoney } from "@mui/icons-material";
+import { useAlert } from "../../contexts/AlertProvider";
+type Coin = { coin: { value: string } };
 
 export interface ProfileModalProps {
   open: boolean;
@@ -29,6 +31,7 @@ const existingImages = [
 const ProfileModal: React.FC<ProfileModalProps> = ({ open, handleOpen, handleClose }) => {
   const { auth } = useAuth();
   const address = localStorage.getItem("address") ?? "";
+  const [balance,setBalance]=useState<string>("")
   const { fetchPlayer  } = useGetPlayer();
   const { callContract } = useContract();
 
@@ -43,6 +46,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ open, handleOpen, handleClo
   const [editingImageLink, setEditingImageLink] = useState<string>("");
   const [usernameTaken, setUsernameTaken] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const { setAlert } = useAlert();
 
   useEffect(() => {
     if (open) {
@@ -65,6 +69,16 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ open, handleOpen, handleClo
   const fetchPlayerInfo = async (address: string) => {
     setLoading(true);
     const player = await fetchPlayer(address);
+    const aptosConfig = new AptosConfig({ network: Network.TESTNET });
+    const aptos = new Aptos(aptosConfig);
+    const resource =await aptos.getAccountResource<Coin>({
+      accountAddress: address,
+      resourceType: "0x1::coin::CoinStore<0x1::aptos_coin::AptosCoin>",
+    });
+     
+    // Now you have access to the response type property
+    const value = resource.coin.value;
+    setBalance(value)
     if (player) {
       setPlayerInfo(player);
       setEditingName(player.name || "");
@@ -98,14 +112,14 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ open, handleOpen, handleClo
 
   const handleUpdate = async () => {
     if (usernameTaken) {
-      alert("Username is already taken. Please choose another one.");
+      setAlert("Username is already taken. Please choose another one.", "error");
       return;
     }
     await callContract({
       functionName: "update_account",
       functionArgs: [editingName, editingUsername, editingImageLink],
       onSuccess: (data: any) => {
-        alert("Profile updated successfully!");
+        setAlert("Profile updated successfully!", "success");
         setPlayerInfo((prev) => ({
           ...prev,
           name: editingName,
@@ -154,10 +168,13 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ open, handleOpen, handleClo
             ✉️ {auth?.email}
             <br />
             🪪 {shortenAddress(address, 5)}{" "}
+            
             <ContentCopy
               style={{ fontSize: "smaller", cursor: "pointer" }}
               onClick={() => navigator.clipboard.writeText(address)}
             />
+            <br />
+            <AttachMoney color="action" /> {parseFloat(balance)/1000000000} APT
           </InfoBox>
         </Box>
         <Box display="flex" flexDirection="column" gap={1} width="100%">

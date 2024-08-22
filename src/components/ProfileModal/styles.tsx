@@ -58,7 +58,7 @@ export const ImageUpload = styled.div<{ imageUrl: string, editing: boolean }>`
 
 export const InfoBox = styled(Box)`
   width: 320px;
-  height: 85px;
+  height: 110px;
   border: 3px solid gray;
   border-radius: 8px;
   font-size: 20px;
