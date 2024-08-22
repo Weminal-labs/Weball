@@ -2,6 +2,7 @@ import { Box, Button, Modal, TextField, Typography } from "@mui/material";
 import { CreateRoomType, RoomType } from "../../type/type";
 import { useAptimusFlow, useKeylessLogin } from "aptimus-sdk-test/react";
 import useContract from "../../hooks/useContract";
+import { useAlert } from "../../contexts/AlertProvider";
 
 interface Pros {
   open: boolean;
@@ -19,7 +20,7 @@ const JoinRoomDialog: React.FC<Pros> = ({
 }) => {
 
   const { callContract, loading, error } = useContract();
-
+  const{setAlert}=useAlert()
   const JoinRoomHandle = async () => {
     closeModal();
     setIsLoading(true);
@@ -27,6 +28,7 @@ const JoinRoomDialog: React.FC<Pros> = ({
       functionName:"join_room_by_room_id",
       functionArgs: [Number(room?.room_id)],
       onSuccess(result) {
+        console.log("ahahha")
         setIsLoading(false);
         openWaitingRoom();
       },
@@ -34,6 +36,7 @@ const JoinRoomDialog: React.FC<Pros> = ({
         console.error("Lỗi khi:", error.status);
 
         console.error("Lỗi khi gọi hàm smart contract:", error);
+        setAlert("Can't join this room","info")
       },
       onFinally() {
           

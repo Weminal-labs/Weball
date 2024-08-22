@@ -32,7 +32,7 @@ const UpdateAccount = () => {
   const [usernameTaken, setUsernameTaken] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingFetch, setLoadingFetch] = useState<boolean>(true);
-
+  const {auth}=useAuth()
   const flow = useAptimusFlow();
   const { address } = useKeylessLogin();
   const { callContract } = useContract();

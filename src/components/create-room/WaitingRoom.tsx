@@ -94,7 +94,7 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
       }
       if (roomDetail?.is_player2_joined) {
         const p2 = await fetchPlayer(roomDetail.player2.vec[0]);
-
+        console.log(p2)
         setPlayer2({
           address: roomDetail.player2.vec[0] ?? "",
           ready: roomDetail.is_player2_ready,
@@ -160,11 +160,11 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
   },[player1,player2])
   const getDetailRoom = async (intervalId: NodeJS.Timeout) => {
     try {
+      console.log("exit")
 
       const roomData = await fetchRoomDetail();
 
       if (roomData.creator_ready && roomData.is_player2_ready) {
-        console.log("exit")
         clearInterval(intervalId); // Dừng interval khi cả hai player sẵn sàng
         
       }

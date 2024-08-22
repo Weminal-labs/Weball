@@ -85,6 +85,9 @@ const PlayGame: React.FC = () => {
       setLoadGame(true);
     }
   };
+  useEffect(()=>{
+    console.log(openWaitRoom)
+  },[openWaitRoom])
   const handleCloseAlert = () => {
     setOpenAlert(false);
   };
@@ -136,7 +139,7 @@ const PlayGame: React.FC = () => {
       roomId: roomObj?.room_id,
       roomName: roomObj?.room_name,
       userId: address,
-      userName: auth?.email,
+      userName: auth?.family_name,
     };
     sendMessage("RoomPlayer", "JoinOrCreateRoom", JSON.stringify(obj));
     setShow(true);
@@ -145,13 +148,24 @@ const PlayGame: React.FC = () => {
   const createRoomContract = async (
     ROOM_NAME: string,
     bet_amount: string,
-
+    withMate: boolean,
+    mateAddress: string,
   ) => {
     setOpenCreate(false);
-
-    await callContract({
-      functionName: "create_room",
-      functionArgs: [ROOM_NAME, bet_amount],
+    let functionName = "";
+    let functionArgs: any[] = [];
+  
+    if (withMate) {
+      functionName = "create_room_mate";
+      functionArgs = [ROOM_NAME, bet_amount, mateAddress];
+    } else {
+      functionName = "create_room";
+      functionArgs = [ROOM_NAME, bet_amount];
+    }
+  
+    const a=await callContract({
+      functionName,
+      functionArgs,
       onSuccess: (result) => {
         // @ts-ignore
 
@@ -181,8 +195,15 @@ const PlayGame: React.FC = () => {
         console.error("Lỗi khi gọi hàm smart contract:", error);
       },
     });
+  
+  
   };
-
+  const handleOpenWaitingRoom = ()=>{
+ // setIsCreator(false);
+            // console.log('adsd')
+            // setLoadGame(true);
+            // setOpenWaitRoom(true);
+  }
   return (
     <>
       <JoinRoomContainer>
@@ -222,6 +243,7 @@ const PlayGame: React.FC = () => {
 
             <GridContainer container spacing={4}>
               {displayedRooms.map((room, index) => {
+                console.log(room)
                 if (!Compare(room.creator, address!, 5))
                   return (
                     <Grid item xs={12} sm={6} md={4} key={index}>
@@ -259,12 +281,7 @@ const PlayGame: React.FC = () => {
         )}
 
         <JoinRoomDialog
-          openWaitingRoom={() => {
-            setIsCreator(false);
-
-            setLoadGame(true);
-            setOpenWaitRoom(true);
-          }}
+          openWaitingRoom={open}
           open={openDialog}
           closeModal={() => {
             setOpenDialog(false);
@@ -272,9 +289,9 @@ const PlayGame: React.FC = () => {
           room={roomObj}
           setIsLoading={setIsLoading}
         />
-        {roomObj && (
-          <WaitingRoom
-            openGame={openGame}
+        {(
+          openWaitRoom&&<WaitingRoom
+            openGame={handleOpenWaitingRoom}
             room={roomObj}
             open={openWaitRoom}
             closeRoom={() => {

@@ -20,6 +20,7 @@ const Messenger = ({ message, sender }: Pros) => {
   },[])
   const getAnother = async()=>{
 	const p2 = await fetchPlayer(sender)
+  console.log(p2?.user_image)
 	setImage(p2?.user_image??"")
   }
   return (
