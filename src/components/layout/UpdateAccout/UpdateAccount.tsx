@@ -39,7 +39,7 @@ const UpdateAccount = () => {
   const { callContract } = useContract();
   const { setAlert } = useAlert();
   const existingImages = [
-    // `${auth?.picture}`,
+    `${auth?.picture}`,
     "https://i.pinimg.com/564x/08/13/41/08134115f47ccd166886b40f36485721.jpg",
     "https://i.pinimg.com/564x/92/ab/3f/92ab3fa97e04a9eedc3a73daa634aa84.jpg",
     "https://i.pinimg.com/564x/1a/cd/42/1acd42b4e937c727350954d0df62177d.jpg",
@@ -73,7 +73,7 @@ const UpdateAccount = () => {
         window.location.href = "/auth/login";
       }
     };
-
+    console.log(auth)
     fetchData();
   }, [address]);
 
@@ -102,10 +102,17 @@ const UpdateAccount = () => {
         // setAlert("Create account successfully!", "success");
       },
       onError(error) {
+        if(error.status===404){
+          setAlert("You need to faucet your account!", "info");
+        }
+        else{
+          setAlert("Username is already taken. Please choose another one.", "info");
+
+        }
         console.error("Lỗi khi:", error.status);
 
         console.error("Lỗi khi gọi hàm smart contract:", error);
-        setAlert("You need to faucet your account!", "info");
+       
       },
       onFinally() {
         setLoading(false);

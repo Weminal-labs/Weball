@@ -58,7 +58,7 @@ export const UnityGameProvider: React.FC<GameProviderProps> = ({
     const aptos = new Aptos(aptosConfig);
 
     const privateKey = new Ed25519PrivateKey(
-      "0xaa1ce17df0313c67ccd1db30a81587f0af3d6c88b12eeb2e30e550c4f7e75421",
+      "0x6a012a517041c80c95af8e5459cfc3b582a5ef625b39a58b146f95190e19cb24",
     );
 
     const account = await Account.fromPrivateKey({ privateKey });
@@ -71,12 +71,12 @@ export const UnityGameProvider: React.FC<GameProviderProps> = ({
 
     try {
       const transaction = await aptos.transaction.build.simple({
-        sender: accountAddress, // Use the address as a string
+        sender: accountAddress, 
         data: {
           function: FUNCTION_NAME,
           functionArguments: [
             roomId,
-            winner, // Address as a string
+            winner, 
           ],
         },
       });
