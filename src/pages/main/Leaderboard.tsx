@@ -10,10 +10,12 @@ import {
   InputViewFunctionData,
 } from "@aptos-labs/ts-sdk";
 import { MODULE_ADDRESS } from "../../utils/Var";
-
-// Player Interface
+import PlayerInfoModal from "../../components/layout/Header/PlayerInfoModal";
+import useGetPlayer from "../../hooks/useGetPlayer";
+import { PlayerInfo } from "../../type/type.ts";// Player Interface
 interface Player {
   address: string;
+  username: string;
   games_played: number;
   points: number;
   winning_games: number;
@@ -57,10 +59,11 @@ const LeaderboardContainer = styled.div`
   background-color: #1a1a2e;
   color: white;
   padding: 20px;
-  border-radius: 10px;
-  width: 100%;
-  max-width: 800px;
-  margin: 0 auto;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   animation: ${fadeIn} 0.5s ease-in;
 `;
 
@@ -100,6 +103,7 @@ const PodiumPlace = styled.div<{ place: number }>`
   animation-delay: ${(props) => props.place * 0.2}s;
 `;
 
+
 const Crown = styled.div`
   font-size: 40px;
   margin-bottom: 10px;
@@ -115,6 +119,7 @@ const Avatar = styled.img`
 const Username = styled.div`
   margin-top: 10px;
   font-weight: bold;
+  cursor: pointer;
 `;
 
 const Score = styled.div`
@@ -169,12 +174,11 @@ const Rank = styled.div`
   font-weight: bold;
 `;
 
-const PlayerInfo = styled.div`
+const PlayerInfoWrapper = styled.div`
   flex-grow: 1;
   display: flex;
   align-items: center;
 `;
-
 const SmallAvatar = styled.img`
   width: 30px;
   height: 30px;
@@ -187,68 +191,23 @@ const PlayerScore = styled.div`
   font-weight: bold;
 `;
 
-function uint8ArrayToHex(uint8Array: Uint8Array): string {
-  return Array.from(uint8Array, (byte) =>
-    byte.toString(16).padStart(2, "0"),
-  ).join("");
-}
+
+
+const shortenAddress = (address: string, chars = 4): string => {
+  return `${address.slice(0, chars)}...${address.slice(-chars)}`;
+};
 
 const Leaderboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"top10" | "top50" | "top100">(
     "top10",
   );
+  const [loading, setLoading] = useState(false);
   const [players, setPlayers] = useState<Player[]>([]);
+  const [playerInfoModalOpen, setPlayerInfoModalOpen] = useState(false);
+  const [playerInfo, setPlayerInfo] = useState<PlayerInfo | null>(null);
+  const [playerAddress, setPlayerAddress] = useState<string | null>(null);
+  const { fetchPlayer } = useGetPlayer();
 
-  const pickWinnerByRoomId = async () => {
-    const aptosConfig = new AptosConfig({ network: Network.TESTNET });
-    const aptos = new Aptos(aptosConfig);
-
-    const privateKeyHex =
-      "0x0cdae4b8e4a1795ffc36d89ebbbdd7bd0cb0e0d81091290096f8d92d40c1fe43";
-    const privateKeyBytes = Buffer.from(privateKeyHex.slice(2), "hex");
-    const privateKey = new Secp256k1PrivateKey(privateKeyBytes);
-    const account = await aptos.deriveAccountFromPrivateKey({ privateKey });
-    // @ts-ignore
-
-    const accountAddress = account.address.toString();
-    console.log("Account Address (Hex):", accountAddress);
-
-    const FUNCTION_NAME = `${MODULE_ADDRESS}::gamev3::pick_winner_and_transfer_bet`;
-
-    try {
-      const payload: InputViewFunctionData = {
-        function: FUNCTION_NAME,
-        // type_arguments: [],
-        functionArguments: [
-          1723050710, // Room ID
-          "0xae93702b20fa4ce18cb54c4ab9e3bcd5feb654d8053a10b197f89b4759f431d8", // Address as a string
-        ],
-      };
-      // @ts-ignore
-
-      const txnRequest = await aptos.generateTransaction(
-            // @ts-ignore
-
-        account.address(),
-        payload,
-      );
-      // @ts-ignore
-
-      const signedTxn = await aptos.signTransaction(account, txnRequest);
-      // @ts-ignore
-
-      const txnHash = await aptos.submitTransaction(signedTxn);
-
-      await aptos.waitForTransaction(txnHash);
-
-      console.log("Transaction hash:", txnHash);
-    } catch (error) {
-          // @ts-ignore
-
-      console.error("Error Status:", error.status);
-      console.error("Error calling smart contract function:", error);
-    }
-  };
 
   useEffect(() => {
     if (activeTab === "top10") {
@@ -260,50 +219,21 @@ const Leaderboard: React.FC = () => {
     }
   }, [activeTab]);
 
-  const fetchTop10Players = async () => {
-    try {
-      const aptosConfig = new AptosConfig({ network: Network.TESTNET });
-      const aptos = new Aptos(aptosConfig);
-      const payload : InputViewFunctionData= {
-        function: `${MODULE_ADDRESS}::gamev3::get_top_10_players`,
-        functionArguments: [],
-      };
-      const data = await aptos.view({ payload });
-      console.log("Top 10 Players Data: ", data); // Debug log
-
-      const players = data.map((entry: any, index: number) => {
-        const player = entry[0]; // Adjusting to access the object inside the array
-        return {
-          address: player.address,
-          games_played: parseInt(player.games_played, 10),
-          points: parseInt(player.points, 10),
-          winning_games: parseInt(player.winning_games, 10),
-          rank: index + 1,
-        };
-      });
-
-      setPlayers(players);
-      console.log("Processed Top 10 Players: ", players); // Debug log
-    } catch (error) {
-      console.error("Failed to fetch top 10 players:", error);
-    }
-  };
-
-  const fetchTop50Players = async () => {
+ const fetchPlayers = async (getPlayersFunction: string) => {
     try {
       const aptosConfig = new AptosConfig({ network: Network.TESTNET });
       const aptos = new Aptos(aptosConfig);
       const payload: InputViewFunctionData = {
-        function: `${MODULE_ADDRESS}::gamev3::get_top_50_players`,
+        function: `${MODULE_ADDRESS}::gamev3::${getPlayersFunction}`,
         functionArguments: [],
       };
       const data = await aptos.view({ payload });
-      console.log("Top 50 Players Data: ", data); // Debug log
 
       const players = data.map((entry: any, index: number) => {
-        const player = entry[0]; // Adjusting to access the object inside the array
+        const player = entry[0];
         return {
           address: player.address,
+          username: player.username || `Player ${index + 1}`, // Add this line
           games_played: parseInt(player.games_played, 10),
           points: parseInt(player.points, 10),
           winning_games: parseInt(player.winning_games, 10),
@@ -312,39 +242,25 @@ const Leaderboard: React.FC = () => {
       });
 
       setPlayers(players);
-      console.log("Processed Top 50 Players: ", players); // Debug log
     } catch (error) {
-      console.error("Failed to fetch top 50 players:", error);
+      console.error(`Failed to fetch players:`, error);
     }
   };
 
-  const fetchTop100Players = async () => {
-    try {
-      const aptosConfig = new AptosConfig({ network: Network.TESTNET });
-      const aptos = new Aptos(aptosConfig);
-      const payload: InputViewFunctionData = {
-        function: `${MODULE_ADDRESS}::gamev3::get_top_100_players`,
-        functionArguments: [],
-      };
-      const data = await aptos.view({ payload });
-      console.log("Top 100 Players Data: ", data); // Debug log
+  const fetchTop10Players = () => fetchPlayers("get_top_10_players");
+  const fetchTop50Players = () => fetchPlayers("get_top_50_players");
+  const fetchTop100Players = () => fetchPlayers("get_top_100_players");
 
-      const players = data.map((entry: any, index: number) => {
-        const player = entry[0]; // Adjusting to access the object inside the array
-        return {
-          address: player.address,
-          games_played: parseInt(player.games_played, 10),
-          points: parseInt(player.points, 10),
-          winning_games: parseInt(player.winning_games, 10),
-          rank: index + 1,
-        };
-      });
 
-      setPlayers(players);
-      console.log("Processed Top 100 Players: ", players); // Debug log
-    } catch (error) {
-      console.error("Failed to fetch top 100 players:", error);
+  const handlePlayerInfoOpen = async (playerAddress: string) => {
+    setLoading(true);
+    const player = await fetchPlayer(playerAddress);
+    if (player) {
+      setPlayerInfo(player);
+      setPlayerAddress(playerAddress);
+      setPlayerInfoModalOpen(true);
     }
+    setLoading(false);
   };
 
   const topPlayers = players.slice(0, 3);
@@ -374,17 +290,18 @@ const Leaderboard: React.FC = () => {
             Top 100
           </Tab>
         </TabContainer>
-        <button onClick={pickWinnerByRoomId}>Pick Winner</button>
 
-        <PodiumContainer>
+       <PodiumContainer>
           {topPlayers.map((player, index) => (
             <PodiumPlace key={player.address} place={index + 1}>
               <Crown>{index === 0 ? "👑" : index === 1 ? "🥈" : "🥉"}</Crown>
               <Avatar
                 src={`https://avatars.dicebear.com/api/human/${player.address}.svg`}
-                alt={player.address}
+                alt={player.username}
               />
-              <Username>{player.address}</Username>
+              <Username onClick={() => handlePlayerInfoOpen(player.address)}>
+                {shortenAddress(player.address)}
+              </Username>
               <Score>{player.points}</Score>
               <Pedestal place={index + 1}>{index + 1}</Pedestal>
             </PodiumPlace>
@@ -395,18 +312,26 @@ const Leaderboard: React.FC = () => {
           {otherPlayers.map((player) => (
             <LeaderboardItem key={player.address}>
               <Rank>{player.rank}</Rank>
-              <PlayerInfo>
+              <PlayerInfoWrapper>
                 <SmallAvatar
                   src={`https://avatars.dicebear.com/api/human/${player.address}.svg`}
-                  alt={player.address}
+                  alt={player.username}
                 />
-                <Username>{player.address}</Username>
-              </PlayerInfo>
+                <Username onClick={() => handlePlayerInfoOpen(player.address)}>
+                  {player.username || shortenAddress(player.address)}
+                </Username>
+              </PlayerInfoWrapper>
               <PlayerScore>{player.points}</PlayerScore>
             </LeaderboardItem>
           ))}
         </LeaderboardList>
       </LeaderboardContainer>
+      <PlayerInfoModal
+  open={playerInfoModalOpen}
+  handleClose={() => setPlayerInfoModalOpen(false)}
+  playerInfo={playerInfo}
+  playerAddress={playerAddress}
+/>
     </>
   );
 };

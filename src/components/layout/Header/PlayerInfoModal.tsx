@@ -37,12 +37,10 @@ const PlayerInfoModal: React.FC<PlayerInfoModalProps> = ({ open, handleClose, pl
     const { username, name, points, games_played, winning_games, likes_received, dislikes_received, user_image } = playerInfo;
     const winRate = (Number(games_played) > 0) ? (Number(winning_games) / Number(games_played)) * 100 : 0;
 
-    const handleAddFriend = async (username: string) => {
-        // await callContract({
-        //     functionName: "add_friend_account",
-        //     functionArgs: [username],
-        // });
-    };
+    useEffect(() => {
+        setLikes(Number(likes_received));
+        setDislikes(Number(dislikes_received));
+    }, [likes_received, dislikes_received]);
 
     const handleLike = async () => {
         await callContract({
@@ -82,15 +80,6 @@ const PlayerInfoModal: React.FC<PlayerInfoModalProps> = ({ open, handleClose, pl
         <Modal open={open} onClose={handleClose}>
             <PlayerInfoModalBox>
                 <img src={user_image} alt={`${username}'s avatar`} style={{ width: '100px', borderRadius: '50%', marginBottom: '20px' }} />
-                <Button
-                    variant="contained"
-                    color="primary"
-                    startIcon={<PersonAddIcon />}
-                    style={{ marginBottom: '20px' }}
-                    onClick={() => handleAddFriend(username)}
-                >
-                    Add friend
-                </Button>
                 <div style={{ width: '100%', textAlign: 'left' }}>
                     <h2>{name}</h2>
                     <h4>{username}</h4>
