@@ -235,9 +235,9 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
       return true;
     }
   };
-  const readyHandle = async (): Promise<void> => {
-    
 
+  
+  const readyHandle = async () => {
     const isReadyUpdated = isCreator
       ? toggleReadyStatus(player1, setPlayer1)
       : toggleReadyStatus(player2, setPlayer2);
@@ -246,17 +246,28 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
     if (isReadyUpdated) {
       await callContract({
         functionName: "ready_by_room_id",
-        functionArgs:[Number(room?.room_id)],
+        functionArgs: [Number(room?.room_id)],
         onSuccess(result) {
-       
+          const alertContent = (
+            <>
+              Ready Transaction:{" "}
+              <a
+                href={`https://explorer.aptoslabs.com/txn/${result.hash}?network=testnet`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {result.hash}
+              </a>
+            </>
+          );
+          setAlert(alertContent, "success");
         },
         onError(error) {
           console.error("Error executing transaction:", error);
-          setAlert("Transaction failed. Please try again.","error");
+          setAlert("Transaction failed. Please try again.", "error");
         },
-      })
+      });
     }
-    
   };
 
   const handleCloseRoom = async () => {
