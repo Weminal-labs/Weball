@@ -174,7 +174,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ open, handleOpen, handleClo
               onClick={() => navigator.clipboard.writeText(address)}
             />
             <br />
-            <AttachMoney color="action" /> {parseFloat(balance)/1000000000} APT
+            <AttachMoney color="action" /> {parseFloat(balance)/100000000} APT
           </InfoBox>
         </Box>
         <Box display="flex" flexDirection="column" gap={1} width="100%">
