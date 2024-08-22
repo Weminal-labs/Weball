@@ -7,6 +7,7 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { PlayerInfo } from "../../../type/type";
 import useContract from "../../../hooks/useContract";
 import { useState, useEffect } from "react";
+import { useAlert } from '../../../contexts/AlertProvider';
 
 interface PlayerInfoModalProps {
     open: boolean;
@@ -21,8 +22,8 @@ const PlayerInfoModal: React.FC<PlayerInfoModalProps> = ({ open, handleClose, pl
     const winRate = (Number(games_played) > 0) ? (Number(winning_games) / Number(games_played)) * 100 : 0;
     const [likes, setLikes] = useState(Number(likes_received));
     const [dislikes, setDislikes] = useState(Number(dislikes_received));
-
     const { callContract } = useContract();
+    const { setAlert } = useAlert();
 
     const handleAddFriend = async (username: string) => {
         // await callContract({
@@ -45,10 +46,8 @@ const PlayerInfoModal: React.FC<PlayerInfoModalProps> = ({ open, handleClose, pl
                 setDislikes((prev) => prev - 1);
             },
             onError: (error) => {
-                if(error.message.includes("E_CANNOT_LIKE_SELF")) 
-                    alert("You cannot like yourself");
-                else 
-                    alert("Already liked it");
+                if(error.message.includes("E_CANNOT_LIKE_SELF")) setAlert("You cannot like yourself");
+                else setAlert("You already liked it");
             },
         })
     }
@@ -62,10 +61,8 @@ const PlayerInfoModal: React.FC<PlayerInfoModalProps> = ({ open, handleClose, pl
                 setLikes((prev) => prev - 1);
             },
             onError: (error) => {
-                if(error.message.includes("E_CANNOT_DISLIKE_SELF")) 
-                    alert("You cannot dislike yourself");
-                else if(error.message.includes("E_ALREADY_DISLIKED"))
-                    alert("Already disliked it");
+                if(error.message.includes("E_CANNOT_DISLIKE_SELF")) setAlert("You cannot dislike yourself");
+                else setAlert("You already disliked it");
             },
         })
     }

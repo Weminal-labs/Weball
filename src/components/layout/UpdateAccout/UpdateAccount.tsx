@@ -33,7 +33,6 @@ const UpdateAccount = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingFetch, setLoadingFetch] = useState<boolean>(true);
 
-  const { auth } = useAuth();
   const flow = useAptimusFlow();
   const { address } = useKeylessLogin();
   const { callContract } = useContract();
@@ -46,6 +45,35 @@ const UpdateAccount = () => {
     "https://i.pinimg.com/564x/0b/2d/d4/0b2dd46969ebcec7433a030e5e19b624.jpg",
     "https://i.pinimg.com/564x/4c/53/a8/4c53a88106cf101590c53ddc421c5c56.jpg",
   ];
+
+  useEffect(() => {
+    const checkUsername = async () => {
+      if (editingUsername) {
+        const taken = await isUsernameTaken(editingUsername);
+        setUsernameTaken(taken as boolean);
+      } else {
+        setUsernameTaken(false);
+      }
+    };
+    checkUsername();
+  }, [editingUsername]);
+
+  
+  const isUsernameTaken = async (username: string) => {
+    try {
+      const aptosConfig = new AptosConfig({ network: Network.TESTNET });
+      const aptos = new Aptos(aptosConfig);
+      const payload: InputViewFunctionData = {
+        function: `${MODULE_ADDRESS}::gamev3::is_username_taken`,
+        functionArguments: [username],
+      };
+      const response = await aptos.view({ payload });
+      return response[0] as boolean;
+    } catch (error) {
+      console.error("Failed to check username exists:", error);
+      return false;
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
