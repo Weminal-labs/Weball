@@ -48,3 +48,13 @@ export type PlayerInfo = {
   username: string;
   winning_games: string;
 };
+interface PlayerInfoLeader {
+  username: string;
+  name: string;
+  points: number;
+  games_played: number;
+  winning_games: number;
+  likes_received: number;
+  dislikes_received: number;
+  user_image: string;
+}
