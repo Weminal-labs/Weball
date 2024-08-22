@@ -25,11 +25,12 @@ function App() {
             <Route path="/playGame" element={<PlayGame />} />
             <Route path="/leaderboard" element={<Leaderboard />} />
             <Route path="/faucet" element={<Faucet />} />
+            <Route path="/update" element={<UpdateAccount />} />
+
           </Route>
         </Route>
         <Route path="/auth" element={<AuthLayout />}>
           <Route path="login" element={<LoginPage />} />
-          <Route path="update" element={<UpdateAccount />} />
 
         </Route>
         <Route path="callback" element={<CallbackPage />} />
