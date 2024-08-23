@@ -97,6 +97,7 @@ const PlayGame: React.FC = () => {
 
   useEffect(() => {
     if (show === false) {
+      getRooms();
       console.log("Finish Game");
       setRoomObj(null);
       setLoadGame(false);
@@ -157,7 +158,18 @@ const PlayGame: React.FC = () => {
   
     if (withMate) {
       functionName = "create_room_mate";
-      functionArgs = [ROOM_NAME, bet_amount, mateAddress];
+      const aptosConfig = new AptosConfig({ network: Network.TESTNET });
+      const aptos = new Aptos(aptosConfig);
+      const payload: InputViewFunctionData = {
+        function: `${MODULE_ADDRESS}::gamev3::get_address_by_username`,
+        functionArguments: [mateAddress],
+      };
+
+      const response = await aptos.view({ payload });
+      // @ts-ignore
+      const findAddress: string = response[0]
+      console.log(findAddress)
+      functionArgs = [ROOM_NAME, bet_amount, findAddress];
     } else {
       functionName = "create_room";
       functionArgs = [ROOM_NAME, bet_amount];
