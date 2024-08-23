@@ -84,7 +84,7 @@ const JoinRoomDialog: React.FC<Pros> = ({
                 fontWeight: "bold",
               }}
             >
-              TOTAL: {room?.bet_amount} APT
+              TOTAL: {Number(room?.bet_amount)/100000000} APT
             </Typography>
           </div>
           <Button
