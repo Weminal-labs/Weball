@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import {
- 
   Button,
   Grid,
   Modal,
@@ -85,9 +84,9 @@ const PlayGame: React.FC = () => {
       setLoadGame(true);
     }
   };
-  useEffect(()=>{
-    console.log(openWaitRoom)
-  },[openWaitRoom])
+  // useEffect(()=>{
+  //   console.log(openWaitRoom)
+  // },[openWaitRoom])
   const handleCloseAlert = () => {
     setOpenAlert(false);
   };
@@ -155,7 +154,7 @@ const PlayGame: React.FC = () => {
     setOpenCreate(false);
     let functionName = "";
     let functionArgs: any[] = [];
-  
+
     if (withMate) {
       functionName = "create_room_mate";
       const aptosConfig = new AptosConfig({ network: Network.TESTNET });
@@ -167,15 +166,15 @@ const PlayGame: React.FC = () => {
 
       const response = await aptos.view({ payload });
       // @ts-ignore
-      const findAddress: string = response[0]
-      console.log(findAddress)
+      const findAddress: string = response[0];
+      console.log(findAddress);
       functionArgs = [ROOM_NAME, bet_amount, findAddress];
     } else {
       functionName = "create_room";
       functionArgs = [ROOM_NAME, bet_amount];
     }
-  
-    const a=await callContract({
+
+    const a = await callContract({
       functionName,
       functionArgs,
       onSuccess: (result) => {
@@ -200,22 +199,19 @@ const PlayGame: React.FC = () => {
           setContentAlert("Exceed request limit, please wait 5 minutes");
           setOpenAlert(true);
         }
-        
+
         // @ts-ignore
         setContentAlert(error.toString());
         setOpenAlert(true);
         console.error("Lỗi khi gọi hàm smart contract:", error);
       },
     });
-  
-  
   };
-  const handleOpenWaitingRoom = ()=>{
- // setIsCreator(false);
-            // console.log('adsd')
-            // setLoadGame(true);
-            // setOpenWaitRoom(true);
-  }
+  const handleOpenWaitingRoom = () => {
+    setIsCreator(false);
+    setLoadGame(true);
+    setOpenWaitRoom(true);
+  };
   return (
     <>
       <JoinRoomContainer>
@@ -255,7 +251,7 @@ const PlayGame: React.FC = () => {
 
             <GridContainer container spacing={4}>
               {displayedRooms.map((room, index) => {
-                console.log(room)
+                console.log(room);
                 if (!Compare(room.creator, address!, 5))
                   return (
                     <Grid item xs={12} sm={6} md={4} key={index}>
@@ -293,7 +289,7 @@ const PlayGame: React.FC = () => {
         )}
 
         <JoinRoomDialog
-          openWaitingRoom={open}
+          openWaitingRoom={handleOpenWaitingRoom}
           open={openDialog}
           closeModal={() => {
             setOpenDialog(false);
@@ -301,9 +297,9 @@ const PlayGame: React.FC = () => {
           room={roomObj}
           setIsLoading={setIsLoading}
         />
-        {(
-          openWaitRoom&&<WaitingRoom
-            openGame={handleOpenWaitingRoom}
+        {openWaitRoom && (
+          <WaitingRoom
+            openGame={openGame}
             room={roomObj}
             open={openWaitRoom}
             closeRoom={() => {

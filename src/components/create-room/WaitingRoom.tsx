@@ -160,7 +160,7 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
   },[player1,player2])
   const getDetailRoom = async (intervalId: NodeJS.Timeout) => {
     try {
-      console.log("exit")
+      // console.log("exit")
 
       const roomData = await fetchRoomDetail();
 
@@ -228,7 +228,7 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
     setPlayer: React.Dispatch<React.SetStateAction<Player | null>>,
   ): boolean => {
     if (player?.ready) {
-      setAlert("Player not ready",'error')
+      setAlert("You can not cancel ready",'error')
       return false;
     } else {
       setPlayer((prev) => (prev ? { ...prev, ready: !prev.ready } : null));
@@ -297,7 +297,7 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
       // @ts-ignore
       console.error("Mã Lỗi:", error.status);
       // @ts-ignore
-     
+      setAlert(error.toString(),"error")
       console.error("Lỗi khi gọi hàm smart contract:", error);
       },
       onSuccess(result) {
@@ -322,9 +322,9 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
         }}
       >
         <Box sx={style}>
-          <div className={`h-full ${openChat ? "block" : "hidden"}`}>
+          {/* <div className={`h-full ${openChat ? "block" : "hidden"}`}>
             <MessengerContainer roomId={room?.room_id ?? ""} />
-          </div>
+          </div> */}
           <div className="w-[400px]">
             <Typography variant="h6" component="h2">
               Staidum: {room?.room_name ?? ""}

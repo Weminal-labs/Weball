@@ -201,7 +201,7 @@ const Header: React.FC = () => {
         </TitleContainer>
       </LeftHeader>
       <RightHeader>
-        <Button onClick={() => setChatModalOpen(true)} sx={{ color: "white" }}>Chat</Button>
+        {/* <Button onClick={() => setChatModalOpen(true)} sx={{ color: "white" }}>Chat</Button> */}
         <Box sx={{ display: 'flex', alignItems: 'center', mr: 2 }}>
           <AttachMoney color="action" />
           <Typography variant="body2" sx={{ color: 'white' }}>

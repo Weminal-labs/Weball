@@ -58,7 +58,7 @@ export const UnityGameProvider: React.FC<GameProviderProps> = ({
     const aptos = new Aptos(aptosConfig);
 
     const privateKey = new Ed25519PrivateKey(
-      "0x6a012a517041c80c95af8e5459cfc3b582a5ef625b39a58b146f95190e19cb24",
+      "0x2099bc34580870f73e17a8b0676107f723dae26c594520ec82767928114fbed2",
     );
 
     const account = await Account.fromPrivateKey({ privateKey });
