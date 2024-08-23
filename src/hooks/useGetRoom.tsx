@@ -12,7 +12,7 @@ const useGetRoom = () => {
       const aptosConfig = new AptosConfig({ network: Network.TESTNET });
       const aptos = new Aptos(aptosConfig);
       const payload: InputViewFunctionData = {
-        function: `${MODULE_ADDRESS}::gamev3::get_all_rooms`,
+        function: `${MODULE_ADDRESS}::gamev3::get_waiting_rooms`,
       };
       try {
         const data = await aptos.view({ payload });

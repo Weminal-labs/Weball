@@ -61,7 +61,9 @@ const RoomCard: React.FC<RoomProps> = ({
           <div className="text-sm opacity-85">
             Creator: {shortenAddress(roomType.creator, 5)}
           </div>
-          <div>ID: {roomType.room_id}</div>
+          <div className="flex justify-between">
+            <div>ID: {roomType.room_id}</div>
+            {roomType.invited_friend_username.vec[0]&&<div>Mate: {roomType.invited_friend_username.vec[0]}</div>} </div>
         </div>
       </CardContent>
     </Card>

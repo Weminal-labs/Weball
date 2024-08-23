@@ -11,8 +11,8 @@ import AuthLayout from "./pages/layout/AuthLayout";
 import RequireAuth from "./components/layout/RequireAuth";
 import Home from "./pages/main/home/Home";
 import PlayGame from "./pages/main/PlayGame/PlayGamePage";
-import UpdateAccount from "./components/layout/UpdateAccout/UpdateAccount";
 import Faucet from "./pages/main/Faucet";
+import CreateAccount from "./components/layout/CreateAccout/CreateAccount";
 
 function App() {
   return (
@@ -25,13 +25,11 @@ function App() {
             <Route path="/playGame" element={<PlayGame />} />
             <Route path="/leaderboard" element={<Leaderboard />} />
             <Route path="/faucet" element={<Faucet />} />
-            <Route path="/update" element={<UpdateAccount />} />
-
+            <Route path="/create-account" element={<CreateAccount />} />
           </Route>
         </Route>
         <Route path="/auth" element={<AuthLayout />}>
           <Route path="login" element={<LoginPage />} />
-
         </Route>
         <Route path="callback" element={<CallbackPage />} />
       </Routes>

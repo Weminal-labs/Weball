@@ -1,16 +1,30 @@
 import React, { useEffect, useState } from "react";
-import { Aptos, AptosConfig, InputViewFunctionData, Network } from "@aptos-labs/ts-sdk";
+import {
+  Aptos,
+  AptosConfig,
+  InputViewFunctionData,
+  Network,
+} from "@aptos-labs/ts-sdk";
 import { useAptimusFlow, useKeylessLogin } from "aptimus-sdk-test/react";
-import { Avatar, Box, Button, CircularProgress, Grid, Modal, TextField, Typography } from "@mui/material";
+import {
+  Avatar,
+  Box,
+  Button,
+  CircularProgress,
+  Grid,
+  Modal,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { Cancel, CheckCircle } from "@mui/icons-material";
-import { ButtonLogout } from "./UpdateAccount.styled";
+import { ButtonLogout } from "./CreateAccount.styled";
 import { MODULE_ADDRESS } from "../../../utils/Var";
 import { SendButton } from "../../SendButton/SendButton";
 import { useAlert } from "../../../contexts/AlertProvider";
 import useAuth from "../../../hooks/useAuth";
 import useContract from "../../../hooks/useContract";
 
-const UpdateAccount = () => {
+const CreateAccount = () => {
   const [editingImageLink, setEditingImageLink] = useState<string>("");
   const [editingName, setEditingName] = useState<string>("");
   const [editingUsername, setEditingUsername] = useState<string>("");
@@ -19,7 +33,7 @@ const UpdateAccount = () => {
   const [loadingFetch, setLoadingFetch] = useState<boolean>(true);
   const { auth } = useAuth();
   const flow = useAptimusFlow();
-  const { address } = useKeylessLogin();
+  const address = localStorage.getItem("address")
   const { callContract } = useContract();
   const { setAlert } = useAlert();
   const existingImages = [
@@ -74,6 +88,10 @@ const UpdateAccount = () => {
           window.location.href = "/";
         } catch (error) {
           setLoadingFetch(false);
+          console.log(address)
+
+          console.log(error)
+
           // Handle the error as needed
         }
       } else {
@@ -81,7 +99,7 @@ const UpdateAccount = () => {
       }
     };
     fetchData();
-  }, [address]);
+  }, []);
 
   const handleExistingImageSelect = (imageUrl: string) => {
     setEditingImageLink(imageUrl);
@@ -116,8 +134,13 @@ const UpdateAccount = () => {
         setAlert("Create account successfully!", "success");
       },
       onError(error) {
-        if (error.status === 404) setAlert("You need to faucet your account!", "info");
-        else setAlert("Username is already taken. Please choose another one.", "info");
+        if (error.status === 404)
+          setAlert("You need to faucet your account!", "info");
+        else
+          setAlert(
+            "Username is already taken. Please choose another one.",
+            "info",
+          );
         console.error("Error calling smart contract:", error);
       },
       onFinally() {
@@ -185,7 +208,11 @@ const UpdateAccount = () => {
             error={usernameTaken}
             helperText={usernameTaken ? "Username is already taken" : ""}
             InputProps={{
-              endAdornment: usernameTaken ? <Cancel color="error" /> : <CheckCircle color="action" />,
+              endAdornment: usernameTaken ? (
+                <Cancel color="error" />
+              ) : (
+                <CheckCircle color="action" />
+              ),
             }}
             fullWidth
           />
@@ -201,7 +228,10 @@ const UpdateAccount = () => {
                   sx={{
                     width: 56,
                     height: 56,
-                    border: editingImageLink === imgUrl ? "3px solid blue" : "2px solid gray",
+                    border:
+                      editingImageLink === imgUrl
+                        ? "3px solid blue"
+                        : "2px solid gray",
                     cursor: "pointer",
                   }}
                   onClick={() => handleExistingImageSelect(imgUrl)}
@@ -237,4 +267,4 @@ const UpdateAccount = () => {
   );
 };
 
-export default UpdateAccount;
+export default CreateAccount;

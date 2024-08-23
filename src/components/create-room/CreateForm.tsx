@@ -1,5 +1,6 @@
 import {
   Autocomplete, Box, Button, FormControlLabel, IconButton, Modal, RadioGroup, TextField, Typography, Theme, useMediaQuery, useTheme,
+  Switch,
 } from "@mui/material";
 import React, { useState } from "react";
 import styled from "styled-components";
@@ -31,8 +32,8 @@ interface Props {
   createRoomContract: (
     ROOM_NAME: string,
     bet_amount: string,
-    // withMate: boolean,
-    // mateAddress: string,
+    withMate: boolean,
+    mateAddress: string,
   ) => Promise<void>;
   open: boolean;
   onClose: () => void;
@@ -79,16 +80,16 @@ const CustomFormControlLabel: React.FC<CustomFormControlLabelProps> = ({
 const CreateForm: React.FC<Props> = ({ createRoomContract, open, onClose }) => {
   const [roomName, setRoomName] = useState("");
   const [bet, setBet] = useState("");
+  const [mate, setMate] = useState("");
+  const [isMateEnabled, setIsMateEnabled] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { setAlert } = useAlert();
 
   const allFieldsFilled = () => {
     if(roomName && bet) {
-      createRoomContract(
-        roomName,
-        (parseInt(bet) * 1000000).toString(),
-      )
+      createRoomContract(roomName, (parseInt(bet) * 1000000).toString(),isMateEnabled,mate)
+
     } else {
       setAlert( "Fields are not filled", "error", );
     }
@@ -204,7 +205,25 @@ const CreateForm: React.FC<Props> = ({ createRoomContract, open, onClose }) => {
             />
           </RadioGroup>
         </Box>
-
+        <div className="flex flex-col">
+          <FormControlLabel
+            control={
+              <Switch
+                checked={isMateEnabled}
+                onChange={(e) => setIsMateEnabled(e.target.checked)}
+              />
+            }
+            label="Mate"
+          />
+          <TextField
+            label="Your mate"
+            variant="outlined"
+            sx={{ width: "400px" }}
+            value={mate}
+            onChange={(e)=>{setMate(e.target.value)}}
+            disabled={!isMateEnabled}
+          />
+        </div>
         <Button
           variant="contained"
           onClick={allFieldsFilled}

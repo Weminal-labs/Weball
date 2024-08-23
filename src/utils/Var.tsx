@@ -1,1 +1,1 @@
-export const MODULE_ADDRESS="fd874114ae9adacd5ee56e5ccdfd626b15bc1cabd18b24d2369a1664ec60244e"
+export const MODULE_ADDRESS="6597927c07d57fb4faa6502245bca5c94d1ac984077ffdce50ba01ac254e7484"

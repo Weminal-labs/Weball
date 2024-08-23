@@ -19,6 +19,7 @@ export interface RoomType {
   bet_amount: string;
   create_time: string;
   creator: string;
+  username :string;
   creator_ready: boolean;
   invited_friend_username: { vec: string[] }; // Assuming `vec` is an array of strings
   is_creator_joined: boolean;

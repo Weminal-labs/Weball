@@ -83,7 +83,7 @@ const RequireAuth = () => {
         setCheckUpdate(true);
       } catch (error) {
         console.log(error);
-        navigate("/update");
+        navigate("/create-account");
         setCheckUpdate(false);
       }
     }

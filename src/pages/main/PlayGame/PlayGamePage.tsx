@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import {
- 
   Button,
   Grid,
   Modal,
@@ -85,6 +84,9 @@ const PlayGame: React.FC = () => {
       setLoadGame(true);
     }
   };
+  // useEffect(()=>{
+  //   console.log(openWaitRoom)
+  // },[openWaitRoom])
   const handleCloseAlert = () => {
     setOpenAlert(false);
   };
@@ -94,6 +96,7 @@ const PlayGame: React.FC = () => {
 
   useEffect(() => {
     if (show === false) {
+      getRooms();
       console.log("Finish Game");
       setRoomObj(null);
       setLoadGame(false);
@@ -136,7 +139,7 @@ const PlayGame: React.FC = () => {
       roomId: roomObj?.room_id,
       roomName: roomObj?.room_name,
       userId: address,
-      userName: auth?.email,
+      userName: auth?.family_name,
     };
     sendMessage("RoomPlayer", "JoinOrCreateRoom", JSON.stringify(obj));
     setShow(true);
@@ -145,13 +148,35 @@ const PlayGame: React.FC = () => {
   const createRoomContract = async (
     ROOM_NAME: string,
     bet_amount: string,
-
+    withMate: boolean,
+    mateAddress: string,
   ) => {
     setOpenCreate(false);
+    let functionName = "";
+    let functionArgs: any[] = [];
 
-    await callContract({
-      functionName: "create_room",
-      functionArgs: [ROOM_NAME, bet_amount],
+    if (withMate) {
+      functionName = "create_room_mate";
+      const aptosConfig = new AptosConfig({ network: Network.TESTNET });
+      const aptos = new Aptos(aptosConfig);
+      const payload: InputViewFunctionData = {
+        function: `${MODULE_ADDRESS}::gamev3::get_address_by_username`,
+        functionArguments: [mateAddress],
+      };
+
+      const response = await aptos.view({ payload });
+      // @ts-ignore
+      const findAddress: string = response[0];
+      console.log(findAddress);
+      functionArgs = [ROOM_NAME, bet_amount, findAddress];
+    } else {
+      functionName = "create_room";
+      functionArgs = [ROOM_NAME, bet_amount];
+    }
+
+    const a = await callContract({
+      functionName,
+      functionArgs,
       onSuccess: (result) => {
         // @ts-ignore
 
@@ -174,7 +199,7 @@ const PlayGame: React.FC = () => {
           setContentAlert("Exceed request limit, please wait 5 minutes");
           setOpenAlert(true);
         }
-        
+
         // @ts-ignore
         setContentAlert(error.toString());
         setOpenAlert(true);
@@ -182,7 +207,11 @@ const PlayGame: React.FC = () => {
       },
     });
   };
-
+  const handleOpenWaitingRoom = () => {
+    setIsCreator(false);
+    setLoadGame(true);
+    setOpenWaitRoom(true);
+  };
   return (
     <>
       <JoinRoomContainer>
@@ -222,6 +251,7 @@ const PlayGame: React.FC = () => {
 
             <GridContainer container spacing={4}>
               {displayedRooms.map((room, index) => {
+                console.log(room);
                 if (!Compare(room.creator, address!, 5))
                   return (
                     <Grid item xs={12} sm={6} md={4} key={index}>
@@ -259,12 +289,7 @@ const PlayGame: React.FC = () => {
         )}
 
         <JoinRoomDialog
-          openWaitingRoom={() => {
-            setIsCreator(false);
-
-            setLoadGame(true);
-            setOpenWaitRoom(true);
-          }}
+          openWaitingRoom={handleOpenWaitingRoom}
           open={openDialog}
           closeModal={() => {
             setOpenDialog(false);
@@ -272,7 +297,7 @@ const PlayGame: React.FC = () => {
           room={roomObj}
           setIsLoading={setIsLoading}
         />
-        {roomObj && (
+        {openWaitRoom && (
           <WaitingRoom
             openGame={openGame}
             room={roomObj}
