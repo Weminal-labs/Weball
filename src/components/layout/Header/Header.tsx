@@ -23,6 +23,12 @@ interface CoinStoreResource {
   };
 }
 
+interface Coin {
+  coin: {
+    value: string;
+  };
+}
+
 const Header: React.FC = () => {
   const address = localStorage.getItem("address");
   const { auth } = useAuth();
@@ -203,7 +209,7 @@ const Header: React.FC = () => {
       <RightHeader>
         {/* <Button onClick={() => setChatModalOpen(true)} sx={{ color: "white" }}>Chat</Button> */}
         <Box sx={{ display: 'flex', alignItems: 'center', mr: 2 }}>
-          <AttachMoney color="action" />
+          <AttachMoney style={{ color: "#7FFF00" }} />
           <Typography variant="body2" sx={{ color: 'white' }}>
             {parseFloat(balance) / 100000000} APT
           </Typography>
