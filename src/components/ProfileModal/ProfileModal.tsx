@@ -6,8 +6,7 @@ import { MODULE_ADDRESS } from "../../utils/Var";
 import { PlayerInfo } from "../../type/type";
 import useGetPlayer from "../../hooks/useGetPlayer";
 import useContract from "../../hooks/useContract";
-import { ModalContainer, ModalContent, Header, ImageUpload, InfoBox, StatBox, StatItem, AvatarImage } from './styles.tsx';
-import { Box, Button, Divider, LinearProgress, Typography, TextField, Grid } from "@mui/material";
+import { Box, Button, Divider, LinearProgress, Typography, TextField, Grid, Avatar } from "@mui/material";
 import { shortenAddress } from '../../utils/Shorten';
 import { ContentCopy } from "@mui/icons-material";
 import { Cancel, CheckCircle, Star, AttachMoney } from "@mui/icons-material";
@@ -31,8 +30,8 @@ const existingImages = [
 const ProfileModal: React.FC<ProfileModalProps> = ({ open, handleOpen, handleClose }) => {
   const { auth } = useAuth();
   const address = localStorage.getItem("address") ?? "";
-  const [balance,setBalance]=useState<string>("")
-  const { fetchPlayer  } = useGetPlayer();
+  const [balance, setBalance] = useState<string>("");
+  const { fetchPlayer } = useGetPlayer();
   const { callContract } = useContract();
 
   const [playerInfo, setPlayerInfo] = useState<PlayerInfo>({
@@ -71,14 +70,13 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ open, handleOpen, handleClo
     const player = await fetchPlayer(address);
     const aptosConfig = new AptosConfig({ network: Network.TESTNET });
     const aptos = new Aptos(aptosConfig);
-    const resource =await aptos.getAccountResource<Coin>({
+    const resource = await aptos.getAccountResource<Coin>({
       accountAddress: address,
       resourceType: "0x1::coin::CoinStore<0x1::aptos_coin::AptosCoin>",
     });
-     
-    // Now you have access to the response type property
+
     const value = resource.coin.value;
-    setBalance(value)
+    setBalance(value);
     if (player) {
       setPlayerInfo(player);
       setEditingName(player.name || "");
@@ -91,7 +89,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ open, handleOpen, handleClo
     if (Number(playerInfo.games_played) > 0) {
       const ratio = (Number(playerInfo.winning_games) / Number(playerInfo.games_played)) * 100;
       setWinRate(parseFloat(ratio.toFixed(2)));
-    } 
+    }
   }, [playerInfo.games_played, playerInfo.winning_games]);
 
   const isUsernameTaken = async (username: string) => {
@@ -126,7 +124,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ open, handleOpen, handleClo
           username: editingUsername,
           user_image: editingImageLink,
         }));
-        window.location.reload();
+        handleCloseModal();
       },
       onError: (error: any) => {
         console.error("Error updating profile:", error);
@@ -141,192 +139,150 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ open, handleOpen, handleClo
     setEditingImageLink("");
   };
 
-  return (
-    <Modal
-      open={open}
-      onClose={handleCloseModal}
-      aria-labelledby="profile-modal-title"
-      aria-describedby="profile-modal-description"
-    >
-      <ModalContainer>
-      <ModalContent>
-        <Header>Player Information</Header>
-        {loading && (
-          <Box width="100%">
-            <LinearProgress />
-          </Box>
-        )}
-        <Box display="flex" gap={2} alignItems="center">
-          <label htmlFor="image-upload">
-            <ImageUpload
-              id="image-upload"
-              imageUrl={playerInfo.user_image || auth?.picture || ""}
-              editing={editing}
-            />
-          </label>
-          <InfoBox>
-            ✉️ {auth?.email}
-            <br />
-            🪪 {shortenAddress(address, 5)}{" "}
-            
-            <ContentCopy
-              style={{ fontSize: "smaller", cursor: "pointer" }}
-              onClick={() => navigator.clipboard.writeText(address)}
-            />
-            <br />
-            <AttachMoney color="action" /> {parseFloat(balance)/100000000} APT
-          </InfoBox>
-        </Box>
-        <Box display="flex" flexDirection="column" gap={1} width="100%">
-          {editing ? (
-            <>
-              <TextField
-                label="Name"
-                variant="outlined"
-                value={editingName}
-                onChange={(e) => setEditingName(e.target.value)}
-                fullWidth
-              />
-              <TextField
-                label="Username"
-                variant="outlined"
-                value={editingUsername}
-                onChange={(e) => setEditingUsername(e.target.value)}
-                error={usernameTaken}
-                helperText={usernameTaken ? "Username is already taken" : ""}
-                InputProps={{
-                  endAdornment: usernameTaken ? (
-                    <Cancel color="error" />
-                  ) : (
-                    <CheckCircle color="action" />
-                  ),
-                }}
-                fullWidth
-              />
-              <Typography variant="subtitle1" sx={{ mt: 2 }}>
-                Select an Avatar:
-              </Typography>
-              <Grid container spacing={2}>
-                {existingImages.map((imgUrl, index) => (
-                  <Grid item xs={4} sm={2} key={index}>
-                    <AvatarImage
-                      src={imgUrl}
-                      selected={editingImageLink === imgUrl}
-                      onClick={() => setEditingImageLink(imgUrl)}
-                    />
-                  </Grid>
-                ))}
-              </Grid>
-              <TextField
-                label="Or enter image URL"
-                variant="outlined"
-                value={editingImageLink}
-                onChange={(e) => setEditingImageLink(e.target.value)}
-                fullWidth
-                sx={{ mt: 2 }}
-              />
-            </>
-          ) : (
-            <>
-              <Box display="flex" flexDirection="row" alignItems="center">
-                <Typography
-                  variant="h6"
-                  style={{ fontWeight: "bold", marginRight: "8px" }}
-                >
-                  Name:
-                </Typography>
-                <Typography variant="h6">{playerInfo.name}</Typography>
-              </Box>
-              <Box display="flex" flexDirection="row" alignItems="center">
-                <Typography
-                  variant="h6"
-                  style={{ fontWeight: "bold", marginRight: "8px" }}
-                >
-                  Username:
-                </Typography>
-                <Typography variant="h6">@{playerInfo.username}</Typography>
-              </Box>
-            </>
-          )}
-        </Box>
-        <Box display="flex" justifyContent="flex-start" width="100%" marginTop="-15px">
-          <Typography variant="h6" style={{ fontWeight: "bold", marginRight: "8px" }}>
-            Total:
-          </Typography>
-          <Typography variant="h6">{playerInfo.games_played} matches</Typography>
-        </Box>
-        <Box display="flex" justifyContent="flex-start" width="100%" marginTop="-15px">
-          <Typography variant="h6" style={{ fontWeight: "bold", marginRight: "8px" }}>
-            Win rate:
-          </Typography>
-          <Typography variant="h6">{winRate.toString()}%</Typography>
-        </Box>
-        <StatBox>
-          <StatItem>
-            <Typography>{playerInfo.winning_games}</Typography>
-            <Typography>Wins</Typography>
-          </StatItem>
-          <Divider
-            variant="middle"
-            orientation="vertical"
-            sx={{ borderColor: "gray", borderWidth: 2, marginY: 2 }}
+  const InfoRow = ({ label, value }: { label: string; value: string }) => (
+  <Box display="flex" alignItems="center" mb={1}>
+    <Typography variant="body1" fontWeight="bold" sx={{ mr: 1, fontSize: '1.2rem' }}>
+      {label}
+    </Typography>
+    <Typography variant="body1" sx={{ fontSize: '1.2rem' }}>{value}</Typography>
+  </Box>
+);
+
+// Reusable Component for Stat Boxes
+const StatBox = ({ title, value }: { title: string; value: string }) => (
+  <Box textAlign="center" flex={1}>
+    <Typography variant="h6" fontWeight="bold">{value}</Typography>
+    <Typography variant="subtitle2" color="textSecondary">{title}</Typography>
+  </Box>
+);
+
+
+return (
+  <Modal open={open} onClose={handleCloseModal}>
+  <Box sx={{ width: '90vw', maxWidth: '500px', margin: 'auto', marginTop: '5%', bgcolor: 'background.paper', borderRadius: '8px', boxShadow: 24, padding: 3, position: 'relative', textAlign: 'center' }}>
+    <Typography variant="h6" fontWeight="bold" mb={2} sx={{ fontSize: '1.5rem'}}>
+      Player Information
+    </Typography>
+    {loading && (
+      <Box width="100%" mb={2}>
+        <LinearProgress />
+      </Box>
+    )}
+    <Box display="flex" alignItems="center" gap={2} mb={1}>
+      <Avatar
+        src={playerInfo?.user_image || auth?.picture || ""}
+        alt="Profile Picture"
+        sx={{ width: 80, height: 80, cursor: editing ? 'pointer' : 'default' }}
+      />
+      <Box>
+        <Typography variant="body1" sx={{ fontSize: '1.2rem' }}>✉️ {auth?.email}</Typography>
+        <Typography variant="body1" display="flex" alignItems="center" sx={{ fontSize: '1.2rem' }}>
+          🪪 {shortenAddress(address, 5)} <ContentCopy style={{ fontSize: 'smaller', cursor: 'pointer', marginLeft: '5px' }} onClick={() => navigator.clipboard.writeText(address)} />
+        </Typography>
+        <Typography variant="body1" display="flex" alignItems="center" sx={{ fontSize: '1.2rem' }}>
+          <AttachMoney color="action" /> {parseFloat(balance) / 100000000} APT
+        </Typography>
+      </Box>
+    </Box>
+    <Box sx={{ overflowY: 'auto', maxHeight: '50vh', mb: 3 }}>
+      {editing ? (
+        <>
+          <TextField
+            label="Name"
+            variant="outlined"
+            value={editingName}
+            onChange={(e) => setEditingName(e.target.value)}
+            fullWidth
+            margin="normal"
+            sx={{ fontSize: '1.2rem' }}
           />
-          <StatItem>
-            <Typography>{Number(playerInfo.games_played) - Number(playerInfo.winning_games)}</Typography>
-            <Typography>Losses</Typography>
-          </StatItem>
-        </StatBox>
-        <Box display="flex" gap={3} alignItems="center">
-          <Star color="primary" />
-          <Typography variant="h6" color="textPrimary">
-            {playerInfo.points} Points
+          <TextField
+            label="Username"
+            variant="outlined"
+            value={editingUsername}
+            onChange={(e) => setEditingUsername(e.target.value)}
+            error={usernameTaken}
+            helperText={usernameTaken ? "Username is already taken" : ""}
+            InputProps={{
+              endAdornment: usernameTaken ? <Cancel color="error" /> : <CheckCircle color="action" />,
+            }}
+            fullWidth
+            margin="normal"
+            sx={{ fontSize: '1.2rem' }}
+          />
+          <Typography variant="subtitle1" sx={{ mt: 2, fontSize: '1.2rem', textAlign: 'left' }} >
+            Select an avatar
           </Typography>
+          <Grid container spacing={2}>
+            {existingImages.map((imgUrl, index) => (
+              <Grid item xs={4} sm={2} key={index}>
+                <Avatar
+                  src={imgUrl}
+                  sx={{
+                    width: 56,
+                    height: 56,
+                    border: editingImageLink === imgUrl ? "3px solid blue" : "2px solid gray",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => setEditingImageLink(imgUrl)}
+                />
+              </Grid>
+            ))}
+          </Grid>
+          <TextField
+            label="Or enter image URL"
+            variant="outlined"
+            value={editingImageLink}
+            onChange={(e) => setEditingImageLink(e.target.value)}
+            fullWidth
+            sx={{ mt: 2, fontSize: '1.2rem' }}
+          />
+        </>
+      ) : (
+        <>
+          <Box display="flex" flexDirection="column" gap={1} mb={2} mt={2} >
+            <InfoRow label="Name:" value={playerInfo?.name} />
+            <InfoRow label="Username:" value={`@${playerInfo?.username}`} />
+            <InfoRow label="Total Matches:" value={`${playerInfo?.games_played || 0} matches`} />
+            <InfoRow label="Win Rate:" value={`${winRate}%`} />
+          </Box>
+          <Box display="flex" alignItems="center" gap={1} >
+            <Star color="primary" />
+            <Typography variant="body1" sx={{ fontSize: '1.2rem' }}>{playerInfo?.points} Points</Typography>
+          </Box>
+        </>
+      )}
+    </Box>
+    {!editing && (
+      <>
+        <Box display="flex" justifyContent="space-between" gap={2} mb={2}>
+          <StatBox title="Wins" value={playerInfo?.winning_games} />
+          <Divider orientation="vertical" flexItem sx={{ borderColor: 'gray' }} />
+          <StatBox title="Losses" value={(Number(playerInfo?.games_played) - Number(playerInfo?.winning_games)).toString()} />
         </Box>
-        <Box display="flex" gap={3}>
-          {editing ? (
-            <>
-              <Button
-                onClick={handleUpdate}
-                variant="contained"
-                sx={{ fontSize: "18px" }}
-                disabled={loading || usernameTaken}
-              >
-                {loading ? "Updating..." : "Update"}
-              </Button>
-              <Button
-                onClick={() => setEditing(false)}
-                variant="contained"
-                sx={{ fontSize: "18px" }}
-                disabled={loading}
-              >
-                Cancel
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button
-                onClick={() => setEditing(true)}
-                variant="contained"
-                sx={{ fontSize: "18px" }}
-                disabled={loading}
-              >
-                Edit
-              </Button>
-              <Button
-                onClick={handleCloseModal}
-                variant="contained"
-                sx={{ fontSize: "18px" }}
-                disabled={loading}
-              >
-                Close
-              </Button>
-            </>
-          )}
-        </Box>
-      </ModalContent>
-    </ModalContainer>
-    </Modal>
-  );
+      </>
+    )}
+    <Box display="flex" justifyContent="flex-end" gap={2}>
+      {editing ? (
+        <>
+          <Button onClick={handleUpdate} variant="contained" color="primary" disabled={loading || usernameTaken}>
+            {loading ? "Updating..." : "Update"}
+          </Button>
+          <Button onClick={() => setEditing(false)} variant="outlined">
+            Cancel
+          </Button>
+        </>
+      ) : (
+        <Button onClick={() => setEditing(true)} variant="contained">
+          Edit
+        </Button>
+      )}
+    </Box>
+  </Box>
+</Modal>
+
+
+);
 };
 
 export default ProfileModal;
