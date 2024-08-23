@@ -1,28 +1,13 @@
-import { Cancel, CheckCircle } from "@mui/icons-material";
-import {
-  Avatar,
-  Box,
-  Button,
-  CircularProgress,
-  Grid,
-  Modal,
-  TextField,
-  Typography,
-} from "@mui/material";
 import React, { useEffect, useState } from "react";
-import {
-  Aptos,
-  AptosConfig,
-  InputViewFunctionData,
-  Network,
-} from "@aptos-labs/ts-sdk";
-import { AptimusNetwork } from "aptimus-sdk-test";
+import { Aptos, AptosConfig, InputViewFunctionData, Network } from "@aptos-labs/ts-sdk";
 import { useAptimusFlow, useKeylessLogin } from "aptimus-sdk-test/react";
+import { Avatar, Box, Button, CircularProgress, Grid, Modal, TextField, Typography } from "@mui/material";
+import { Cancel, CheckCircle } from "@mui/icons-material";
 import { ButtonLogout } from "./UpdateAccount.styled";
-import useAuth from "../../../hooks/useAuth";
 import { MODULE_ADDRESS } from "../../../utils/Var";
 import { SendButton } from "../../SendButton/SendButton";
 import { useAlert } from "../../../contexts/AlertProvider";
+import useAuth from "../../../hooks/useAuth";
 import useContract from "../../../hooks/useContract";
 
 const UpdateAccount = () => {
@@ -32,7 +17,7 @@ const UpdateAccount = () => {
   const [usernameTaken, setUsernameTaken] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingFetch, setLoadingFetch] = useState<boolean>(true);
-  const {auth}=useAuth()
+  const { auth } = useAuth();
   const flow = useAptimusFlow();
   const { address } = useKeylessLogin();
   const { callContract } = useContract();
@@ -51,14 +36,11 @@ const UpdateAccount = () => {
       if (editingUsername) {
         const taken = await isUsernameTaken(editingUsername);
         setUsernameTaken(taken as boolean);
-      } else {
-        setUsernameTaken(false);
-      }
+      } else setUsernameTaken(false);
     };
     checkUsername();
   }, [editingUsername]);
 
-  
   const isUsernameTaken = async (username: string) => {
     try {
       const aptosConfig = new AptosConfig({ network: Network.TESTNET });
@@ -77,7 +59,6 @@ const UpdateAccount = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      console.log(address);
       if (address) {
         try {
           setLoadingFetch(true);
@@ -87,21 +68,18 @@ const UpdateAccount = () => {
             function: `${MODULE_ADDRESS}::gamev3::get_player_info`,
             functionArguments: [address],
           };
-          const response = await aptos.view({ payload });
+          await aptos.view({ payload });
 
           // Handle the response as needed (e.g., set user data)
           window.location.href = "/";
         } catch (error) {
           setLoadingFetch(false);
-
-          //   console.error("Error fetching player info:", error);
-          //   window.location.href = "/auth/login";
+          // Handle the error as needed
         }
       } else {
         window.location.href = "/auth/login";
       }
     };
-    console.log(auth)
     fetchData();
   }, [address]);
 
@@ -109,15 +87,23 @@ const UpdateAccount = () => {
     setEditingImageLink(imageUrl);
   };
 
-  const handleImageLinkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const link = e.target.value;
-    setEditingImageLink(link);
+  // const handleImageLinkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const link = e.target.value;
+  //   setEditingImageLink(link);
+  // };
+
+  const allFieldsFilled = () => {
+    return editingName && editingUsername;
   };
 
   const handleUpdate = async () => {
     if (usernameTaken) {
       setAlert("Username is already taken. Please choose another one.", "info");
+      return;
+    }
 
+    if (!allFieldsFilled()) {
+      setAlert("All fields must be filled.", "info");
       return;
     }
 
@@ -127,28 +113,21 @@ const UpdateAccount = () => {
       functionArgs: [editingName, editingUsername, editingImageLink],
       onSuccess(result) {
         window.location.href = "/";
-        // setAlert("Create account successfully!", "success");
+        setAlert("Create account successfully!", "success");
       },
       onError(error) {
-        if(error.status===404){
-          setAlert("You need to faucet your account!", "info");
-        }
-        else{
-          setAlert("Username is already taken. Please choose another one.", "info");
-
-        }
-        console.error("Lỗi khi:", error.status);
-
-        console.error("Lỗi khi gọi hàm smart contract:", error);
-       
+        if (error.status === 404) setAlert("You need to faucet your account!", "info");
+        else setAlert("Username is already taken. Please choose another one.", "info");
+        console.error("Error calling smart contract:", error);
       },
       onFinally() {
         setLoading(false);
       },
     });
   };
+
   if (loadingFetch) {
-    <CircularProgress />;
+    return <CircularProgress />;
   }
 
   const handleLogout = () => {
@@ -158,12 +137,7 @@ const UpdateAccount = () => {
   };
 
   return (
-    <Modal
-      open={true}
-      sx={{
-        backdropFilter: "blur(20px)",
-      }}
-    >
+    <Modal open={true} sx={{ backdropFilter: "blur(20px)" }}>
       <Box
         display="flex"
         alignItems="center"
@@ -193,7 +167,6 @@ const UpdateAccount = () => {
             <Typography variant="h5" sx={{ color: "Black" }}>
               Create Your Account
             </Typography>
-
             <ButtonLogout onClick={handleLogout}>Logout</ButtonLogout>
           </Box>
 
@@ -212,11 +185,7 @@ const UpdateAccount = () => {
             error={usernameTaken}
             helperText={usernameTaken ? "Username is already taken" : ""}
             InputProps={{
-              endAdornment: usernameTaken ? (
-                <Cancel color="error" />
-              ) : (
-                <CheckCircle color="action" />
-              ),
+              endAdornment: usernameTaken ? <Cancel color="error" /> : <CheckCircle color="action" />,
             }}
             fullWidth
           />
@@ -232,10 +201,7 @@ const UpdateAccount = () => {
                   sx={{
                     width: 56,
                     height: 56,
-                    border:
-                      editingImageLink === imgUrl
-                        ? "3px solid blue"
-                        : "2px solid gray",
+                    border: editingImageLink === imgUrl ? "3px solid blue" : "2px solid gray",
                     cursor: "pointer",
                   }}
                   onClick={() => handleExistingImageSelect(imgUrl)}
@@ -244,14 +210,14 @@ const UpdateAccount = () => {
             ))}
           </Grid>
 
-          <TextField
+          {/* <TextField
             label="Or enter image URL"
             variant="outlined"
             value={editingImageLink}
             onChange={handleImageLinkChange}
             fullWidth
             sx={{ mt: 2 }}
-          />
+          /> */}
 
           <SendButton walletAddress={address || ""} type={Network.TESTNET}>
             Faucet
@@ -261,7 +227,7 @@ const UpdateAccount = () => {
             variant="contained"
             color="primary"
             onClick={handleUpdate}
-            disabled={loading} // Disable button during loading
+            disabled={loading || !allFieldsFilled()}
           >
             {loading ? "Loading..." : "Create"}
           </Button>

@@ -1,22 +1,12 @@
 import {
-  Autocomplete,
-  Box,
-  Button,
-  FormControlLabel,
-  IconButton,
-  Modal,
-  RadioGroup,
-  TextField,
-  Typography,
-  Theme,
-  useMediaQuery,
-  useTheme,
+  Autocomplete, Box, Button, FormControlLabel, IconButton, Modal, RadioGroup, TextField, Typography, Theme, useMediaQuery, useTheme,
   Switch,
 } from "@mui/material";
 import React, { useState } from "react";
 import styled from "styled-components";
 import CloseIcon from "@mui/icons-material/Close";
-import { useAptimusFlow, useKeylessLogin } from "aptimus-sdk-test/react";
+import { useAlert } from '../../contexts/AlertProvider';
+
 
 const stadiums = [
   "Old Trafford",
@@ -94,6 +84,16 @@ const CreateForm: React.FC<Props> = ({ createRoomContract, open, onClose }) => {
   const [isMateEnabled, setIsMateEnabled] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const { setAlert } = useAlert();
+
+  const allFieldsFilled = () => {
+    if(roomName && bet) {
+      createRoomContract(roomName, (parseInt(bet) * 1000000).toString(),isMateEnabled,mate)
+
+    } else {
+      setAlert( "Fields are not filled", "error", );
+    }
+  };
 
   return (
     <Modal
@@ -226,9 +226,7 @@ const CreateForm: React.FC<Props> = ({ createRoomContract, open, onClose }) => {
         </div>
         <Button
           variant="contained"
-          onClick={() =>
-            createRoomContract(roomName, (parseInt(bet) * 1000000).toString(),isMateEnabled,mate)
-          }
+          onClick={allFieldsFilled}
           sx={{
             width: "75%",
           }}
