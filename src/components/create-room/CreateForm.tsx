@@ -1,22 +1,11 @@
 import {
-  Autocomplete,
-  Box,
-  Button,
-  FormControlLabel,
-  IconButton,
-  Modal,
-  RadioGroup,
-  TextField,
-  Typography,
-  Theme,
-  useMediaQuery,
-  useTheme,
-  Switch,
+  Autocomplete, Box, Button, FormControlLabel, IconButton, Modal, RadioGroup, TextField, Typography, Theme, useMediaQuery, useTheme,
 } from "@mui/material";
 import React, { useState } from "react";
 import styled from "styled-components";
 import CloseIcon from "@mui/icons-material/Close";
-import { useAptimusFlow, useKeylessLogin } from "aptimus-sdk-test/react";
+import { useAlert } from '../../contexts/AlertProvider';
+
 
 const stadiums = [
   "Old Trafford",
@@ -90,12 +79,20 @@ const CustomFormControlLabel: React.FC<CustomFormControlLabelProps> = ({
 const CreateForm: React.FC<Props> = ({ createRoomContract, open, onClose }) => {
   const [roomName, setRoomName] = useState("");
   const [bet, setBet] = useState("");
-  const [mate, setMate] = useState("");
-  const [isMateEnabled, setIsMateEnabled] = useState(false);
-  const { address } = useKeylessLogin();
-  const flow = useAptimusFlow();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const { setAlert } = useAlert();
+
+  const allFieldsFilled = () => {
+    if(roomName && bet) {
+      createRoomContract(
+        roomName,
+        (parseInt(bet) * 1000000).toString(),
+      )
+    } else {
+      setAlert( "Fields are not filled", "error", );
+    }
+  };
 
   return (
     <Modal
@@ -210,13 +207,7 @@ const CreateForm: React.FC<Props> = ({ createRoomContract, open, onClose }) => {
 
         <Button
           variant="contained"
-          onClick={() =>
-            createRoomContract(
-              roomName,
-              (parseInt(bet) * 1000000).toString(),
-
-            )
-          }
+          onClick={allFieldsFilled}
           sx={{
             width: "75%",
           }}
