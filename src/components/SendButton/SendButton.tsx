@@ -2,6 +2,7 @@ import { PropsWithChildren } from "react";
 import { useSendAptos } from "../../hooks/useSendAptos";
 import { ButtonFaucet } from "../layout/CreateAccout/CreateAccount.styled";
 import { useAlert } from "../../contexts/AlertProvider";
+import CustomButton from "../buttons/CustomButton";
 
 type SendButtonProps = {
   walletAddress: string;
@@ -22,8 +23,8 @@ export const SendButton = (props: PropsWithChildren<SendButtonProps>) => {
   };
 
   return (
-    <ButtonFaucet onClick={onSubmit} disabled={!walletAddress}>
-      {props.children}
-    </ButtonFaucet>
+    <CustomButton onClick={onSubmit} disabled={!walletAddress} content="faucet" isMain={false}>
+      {/* {props.children} */}
+    </CustomButton>
   );
 };

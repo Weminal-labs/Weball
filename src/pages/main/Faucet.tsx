@@ -1,40 +1,45 @@
 import React, { useState } from "react";
 import { Box, Button } from "@mui/material";
-import { Account, Aptos, AptosConfig, Ed25519PrivateKey, Network, Secp256k1PrivateKey } from "@aptos-labs/ts-sdk";
+import {
+  Account,
+  Aptos,
+  AptosConfig,
+  Ed25519PrivateKey,
+  Network,
+  Secp256k1PrivateKey,
+} from "@aptos-labs/ts-sdk";
 import { MODULE_ADDRESS } from "../../utils/Var";
 import { Buffer } from "buffer";
 import { SendButton } from "../../components/SendButton/SendButton";
 import { useAlert } from "../../contexts/AlertProvider";
+import CustomButton from "../../components/buttons/CustomButton";
 
 const Faucet: React.FC = () => {
   const [open, setOpen] = useState(false);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  const {setAlert} = useAlert()
+  const { setAlert } = useAlert();
   const hexToUint8Array = (hex: string): Uint8Array => {
     return Uint8Array.from(Buffer.from(hex.slice(2), "hex"));
   };
-  
-  
+
   const createRoomContract = async () => {
     const aptosConfig = new AptosConfig({ network: Network.TESTNET });
     const aptos = new Aptos(aptosConfig);
-
-  }
-  const address = localStorage.getItem("address")
+  };
+  const address = localStorage.getItem("address");
   // const pickWinnerByRoomId = async () => {
   //   const aptosConfig = new AptosConfig({ network: Network.TESTNET });
   //   const aptos = new Aptos(aptosConfig);
 
   //   const privateKey = new Ed25519PrivateKey("0x0cdae4b8e4a1795ffc36d89ebbbdd7bd0cb0e0d81091290096f8d92d40c1fe43");
-    
+
   //   const account = await Account.fromPrivateKey({ privateKey });
-  
-  
+
   //   // Get the account address
   //   const accountAddress = account.accountAddress.toString();
-  
+
   //   console.log("Account Address:", accountAddress);
   //   const FUNCTION_NAME = `${MODULE_ADDRESS}::gamev3::pick_winner_and_transfer_bet`;
 
@@ -81,29 +86,38 @@ const Faucet: React.FC = () => {
   //   const response = await faucetClient.fund({ requestBody: request });
   //   return response.txn_hashes;
   // }
-  const testFunction = async()=>{
-    const address = localStorage.getItem("address")
+  const testFunction = async () => {
+    const address = localStorage.getItem("address");
     // const a = await callFaucet(1,address!)
     // console.log(a)
-  }
+  };
   return (
-    // <Box
-    //   sx={{
-    //     height: "100vh",
-    //     width: "100vw",
-    //     backgroundColor: "#F5F5F5",
-    //     display: "flex",
-    //     justifyContent: "center",
-    //     alignItems: "center",
-    //   }}
-    // >
-    //    <SendButton walletAddress={address || ""} type={Network.TESTNET}>
-    //         Faucet
-    //       </SendButton>
-    // </Box>
-    <></>
+    <Box sx={{
+      width:"100%",
+      height:"100%",
+      display:"flex",
+      justifyContent:"center",
+      alignItems:"center"
+    }}>
+      <Box
+        sx={{
+          height: "50vh",
+          width: "50vw",
+          display: "flex",
+          background: "white",
+          backgroundColor:
+            "rgba(255, 255, 255, 0.1)",
+          backdropVilter: "blur(1.5rem)",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <SendButton walletAddress={address || ""} type={Network.TESTNET}>
+          Faucet
+        </SendButton>
+      </Box>
+    </Box>
   );
 };
-
 
 export default Faucet;
