@@ -136,6 +136,7 @@ const Header: React.FC = () => {
   };
 
   const handleProfileOpen = () => {
+    console.log("adsdad")
     setProfileModalOpen(true);
     handleClose();
   };
@@ -188,158 +189,190 @@ const Header: React.FC = () => {
   };
 
   return (
+    // <HeaderContainer>
+    //   <LeftHeader>
+    //     <TitleContainer>
+    //       <Logo>
+    //         <img
+    //           style={{
+    //             width: "40px",
+    //             height: "40px",
+    //             objectFit: "cover",
+    //             borderRadius: "50px",
+    //           }}
+    //           src={"/logo.png"}
+    //           alt="logo"
+    //         />
+    //       </Logo>
+    //       <Title>WEBALL</Title>
+    //     </TitleContainer>
+    //   </LeftHeader>
+    //   <RightHeader>
+    //     {/* <Button onClick={() => setChatModalOpen(true)} sx={{ color: "white" }}>Chat</Button> */}
+    //     <Box sx={{ display: 'flex', alignItems: 'center', mr: 2 }}>
+    //       <AttachMoney style={{ color: "#7FFF00" }} />
+    //       <Typography variant="body2" sx={{ color: 'white' }}>
+    //         {parseFloat(balance) / 100000000} APT
+    //       </Typography>
+    //     </Box>
+    //     <WelcomeText onClick={() => navigator.clipboard.writeText(address ?? "")}>{shortenAddress(address ?? "", 5)}</WelcomeText>
+    //     <Avatar
+    //       component="div"
+    //       src={auth?.picture}
+    //       onClick={handleClick}
+    //       sx={{ cursor: "pointer" }}
+    //     />
+    //     <Menu
+    //       id="basic-menu"
+    //       anchorEl={anchorEl}
+    //       open={open}
+    //       onClose={handleClose}
+    //       MenuListProps={{
+    //         "aria-labelledby": "basic-button",
+    //       }}
+    //     >
+    //       <MenuItem onClick={handleProfileOpen}>Profile</MenuItem>
+    //       <MenuItem onClick={handleClose}>My account</MenuItem>
+    //       <MenuItem onClick={handleLogout}>Logout</MenuItem>
+    //     </Menu>
+    //   </RightHeader>
+    //   <ProfileModal
+    //     open={profileModalOpen}
+    //     handleOpen={handleProfileOpen}
+    //     handleClose={() => setProfileModalOpen(false)}
+    //   />
+    //         <Modal open={chatModalOpen} onClose={() => setChatModalOpen(false)}>
+    //         <Box sx={{
+    //           position: 'absolute',
+    //           top: '50%',
+    //           left: '50%',
+    //           transform: 'translate(-50%, -50%)',
+    //           width: 400,
+    //           bgcolor: 'background.paper',
+    //           boxShadow: 24,
+    //           p: 4,
+    //           maxHeight: '80vh',
+    //           display: 'flex',
+    //           flexDirection: 'column',
+    //           borderRadius: 2,
+    //         }}>
+    //           <h2>Global Chat</h2>
+    //           {loading ? (
+    //             <Box sx={{
+    //               display: 'flex',
+    //               justifyContent: 'center',
+    //               alignItems: 'center',
+    //               height: '100%',
+    //             }}>
+    //               <ClipLoader color="#00f" loading={loading} size={150} />
+    //             </Box>
+    //           ) : (
+    //             <>
+    //               <Box sx={{
+    //                 flexGrow: 1,
+    //                 overflowY: 'auto',
+    //                 mb: 2,
+    //                 display: 'flex',
+    //                 flexDirection: 'column',
+    //               }}>
+    //                 {messages.map((msg, index) => (
+    //                   <Box key={index} sx={{
+    //                     display: 'flex',
+    //                     justifyContent: msg.sender === address ? 'flex-end' : 'flex-start',
+    //                     mb: 1,
+    //                   }}>
+    //                     <Box sx={{
+    //                       display: 'flex',
+    //                       flexDirection: msg.sender === address ? 'row-reverse' : 'row',
+    //                       alignItems: 'flex-start',
+    //                     }}>
+    //                       <Avatar src={msg.sender === address ? auth?.picture : ''} sx={{ width: 32, height: 32, mr: msg.sender === address ? 0 : 1, ml: msg.sender === address ? 1 : 0 }} />
+    //                       <Box sx={{
+    //                         bgcolor: msg.sender === address ? 'primary.main' : 'grey.300',
+    //                         color: msg.sender === address ? 'white' : 'black',
+    //                         p: 1,
+    //                         borderRadius: 2,
+    //                         maxWidth: '70%',
+    //                       }}>
+    //                         <Tooltip title={msg.sender}>
+    //                           <Box component="span" sx={{ fontWeight: 'bold', cursor: 'pointer' }} onClick={() => handlePlayerInfoOpen(msg.sender)}>
+    //                             {msg.username}
+    //                           </Box>
+    //                         </Tooltip>
+    //                         <Box>{msg.message}</Box>
+    //                         <Box sx={{ fontSize: '0.8rem', opacity: 0.7 }}>{new Date(parseInt(msg.timestamp) * 1000).toLocaleString()}</Box>
+    //                       </Box>
+    //                     </Box>
+    //                   </Box>
+    //                 ))}
+    //               </Box>
+    //               <Box component="form" onSubmit={(e) => { e.preventDefault(); handleSendMessage(); }} sx={{ display: 'flex', position: 'relative' }}>
+    //                 <TextField
+    //                   fullWidth
+    //                   variant="outlined"
+    //                   placeholder="Send a message"
+    //                   value={message}
+    //                   onChange={(e) => setMessage(e.target.value)}
+    //                   onKeyDown={handleKeyPress}
+    //                   sx={{ 
+    //                     pr: 5,
+    //                     '& .MuiOutlinedInput-root': {
+    //                       borderRadius: 2,
+    //                     }
+    //                   }}
+    //                 />
+    //                 <Button 
+    //                   type="submit" 
+    //                   sx={{ 
+    //                     position: 'absolute', 
+    //                     right: 8, 
+    //                     top: '50%', 
+    //                     transform: 'translateY(-50%)',
+    //                     minWidth: 'auto',
+    //                     padding: '6px',
+    //                     borderRadius: '50%',
+    //                   }}
+    //                 >
+    //                   <BsSend />
+    //                 </Button>
+    //               </Box>
+    //             </>
+    //           )}
+    //         </Box>
+    //       </Modal>
+
+    // </HeaderContainer>
     <HeaderContainer>
-      <LeftHeader>
-        <TitleContainer>
-          <Logo>
-            <img
-              style={{
-                width: "40px",
-                height: "40px",
-                objectFit: "cover",
-                borderRadius: "50px",
-              }}
-              src={"/logo.png"}
-              alt="logo"
-            />
-          </Logo>
-          <Title>WEBALL</Title>
-        </TitleContainer>
-      </LeftHeader>
-      <RightHeader>
-        {/* <Button onClick={() => setChatModalOpen(true)} sx={{ color: "white" }}>Chat</Button> */}
-        <Box sx={{ display: 'flex', alignItems: 'center', mr: 2 }}>
+       <RightHeader>
+         {/* <Button onClick={() => setChatModalOpen(true)} sx={{ color: "white" }}>Chat</Button> */}
+         {/* <Box sx={{ display: 'flex', alignItems: 'center', mr: 2 }}>
           <AttachMoney style={{ color: "#7FFF00" }} />
-          <Typography variant="body2" sx={{ color: 'white' }}>
-            {parseFloat(balance) / 100000000} APT
-          </Typography>
-        </Box>
-        <WelcomeText onClick={() => navigator.clipboard.writeText(address ?? "")}>{shortenAddress(address ?? "", 5)}</WelcomeText>
-        <Avatar
-          component="div"
-          src={auth?.picture}
-          onClick={handleClick}
-          sx={{ cursor: "pointer" }}
-        />
-        <Menu
-          id="basic-menu"
-          anchorEl={anchorEl}
-          open={open}
-          onClose={handleClose}
-          MenuListProps={{
-            "aria-labelledby": "basic-button",
-          }}
+           <Typography variant="body2" sx={{ color: 'white' }}>
+             {parseFloat(balance) / 100000000} APT
+           </Typography>
+         </Box> */}
+         <WelcomeText onClick={() => navigator.clipboard.writeText(address ?? "")}>{shortenAddress(address ?? "", 5)}</WelcomeText>
+         <Avatar
+           component="div"
+           src={auth?.picture}
+         onClick={handleClick}
+           sx={{ cursor: "pointer" }}
+         />
+         <Menu
+           id="basic-menu"
+           anchorEl={anchorEl}
+           open={open}
+           onClose={handleClose}
+           MenuListProps={{
+             "aria-labelledby": "basic-button",
+           }}
         >
           <MenuItem onClick={handleProfileOpen}>Profile</MenuItem>
-          <MenuItem onClick={handleClose}>My account</MenuItem>
-          <MenuItem onClick={handleLogout}>Logout</MenuItem>
-        </Menu>
-      </RightHeader>
-      <ProfileModal
-        open={profileModalOpen}
-        handleOpen={handleProfileOpen}
-        handleClose={() => setProfileModalOpen(false)}
-      />
-            <Modal open={chatModalOpen} onClose={() => setChatModalOpen(false)}>
-            <Box sx={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              width: 400,
-              bgcolor: 'background.paper',
-              boxShadow: 24,
-              p: 4,
-              maxHeight: '80vh',
-              display: 'flex',
-              flexDirection: 'column',
-              borderRadius: 2,
-            }}>
-              <h2>Global Chat</h2>
-              {loading ? (
-                <Box sx={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  height: '100%',
-                }}>
-                  <ClipLoader color="#00f" loading={loading} size={150} />
-                </Box>
-              ) : (
-                <>
-                  <Box sx={{
-                    flexGrow: 1,
-                    overflowY: 'auto',
-                    mb: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                  }}>
-                    {messages.map((msg, index) => (
-                      <Box key={index} sx={{
-                        display: 'flex',
-                        justifyContent: msg.sender === address ? 'flex-end' : 'flex-start',
-                        mb: 1,
-                      }}>
-                        <Box sx={{
-                          display: 'flex',
-                          flexDirection: msg.sender === address ? 'row-reverse' : 'row',
-                          alignItems: 'flex-start',
-                        }}>
-                          <Avatar src={msg.sender === address ? auth?.picture : ''} sx={{ width: 32, height: 32, mr: msg.sender === address ? 0 : 1, ml: msg.sender === address ? 1 : 0 }} />
-                          <Box sx={{
-                            bgcolor: msg.sender === address ? 'primary.main' : 'grey.300',
-                            color: msg.sender === address ? 'white' : 'black',
-                            p: 1,
-                            borderRadius: 2,
-                            maxWidth: '70%',
-                          }}>
-                            <Tooltip title={msg.sender}>
-                              <Box component="span" sx={{ fontWeight: 'bold', cursor: 'pointer' }} onClick={() => handlePlayerInfoOpen(msg.sender)}>
-                                {msg.username}
-                              </Box>
-                            </Tooltip>
-                            <Box>{msg.message}</Box>
-                            <Box sx={{ fontSize: '0.8rem', opacity: 0.7 }}>{new Date(parseInt(msg.timestamp) * 1000).toLocaleString()}</Box>
-                          </Box>
-                        </Box>
-                      </Box>
-                    ))}
-                  </Box>
-                  <Box component="form" onSubmit={(e) => { e.preventDefault(); handleSendMessage(); }} sx={{ display: 'flex', position: 'relative' }}>
-                    <TextField
-                      fullWidth
-                      variant="outlined"
-                      placeholder="Send a message"
-                      value={message}
-                      onChange={(e) => setMessage(e.target.value)}
-                      onKeyDown={handleKeyPress}
-                      sx={{ 
-                        pr: 5,
-                        '& .MuiOutlinedInput-root': {
-                          borderRadius: 2,
-                        }
-                      }}
-                    />
-                    <Button 
-                      type="submit" 
-                      sx={{ 
-                        position: 'absolute', 
-                        right: 8, 
-                        top: '50%', 
-                        transform: 'translateY(-50%)',
-                        minWidth: 'auto',
-                        padding: '6px',
-                        borderRadius: '50%',
-                      }}
-                    >
-                      <BsSend />
-                    </Button>
-                  </Box>
-                </>
-              )}
-            </Box>
-          </Modal>
-      <PlayerInfoModal
+           <MenuItem onClick={handleClose}>My account</MenuItem>
+         <MenuItem onClick={handleLogout}>Logout</MenuItem>
+       </Menu>
+    </RightHeader>
+    <PlayerInfoModal
         open={playerInfoModalOpen}
         handleClose={handlePlayerInfoClose}
         playerInfo={playerInfo}

@@ -2,13 +2,12 @@ import styled from "styled-components";
 import { Box, IconButton } from "@mui/material";
 
 export const HeaderContainer = styled.div`
-  height: 60px;
+  height: 100%;
   padding: 20px;
   text-align: left;
   display: flex;
   justify-content: space-evenly;
   align-items: center;
-  background-color: #181733;
 `;
 
 export const LeftHeader = styled.div`

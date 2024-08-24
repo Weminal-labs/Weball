@@ -87,20 +87,21 @@ const Faucet: React.FC = () => {
     // console.log(a)
   }
   return (
-    <Box
-      sx={{
-        height: "100vh",
-        width: "100vw",
-        backgroundColor: "#F5F5F5",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-       <SendButton walletAddress={address || ""} type={Network.TESTNET}>
-            Faucet
-          </SendButton>
-    </Box>
+    // <Box
+    //   sx={{
+    //     height: "100vh",
+    //     width: "100vw",
+    //     backgroundColor: "#F5F5F5",
+    //     display: "flex",
+    //     justifyContent: "center",
+    //     alignItems: "center",
+    //   }}
+    // >
+    //    <SendButton walletAddress={address || ""} type={Network.TESTNET}>
+    //         Faucet
+    //       </SendButton>
+    // </Box>
+    <></>
   );
 };
 

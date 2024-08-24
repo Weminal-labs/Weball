@@ -2,6 +2,28 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'Nord';
+  src: url('/font/TTF/Nord-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Nord';
+  src: url('/font/TTF/Nord-Bold.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Nord';
+  src: url('/font/TTF/Nord-Italic.ttf') format('truetype');
+  font-weight: normal;
+  font-style: italic;
+}
+
+
 body, html {
   margin: 0;
   padding: 0;
@@ -10,12 +32,17 @@ body, html {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-family: 'Roboto', sans-serif;
   overflow: hidden;
     cursor: url('cursor2.png'), auto;
+    font-family: 'Nord', sans-serif;
+
 }
 
 #root {
   height: 100%;
   width: 100%;
+  background-color: black;
+  background-image: url('/background.png');
+  background-size: cover; /* This will make the background cover the entire area */
+  background-position: center; /* This centers the background image */
 }

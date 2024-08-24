@@ -139,7 +139,7 @@ const PlayGame: React.FC = () => {
       roomId: roomObj?.room_id,
       roomName: roomObj?.room_name,
       userId: address,
-      userName: auth?.family_name,
+      userName: "123456",
     };
     sendMessage("RoomPlayer", "JoinOrCreateRoom", JSON.stringify(obj));
     setShow(true);

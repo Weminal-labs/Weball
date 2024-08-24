@@ -29,5 +29,4 @@ export const JoinRoomContainer = styled.div`
   flex-wrap: wrap;
   gap: 25px;
   padding: 50px;
-  background: linear-gradient(45deg, #219ce2 30%, #0cbd16 90%);
 `;
