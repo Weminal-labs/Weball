@@ -25,6 +25,7 @@ const SidebarWrapper = styled.div`
 const MainContentWrapper = styled.div`
   grid-column: span 10;
   grid-row: span 11;
+  padding:30px
 `;
 
 const Layout = () => {

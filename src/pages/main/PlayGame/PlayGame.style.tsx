@@ -4,12 +4,17 @@ import { Box, Grid } from "@mui/material";
 export const ContainerBox = styled.div`
   width: 100%;
   display: flex;
-  justify-content: space-between;
+    flex-direction:column;
+    gap:8px;
+    margin-top:10px
+
 `;
 
 export const FlexBox = styled.div`
   width: 100%;
   display: flex;
+    justify-content: space-between;
+
   gap: 12px;
 `;
 
@@ -28,5 +33,4 @@ export const JoinRoomContainer = styled.div`
   overflow-y: scroll;
   flex-wrap: wrap;
   gap: 25px;
-  padding: 50px;
 `;

@@ -33,6 +33,7 @@ import { MODULE_ADDRESS } from "../../../utils/Var";
 import { useAptimusFlow } from "aptimus-sdk-test/react";
 import { Compare } from "../../../utils/CompareAddress";
 import useContract from "../../../hooks/useContract";
+import CustomButton from "../../../components/buttons/CustomButton";
 
 const ITEMS_PER_PAGE = 6;
 
@@ -220,25 +221,61 @@ const PlayGame: React.FC = () => {
         ) : (
           <>
             <ContainerBox>
-              <FlexBox>
-                <TextField
+            <TextField
                   label="Search Room by ID"
                   variant="outlined"
                   value={searchTerm}
                   onChange={handleSearchChange}
                   size="small"
-                  sx={{ width: "40%" }}
+                  sx={{ width: "80%",
+                    '& .MuiOutlinedInput-root': {
+      '& fieldset': {
+        borderColor: 'green', // Default border color
+      },
+      '&:hover fieldset': {
+        borderColor: 'white', // Border color on hover
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: 'blue', // Border color when focused
+      },
+    },
+    '& .MuiInputLabel-root': {
+      color: 'grey', // Label color
+    },
+    '& .MuiInputLabel-root.Mui-focused': {
+      color: 'blue', // Label color when focused
+    },
+    '& .MuiOutlinedInput-input': {
+      color: 'white', // Input text color
+    },
+                   }}
                 />
-
-                <Button
-                  variant="contained"
-                  color="primary"
+                
+              <FlexBox>
+                
+                <div className="w-[140px]">
+                <CustomButton
+                  content="Reload"
+                  disabled={false}
+                  isMain={false}
                   onClick={handleReload}
-                >
-                  Reload
-                </Button>
+                  
+                />
+                </div>
+  
+                <div className="w-[140px]">
+                <CustomButton
+                  content="Create"
+                  disabled={false}
+                  isMain={true}
+                  onClick={() => {
+                    setOpenCreate(true);
+                  }}                  
+                />
+                </div>
               </FlexBox>
-              <Button
+     
+              {/* <Button
                 variant="contained"
                 color="success"
                 onClick={() => {
@@ -246,7 +283,7 @@ const PlayGame: React.FC = () => {
                 }}
               >
                 Create
-              </Button>
+              </Button> */}
             </ContainerBox>
 
             <GridContainer container spacing={4}>

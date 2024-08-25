@@ -107,7 +107,7 @@ const Faucet: React.FC = () => {
           background: "white",
           backgroundColor:
             "rgba(255, 255, 255, 0.1)",
-          backdropVilter: "blur(1.5rem)",
+          backdropFilter: "blur(1.5rem)",
           justifyContent: "center",
           alignItems: "center",
         }}

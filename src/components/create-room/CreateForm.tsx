@@ -1,12 +1,23 @@
 import {
-  Autocomplete, Box, Button, FormControlLabel, IconButton, Modal, RadioGroup, TextField, Typography, Theme, useMediaQuery, useTheme,
+  Autocomplete,
+  Box,
+  Button,
+  FormControlLabel,
+  IconButton,
+  Modal,
+  RadioGroup,
+  TextField,
+  Typography,
+  Theme,
+  useMediaQuery,
+  useTheme,
   Switch,
 } from "@mui/material";
 import React, { useState } from "react";
 import styled from "styled-components";
 import CloseIcon from "@mui/icons-material/Close";
-import { useAlert } from '../../contexts/AlertProvider';
-
+import { useAlert } from "../../contexts/AlertProvider";
+import CustomButton from "../buttons/CustomButton";
 
 const stadiums = [
   "Old Trafford",
@@ -39,7 +50,7 @@ interface Props {
   onClose: () => void;
 }
 
-const CustomButton = styled("div")<CustomButtonProps>(
+const CustomButtonSelect = styled("div")<CustomButtonProps>(
   ({ theme, selected }) => ({
     display: "flex",
     alignItems: "center",
@@ -65,12 +76,12 @@ const CustomFormControlLabel: React.FC<CustomFormControlLabelProps> = ({
 }) => (
   <FormControlLabel
     control={
-      <CustomButton
+      <CustomButtonSelect
         selected={selectedValue === value}
         onClick={() => onChange(value)}
       >
         {label}
-      </CustomButton>
+      </CustomButtonSelect>
     }
     label=""
     style={{ margin: 0 }}
@@ -87,11 +98,15 @@ const CreateForm: React.FC<Props> = ({ createRoomContract, open, onClose }) => {
   const { setAlert } = useAlert();
 
   const allFieldsFilled = () => {
-    if(roomName && bet) {
-      createRoomContract(roomName, (parseInt(bet) * 1000000).toString(),isMateEnabled,mate)
-
+    if (roomName && bet) {
+      createRoomContract(
+        roomName,
+        (parseInt(bet) * 1000000).toString(),
+        isMateEnabled,
+        mate,
+      );
     } else {
-      setAlert( "Fields are not filled", "error", );
+      setAlert("Fields are not filled", "error");
     }
   };
 
@@ -101,6 +116,10 @@ const CreateForm: React.FC<Props> = ({ createRoomContract, open, onClose }) => {
       onClose={onClose}
       aria-labelledby="create-room-modal-title"
       aria-describedby="create-room-modal-description"
+      sx={{
+        backdropFilter: "blur(8px)",
+
+      }}
     >
       <Box
         sx={{
@@ -117,10 +136,11 @@ const CreateForm: React.FC<Props> = ({ createRoomContract, open, onClose }) => {
           justifyContent: "center",
           alignItems: "center",
           padding: "20px",
-          border: "2px solid black",
+          border: "2px solid white",
           borderRadius: "8px",
-          background: "white",
-          boxShadow: "4px 4px 20px rgba(0, 0, 0.1, 0.2)",
+           background: 'linear-gradient(180deg, #44616C 0%, #2A484A 100%)',
+        backdropFilter: "blur(1.5rem)",          boxShadow: "4px 4px 20px rgba(0, 0, 0.1, 0.2)",
+          color:"white"
         }}
       >
         <IconButton
@@ -136,15 +156,10 @@ const CreateForm: React.FC<Props> = ({ createRoomContract, open, onClose }) => {
           <CloseIcon />
         </IconButton>
 
-        <Typography
-          id="create-room-modal-title"
-          variant={isMobile ? "h5" : "h4"}
-          align="center"
-          gutterBottom
-        >
+        <h1 id="create-room-modal-title" className="text-[40px]">
           Create a Room
-        </Typography>
-        <Typography
+        </h1>
+        {/* <Typography
           id="create-room-modal-description"
           variant={isMobile ? "body2" : "body1"}
           align="center"
@@ -153,10 +168,29 @@ const CreateForm: React.FC<Props> = ({ createRoomContract, open, onClose }) => {
         >
           Create a room for friends to compete in a soccer match. Enjoy the game
           and have fun!
-        </Typography>
+        </Typography> */}
 
         <Autocomplete
-          sx={{ width: "100%", maxWidth: "400px" }}
+          sx={{ width: "100%", maxWidth: "400px",'& .MuiOutlinedInput-root': {
+      '& fieldset': {
+        borderColor: 'white', // Default border color
+      },
+      '&:hover fieldset': {
+        borderColor: 'white', // Border color on hover
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: 'white', // Border color when focused
+      },
+    },
+    '& .MuiInputLabel-root': {
+      color: 'white', // Label color
+    },
+    '& .MuiInputLabel-root.Mui-focused': {
+      color: 'white', // Label color when focused
+    },
+    '& .MuiOutlinedInput-input': {
+      color: 'white', // Input text color
+    }, }}
           options={stadiums}
           value={roomName}
           onChange={(event, newValue) => setRoomName(newValue ?? "")}
@@ -173,7 +207,7 @@ const CreateForm: React.FC<Props> = ({ createRoomContract, open, onClose }) => {
         <Box sx={{ width: "100%", maxWidth: "400px" }}>
           <Typography
             variant="h6"
-            sx={{ textAlign: "left", color: "black", fontWeight: "bold" }}
+            sx={{ textAlign: "left", fontWeight: "bold" }}
           >
             APT
           </Typography>
@@ -218,21 +252,41 @@ const CreateForm: React.FC<Props> = ({ createRoomContract, open, onClose }) => {
           <TextField
             label="Your mate"
             variant="outlined"
-            sx={{ width: "400px" }}
+            sx={{ width: "400px",'& .MuiOutlinedInput-root': {
+      '& fieldset': {
+        borderColor: 'white', // Default border color
+      },
+      '&:hover fieldset': {
+        borderColor: 'white', // Border color on hover
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: 'white', // Border color when focused
+      },
+    },
+    '& .MuiInputLabel-root': {
+      color: 'white', // Label color
+    },
+    '& .MuiInputLabel-root.Mui-focused': {
+      color: 'white', // Label color when focused
+    },
+    '& .MuiOutlinedInput-input': {
+      color: 'white', // Input text color
+    }, }}
             value={mate}
-            onChange={(e)=>{setMate(e.target.value)}}
+            onChange={(e) => {
+              setMate(e.target.value);
+            }}
             disabled={!isMateEnabled}
           />
         </div>
-        <Button
-          variant="contained"
-          onClick={allFieldsFilled}
-          sx={{
-            width: "75%",
-          }}
-        >
-          Create
-        </Button>
+        <div className="w-[75%]">
+          <CustomButton
+            onClick={allFieldsFilled}
+            content="Create"
+            disabled={false}
+            isMain={true}
+          ></CustomButton>
+        </div>
       </Box>
     </Modal>
   );

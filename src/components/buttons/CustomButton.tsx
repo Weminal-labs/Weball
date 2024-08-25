@@ -25,7 +25,7 @@ const ButtonStyled = styled.button`
 cursor: pointer;
   color:white;
   background-color: ${({ isMain }) => (isMain ? '#41646A' : '#152D31')};
-  width: 80%;
+  width: 100%;
 
 `;
 
