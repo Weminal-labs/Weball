@@ -15,7 +15,7 @@ import useAuth from "../../../hooks/useAuth";
 import useGetRoom from "../../../hooks/useGetRoom";
 import UnityGameComponent, { useUnityGame } from "../../../hooks/useUnityGame";
 import { RoomType } from "../../../type/type";
-import CreateForm from "../../../components/create-room/CreateForm";
+import CreateForm from "../../../components/create-room/CreateForm/CreateForm";
 import AlertComponent from "../../../components/layout/AlertComponent";
 import {
   Aptos,
@@ -24,7 +24,9 @@ import {
   Network,
 } from "@aptos-labs/ts-sdk";
 import {
+  ButtonContainer,
   ContainerBox,
+  CustomTextField,
   FlexBox,
   GridContainer,
   JoinRoomContainer,
@@ -221,69 +223,35 @@ const PlayGame: React.FC = () => {
         ) : (
           <>
             <ContainerBox>
-            <TextField
-                  label="Search Room by ID"
-                  variant="outlined"
-                  value={searchTerm}
-                  onChange={handleSearchChange}
-                  size="small"
-                  sx={{ width: "80%",
-                    '& .MuiOutlinedInput-root': {
-      '& fieldset': {
-        borderColor: 'green', // Default border color
-      },
-      '&:hover fieldset': {
-        borderColor: 'white', // Border color on hover
-      },
-      '&.Mui-focused fieldset': {
-        borderColor: 'blue', // Border color when focused
-      },
-    },
-    '& .MuiInputLabel-root': {
-      color: 'grey', // Label color
-    },
-    '& .MuiInputLabel-root.Mui-focused': {
-      color: 'blue', // Label color when focused
-    },
-    '& .MuiOutlinedInput-input': {
-      color: 'white', // Input text color
-    },
-                   }}
-                />
-                
+              <CustomTextField
+                label="Search Room by ID"
+                variant="outlined"
+                value={searchTerm}
+                onChange={handleSearchChange}
+                size="small"
+              />
+
               <FlexBox>
-                
-                <div className="w-[140px]">
-                <CustomButton
-                  content="Reload"
-                  disabled={false}
-                  isMain={false}
-                  onClick={handleReload}
-                  
-                />
-                </div>
-  
-                <div className="w-[140px]">
-                <CustomButton
-                  content="Create"
-                  disabled={false}
-                  isMain={true}
-                  onClick={() => {
-                    setOpenCreate(true);
-                  }}                  
-                />
-                </div>
+                <ButtonContainer>
+                  <CustomButton
+                    content="Reload"
+                    disabled={false}
+                    isMain={false}
+                    onClick={handleReload}
+                  />
+                </ButtonContainer>
+
+                <ButtonContainer>
+                  <CustomButton
+                    content="Create"
+                    disabled={false}
+                    isMain={true}
+                    onClick={() => {
+                      setOpenCreate(true);
+                    }}
+                  />
+                </ButtonContainer>
               </FlexBox>
-     
-              {/* <Button
-                variant="contained"
-                color="success"
-                onClick={() => {
-                  setOpenCreate(true);
-                }}
-              >
-                Create
-              </Button> */}
             </ContainerBox>
 
             <GridContainer container spacing={4}>

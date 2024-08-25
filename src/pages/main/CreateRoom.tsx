@@ -13,7 +13,7 @@ import { CreateRoomType, RoomType } from "../../type/type";
 import LoadingScreen from "../../components/layout/LoadingScreen";
 import WaitingRoom from "../../components/create-room/WaitingRoom";
 import AlertComponent from "../../components/layout/AlertComponent";
-import CreateForm from "../../components/create-room/CreateForm";
+import CreateForm from "../../components/create-room/CreateForm/CreateForm";
 import { useNavigate } from "react-router-dom";
 import RoomCard from "../../components/join-room/Room";
 import useAuth from "../../hooks/useAuth";
@@ -119,7 +119,7 @@ const CreateRoom: React.FC = () => {
         setContentAlert("Exceed request limit, please wait 5 minutes");
         setOpenAlert(true);
       }
-          // @ts-ignore
+      // @ts-ignore
 
       if (error.status === 400) {
         flow.logout();

@@ -59,9 +59,9 @@ const SideBar = () => {
                 alignItems: "center",
                 justifyContent: "flex-start",
                 textDecoration: "none",
-                color: isActive ? "white" : "grey",
+                color: isActive ? "#0A665B" : "white",
                 background: isActive
-                  ? "linear-gradient(180deg, #885BFF 0%, #5977D6 100%)"
+                  ? "white"
                   : "transparent",
                 padding: "10px 0",
                 width: "80%",
