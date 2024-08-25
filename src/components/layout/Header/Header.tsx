@@ -372,6 +372,12 @@ const Header: React.FC = () => {
          <MenuItem onClick={handleLogout}>Logout</MenuItem>
        </Menu>
     </RightHeader>
+    <ProfileModal
+        open={profileModalOpen}
+        handleOpen={handleProfileOpen}
+        handleClose={() => setProfileModalOpen(false)}
+        
+      />
     <PlayerInfoModal
         open={playerInfoModalOpen}
         handleClose={handlePlayerInfoClose}
