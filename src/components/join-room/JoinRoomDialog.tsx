@@ -5,6 +5,7 @@ import useContract from "../../hooks/useContract";
 import { useAlert } from "../../contexts/AlertProvider";
 import styled from "styled-components";
 import { shortenAddress } from "../../utils/Shorten";
+import CustomButton from "../buttons/CustomButton";
 
 interface Pros {
   open: boolean;
@@ -97,31 +98,15 @@ const JoinRoomDialog: React.FC<Pros> = ({
 
           <ReadyButton>
 
-            <Button
-              variant="contained"
-              size="large"
-              sx={{
-                width: "100px",
-                boxSizing: "border-box",
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "center",
-                alignItems: "center",
-                padding: "16px 24px",
-                gap: "10px",
-                width: "359px",
-                height: "61px",
-                background: "#41646A",
-                border: "2px solid #B7B7B7",
-                flex: "none",
-                order: 0,
-                alignSelf: "stretch",
-                flexGrow: 0,
-              }}
+            <CustomButton
+        
+              content="Join"
+              disabled={false}
+              isMain={true}
               onClick={JoinRoomHandle}
             >
-              Join
-            </Button>
+              
+            </CustomButton>
           </ReadyButton>
         </ReadyContent>
       </Box>
