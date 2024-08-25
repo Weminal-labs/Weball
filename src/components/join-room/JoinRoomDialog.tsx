@@ -51,6 +51,9 @@ const JoinRoomDialog: React.FC<Pros> = ({
       aria-labelledby="waiting-room-title"
       aria-describedby="waiting-room-description"
       onClose={closeModal}
+      sx={{
+        backdropFilter: "blur(5px)",
+      }}
     >
       <Box sx={style}>
         <Title>
@@ -130,14 +133,15 @@ const style = {
   position: "absolute",
   width: "479px",
   height: "408px",
-  left: "calc(50% - 479px/2 + 0.5px)",
-  top: "315px",
+  left: "50%",
+  top: "50%",
+  transform: "translate(-50%, -50%)",
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
   padding: "60px",
   gap: "40px",
-  background: "linear-gradient(180deg, rgba(68, 97, 108, 0.6) 0%, rgba(42, 72, 74, 0.6) 100%)",
+background: "linear-gradient(180deg, rgba(68, 97, 108, 0.6) 0%, rgba(42, 72, 74, 0.6) 100%)",
   borderRadius: "12px",
   boxSizing: "border-box",
 };
