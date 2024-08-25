@@ -1,21 +1,7 @@
 import React, { useEffect, useState } from "react";
-import {
-  Aptos,
-  AptosConfig,
-  InputViewFunctionData,
-  Network,
-} from "@aptos-labs/ts-sdk";
+import { Aptos, AptosConfig, InputViewFunctionData, Network } from "@aptos-labs/ts-sdk";
 import { useAptimusFlow, useKeylessLogin } from "aptimus-sdk-test/react";
-import {
-  Avatar,
-  Box,
-  Button,
-  CircularProgress,
-  Grid,
-  Modal,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Avatar, Box, Button, CircularProgress, Grid, Modal, TextField, Typography } from "@mui/material";
 import { Cancel, CheckCircle } from "@mui/icons-material";
 import { ButtonLogout } from "./CreateAccount.styled";
 import { MODULE_ADDRESS } from "../../../utils/Var";
@@ -23,6 +9,8 @@ import { SendButton } from "../../SendButton/SendButton";
 import { useAlert } from "../../../contexts/AlertProvider";
 import useAuth from "../../../hooks/useAuth";
 import useContract from "../../../hooks/useContract";
+import CustomButton from "../../buttons/CustomButton";
+import CustomInput from "../../input/CustomInput";
 
 const CreateAccount = () => {
   const [editingImageLink, setEditingImageLink] = useState<string>("");
@@ -160,107 +148,81 @@ const CreateAccount = () => {
   };
 
   return (
-    <Modal open={true} sx={{ backdropFilter: "blur(20px)" }}>
-      <Box
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        sx={{
-          position: "relative",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          backgroundColor: "white",
-          width: 620,
-          p: 4,
-          borderRadius: 2,
-          boxShadow: 24,
-        }}
-      >
-        <Box display="flex" flexDirection="column" gap={2} width="100%">
-          <Box
-            display="flex"
-            flexDirection="row"
-            gap={2}
-            width="100%"
-            justifyContent="space-between"
-            alignItems="center"
-            textAlign="center"
-          >
-            <Typography variant="h5" sx={{ color: "Black" }}>
-              Create Your Account
-            </Typography>
-            <ButtonLogout onClick={handleLogout}>Logout</ButtonLogout>
+    <Modal open={true} >
+      <Box sx={{
+        width: '100vw', maxWidth: '550px', margin: 'auto', marginTop: '3%', background: 'linear-gradient(180deg, rgba(68, 97, 108, 0.6) 0%, rgba(42, 72, 74, 0.6) 100%)',
+        borderRadius: '8px', boxShadow: 24, padding: 3, position: 'relative', textTransform: 'uppercase', border: "2px solid rgba(255, 222, 100, 0.2)"
+      }}>
+        <Box display="flex" flexDirection="column" gap={2} width="100%" >
+          <Typography variant="h6" fontWeight="bold" mb={1} mt={1.5} align="center" fontSize="1.8rem" letterSpacing="0.2rem" color="white">
+            Create your account
+          </Typography>
+          <Box mb={1} width="450px" margin="0 auto">
+            <CustomInput
+              value={editingName}
+              onChange={(e) => setEditingName(e.target.value)}
+              placeholder="Name"
+              isMain={true} // or false depending on your styling needs
+              disabled={false} // or true if you want to disable the input
+            />
+          </Box>
+          <Box width="450px" margin="0 auto">
+            <CustomInput
+              value={editingUsername}
+              onChange={(e) => setEditingUsername(e.target.value)}
+              placeholder="username"
+              isMain={true} // or false depending on your styling needs
+              disabled={false} // or true if you want to disable the input
+            />
           </Box>
 
-          <TextField
-            label="Name"
-            variant="outlined"
-            value={editingName}
-            onChange={(e) => setEditingName(e.target.value)}
-            fullWidth
-          />
-          <TextField
-            label="Username"
-            variant="outlined"
-            value={editingUsername}
-            onChange={(e) => setEditingUsername(e.target.value)}
-            error={usernameTaken}
-            helperText={usernameTaken ? "Username is already taken" : ""}
-            InputProps={{
-              endAdornment: usernameTaken ? (
-                <Cancel color="error" />
-              ) : (
-                <CheckCircle color="action" />
-              ),
-            }}
-            fullWidth
-          />
+          <Box display="flex" justifyContent="center" flexDirection="column" margin="0 25px 0 30px" gap={1.5}>
+            <Typography variant="subtitle1" fontSize="0.7rem" color="white" letterSpacing="0.1rem">
+              Select your Avatar
+            </Typography>
+            <Grid container spacing={2} >
+              {existingImages.map((imgUrl, index) => (
+                <Grid item xs={4} sm={2} key={index}>
+                  <Avatar
+                    src={imgUrl}
+                    sx={{
+                      width: 56,
+                      height: 56,
+                      border:
+                        editingImageLink === imgUrl
+                          ? "3px solid blue"
+                          : "2px solid gray",
+                      cursor: "pointer",
+                    }}
+                    onClick={() => handleExistingImageSelect(imgUrl)}
+                  />
+                </Grid>
+              ))}
+            </Grid>
 
-          <Typography variant="subtitle1" sx={{ mt: 2 }}>
-            Select an Avatar:
-          </Typography>
-          <Grid container spacing={2}>
-            {existingImages.map((imgUrl, index) => (
-              <Grid item xs={4} sm={2} key={index}>
-                <Avatar
-                  src={imgUrl}
-                  sx={{
-                    width: 56,
-                    height: 56,
-                    border:
-                      editingImageLink === imgUrl
-                        ? "3px solid blue"
-                        : "2px solid gray",
-                    cursor: "pointer",
-                  }}
-                  onClick={() => handleExistingImageSelect(imgUrl)}
-                />
-              </Grid>
-            ))}
-          </Grid>
+            <Typography variant="subtitle1" fontSize="0.7rem" color="white" letterSpacing="0.1rem" mt={1}>
+              Or enter image URL
+            </Typography>
+            <Box display="flex" justifyContent="center" >
+              <CustomInput
+                value={editingImageLink}
+                onChange={(e) => setEditingImageLink(e.target.value)}
+                placeholder="Paste url here"
+                isMain={true}
+                disabled={false}
+              /></Box>
+          </Box>
 
-          {/* <TextField
-            label="Or enter image URL"
-            variant="outlined"
-            value={editingImageLink}
-            onChange={handleImageLinkChange}
-            fullWidth
-            sx={{ mt: 2 }}
-          /> */}
 
-          <SendButton walletAddress={address || ""} type={Network.TESTNET}>
-            Faucet
-          </SendButton>
+          <Box display="flex" justifyContent="center" mt={1} margin="10px 25px 0 30px" >
+            <SendButton walletAddress={address || ""} type={Network.TESTNET}>
+              Faucet
+            </SendButton>
+          </Box>
+          <Box display="flex" justifyContent="center" margin="10px 25px 25px 30px">
+            <CustomButton content={loading ? "Loading..." : "Create"} isMain={true} onClick={handleUpdate} disabled={loading || !allFieldsFilled()} />
+          </Box>
 
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleUpdate}
-            disabled={loading || !allFieldsFilled()}
-          >
-            {loading ? "Loading..." : "Create"}
-          </Button>
         </Box>
       </Box>
     </Modal>

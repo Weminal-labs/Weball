@@ -6,10 +6,9 @@ import { MODULE_ADDRESS } from "../../utils/Var";
 import { PlayerInfo } from "../../type/type";
 import useGetPlayer from "../../hooks/useGetPlayer";
 import useContract from "../../hooks/useContract";
-import { Box, Button, Divider, LinearProgress, Typography, TextField, Grid, Avatar } from "@mui/material";
+import { Box, LinearProgress, Typography, Avatar } from "@mui/material";
 import { shortenAddress } from '../../utils/Shorten';
 import { ContentCopy } from "@mui/icons-material";
-import { Cancel, CheckCircle, Star, AttachMoney } from "@mui/icons-material";
 import { useAlert } from "../../contexts/AlertProvider";
 import CustomButton from "../buttons/CustomButton";
 type Coin = { coin: { value: string } };
@@ -109,29 +108,29 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ open, handleOpen, handleClo
     }
   };
 
-  const handleUpdate = async () => {
-    if (usernameTaken) {
-      setAlert("Username is already taken. Please choose another one.", "error");
-      return;
-    }
-    await callContract({
-      functionName: "update_account",
-      functionArgs: [editingName, editingUsername, editingImageLink],
-      onSuccess: (data: any) => {
-        setAlert("Profile updated successfully!", "success");
-        setPlayerInfo((prev) => ({
-          ...prev,
-          name: editingName,
-          username: editingUsername,
-          user_image: editingImageLink,
-        }));
-        handleCloseModal();
-      },
-      onError: (error: any) => {
-        console.error("Error updating profile:", error);
-      },
-    });
-  };
+  // const handleUpdate = async () => {
+  //   if (usernameTaken) {
+  //     setAlert("Username is already taken. Please choose another one.", "error");
+  //     return;
+  //   }
+  //   await callContract({
+  //     functionName: "update_account",
+  //     functionArgs: [editingName, editingUsername, editingImageLink],
+  //     onSuccess: (data: any) => {
+  //       setAlert("Profile updated successfully!", "success");
+  //       setPlayerInfo((prev) => ({
+  //         ...prev,
+  //         name: editingName,
+  //         username: editingUsername,
+  //         user_image: editingImageLink,
+  //       }));
+  //       handleCloseModal();
+  //     },
+  //     onError: (error: any) => {
+  //       console.error("Error updating profile:", error);
+  //     },
+  //   });
+  // };
 
   const handleCloseModal = () => {
     handleClose();
@@ -139,24 +138,6 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ open, handleOpen, handleClo
     setUsernameTaken(false);
     setEditingImageLink("");
   };
-
-  const InfoRow = ({ label, value }: { label: string; value: string }) => (
-    <Box display="flex" alignItems="center" mb={1}>
-      <Typography variant="body1" fontWeight="bold" sx={{ mr: 1, fontSize: '1.2rem' }}>
-        {label}
-      </Typography>
-      <Typography variant="body1" sx={{ fontSize: '1.2rem' }}>{value}</Typography>
-    </Box>
-  );
-
-  // Reusable Component for Stat Boxes
-  const StatBox = ({ title, value }: { title: string; value: string }) => (
-    <Box textAlign="center" flex={1}>
-      <Typography variant="h6" fontWeight="bold">{value}</Typography>
-      <Typography variant="subtitle2" color="textSecondary">{title}</Typography>
-    </Box>
-  );
-
 
   return (
     <Modal open={open} onClose={handleCloseModal} sx={{
@@ -188,7 +169,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ open, handleOpen, handleClo
               id: {shortenAddress(address, 5)} <ContentCopy style={{ cursor: 'pointer', marginLeft: '5px' }} onClick={() => navigator.clipboard.writeText(address)} />
             </Typography>
             <Typography variant="body1">creator: {playerInfo?.name}</Typography>
-            <Typography variant="body1" display="flex" alignItems="center"> $ {parseFloat(balance) / 100000000} </Typography>
+            <Typography variant="body1" display="flex" alignItems="center"> $ {(parseFloat(balance) / 100000000).toFixed(2)} APT</Typography>
           </Box>
         </Box>
         <Typography variant="body1" fontSize="1.3rem" margin="0px 0px 0px 35px">   Win Rate: {winRate}%</Typography>
