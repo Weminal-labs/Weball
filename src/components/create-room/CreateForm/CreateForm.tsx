@@ -102,7 +102,7 @@ const CreateForm: React.FC<Props> = ({ createRoomContract, open, onClose }) => {
     if (roomName && bet) {
       createRoomContract(
         roomName,
-        (parseInt(bet) * 1000000).toString(),
+        (parseInt(bet) * 10000000).toString(),
         isMateEnabled,
         mate,
       );
@@ -151,20 +151,20 @@ const CreateForm: React.FC<Props> = ({ createRoomContract, open, onClose }) => {
           row
         >
           <CustomFormControlLabel
-            value="5"
-            label="5"
+            value="0.5"
+            label="0.5"
             selectedValue={bet}
             onChange={setBet}
           />
           <CustomFormControlLabel
-            value="10"
-            label="10"
+            value="1"
+            label="1"
             selectedValue={bet}
             onChange={setBet}
           />
           <CustomFormControlLabel
-            value="15"
-            label="15"
+            value="3"
+            label="3"
             selectedValue={bet}
             onChange={setBet}
           />

@@ -168,7 +168,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ open, handleOpen, handleClo
             <Typography variant="body1" display="flex" alignItems="center">
               id: {shortenAddress(address, 5)} <ContentCopy style={{ cursor: 'pointer', marginLeft: '5px' }} onClick={() => navigator.clipboard.writeText(address)} />
             </Typography>
-            <Typography variant="body1">creator: {playerInfo?.name}</Typography>
+            <Typography variant="body1">username: {playerInfo?.name}</Typography>
             <Typography variant="body1" display="flex" alignItems="center"> $ {(parseFloat(balance) / 100000000).toFixed(2)} APT</Typography>
           </Box>
         </Box>

@@ -90,7 +90,7 @@ const JoinRoomDialog: React.FC<Pros> = ({
 
                 </APTAvatar>
                 <APTAmount>
-                  TOTAL: {Number(room?.bet_amount) / 100000000} APT
+                  TOTAL: {Number(room?.bet_amount) / 10000000} APT
                 </APTAmount>
               </APT>
             </ReadyAPT>
