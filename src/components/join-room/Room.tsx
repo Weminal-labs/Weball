@@ -9,90 +9,69 @@ import {
 import { AttachMoney, People } from "@mui/icons-material";
 import { RoomType } from "../../type/type";
 import { shortenAddress } from "../../utils/Shorten";
-import { MODULE_ADDRESS } from "../../utils/Var";
-import { Aptos, AptosConfig, Network } from "@aptos-labs/ts-sdk";
-import { useAptimusFlow, useKeylessLogin } from "aptimus-sdk-test/react";
-import { AptimusNetwork } from "aptimus-sdk-test";
-import { useUnityGame } from "../../hooks/useUnityGame";
 
 interface RoomProps {
   roomType: RoomType;
-  setShow: React.Dispatch<React.SetStateAction<boolean>>;
-  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  openDialog: () => void;
+
+  setRoomObj: React.Dispatch<React.SetStateAction<RoomType | null>>;
 }
 
-const RoomCard: React.FC<RoomProps> = ({ roomType, setShow, setIsLoading }) => {
-  const flow = useAptimusFlow();
-  const { address } = useKeylessLogin();
-  const { sendMessage, isLoaded } = useUnityGame();
-
-  const JoinRoom = async () => {
-    const aptosConfig = new AptosConfig({ network: Network.TESTNET });
-    const aptos = new Aptos(aptosConfig);
-    const FUNCTION_NAME = `${MODULE_ADDRESS}::gamev3::join_room_by_room_id`;
-    const ROOM_ID = Number(roomType.room_id);
-    setIsLoading(true);
-    try {
-      const transaction = await aptos.transaction.build.simple({
-        sender: address ?? "",
-        data: {
-          function: FUNCTION_NAME,
-          functionArguments: [ROOM_ID],
-        },
-      });
-      const committedTransaction = await flow.executeTransaction({
-        aptos,
-        transaction,
-        network: AptimusNetwork.TESTNET,
-      });
-      //@ts-ignore
-      console.log(committedTransaction.events[1].data);
-      if (isLoaded === false) {
-        console.log("Máy chủ chưa kết nối");
-        return;
-      }
-      const obj = {
-        roomId: roomType.room_id,
-        roomName: roomType.room_name,
-        userId: roomType.creator,
-        userName: "userName",
-      };
-      setIsLoading(false);
-      sendMessage("RoomPlayer", "JoinOrCreateRoom", JSON.stringify(obj));
-      setShow(true);
-    } catch (error) {
-      console.error("Lỗi khi gọi hàm smart contract:", error);
-    }
+const RoomCard: React.FC<RoomProps> = ({
+  roomType,
+  openDialog,
+  setRoomObj,
+}) => {
+  const handleCLick = () => {
+    setRoomObj(roomType);
+    openDialog();
   };
+
   return (
-    <Card onClick={JoinRoom} sx={{ maxWidth: 450, cursor: "pointer" }}>
+    <Card onClick={handleCLick} sx={{ maxWidth: 400, cursor: "pointer",   color:"white" ,    background: 'linear-gradient(90deg, #173236 0%, rgba(5, 12, 16, 0.3) 100%)'
+
+    }}>
       <CardMedia
-        sx={{ height: 280, width: "100%" }}
+        sx={{ height: 160, width: "100%" }}
         image="/stadium/stadium1.jpg"
         title="Stadium"
       />
-      <CardContent>
-        <h2 className="text-lg font-semibold">Stadium: {roomType.room_name}</h2>
+      <CardContent
+        sx={{
+          // background: "white",
+          backgroundColor: "rgba(255, 255, 255, 0.1)",
+          opacity:"0.6",
+          fontSize:"14px",
+          paddingX:"40px"
+          // backdropFilter: "blur(1.5rem)",
+        }}
+      >
+        <h2 className="text-base font-semibold">{roomType.room_name}</h2>
         <Box className="my-2 flex gap-2">
-          <Box className="flex gap-1" sx={{ color: "#1976d2" }}>
-            <People sx={{ color: "#1976d2" }} />
-            <Typography component="span" sx={{ color: "#1976d2" }}>
+          <Box className="flex gap-1" sx={{ }}>
+            <People sx={{  }} />
+            <Typography component="span" sx={{  }}>
               {roomType.is_player2_joined ? "2" : "1"}/2 players
             </Typography>
           </Box>
-          <Box className="flex gap-1" sx={{ color: "#1976d2" }}>
-            <AttachMoney sx={{ color: "#1976d2" }} />
-            <Typography component="span" sx={{ color: "#1976d2" }}>
-              {roomType.bet_amount} aptos
+          <Box className="flex gap-1" sx={{}}>
+            <AttachMoney sx={{ }} />
+            <Typography component="span" sx={{  }}>
+              {(Number(roomType.bet_amount) / 10000000).toFixed(2)} APT
             </Typography>
           </Box>
         </Box>
         <Divider variant="middle" />
         <div className="my-3 flex flex-col gap-1">
-          <div className="text-sm opacity-85">
+          <div className="opacity-85">
             Creator: {shortenAddress(roomType.creator, 5)}
           </div>
-          <div>ID: {roomType.room_id}</div>
+          <div className="flex justify-between">
+            <div>ID: {roomType.room_id}</div>
+            {roomType.invited_friend_username.vec[0] && (
+              <div>Mate: {roomType.invited_friend_username.vec[0]}</div>
+            )}{" "}
+          </div>
         </div>
       </CardContent>
     </Card>
