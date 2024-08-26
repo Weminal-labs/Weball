@@ -1,9 +1,7 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Aptos, AptosConfig, InputViewFunctionData, Network } from "@aptos-labs/ts-sdk";
-import { useAptimusFlow, useKeylessLogin } from "aptimus-sdk-test/react";
-import { Avatar, Box, Button, CircularProgress, Grid, Modal, TextField, Typography } from "@mui/material";
-import { Cancel, CheckCircle } from "@mui/icons-material";
-import { ButtonLogout } from "./CreateAccount.styled";
+import { Avatar, Box, CircularProgress, Grid, Modal, Typography } from "@mui/material";
+
 import { MODULE_ADDRESS } from "../../../utils/Var";
 import { SendButton } from "../../SendButton/SendButton";
 import { useAlert } from "../../../contexts/AlertProvider";
@@ -20,7 +18,6 @@ const CreateAccount = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingFetch, setLoadingFetch] = useState<boolean>(true);
   const { auth } = useAuth();
-  const flow = useAptimusFlow();
   const address = localStorage.getItem("address")
   const { callContract } = useContract();
   const { setAlert } = useAlert();
@@ -93,11 +90,6 @@ const CreateAccount = () => {
     setEditingImageLink(imageUrl);
   };
 
-  // const handleImageLinkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   const link = e.target.value;
-  //   setEditingImageLink(link);
-  // };
-
   const allFieldsFilled = () => {
     return editingName && editingUsername;
   };
@@ -141,11 +133,11 @@ const CreateAccount = () => {
     return <CircularProgress />;
   }
 
-  const handleLogout = () => {
-    localStorage.clear();
-    flow.logout();
-    window.location.href = "/";
-  };
+  // const handleLogout = () => {
+  //   localStorage.clear();
+  //   flow.logout();
+  //   window.location.href = "/";
+  // };
 
   return (
     <Modal open={true} >
@@ -162,8 +154,8 @@ const CreateAccount = () => {
               value={editingName}
               onChange={(e) => setEditingName(e.target.value)}
               placeholder="Name"
-              isMain={true} // or false depending on your styling needs
-              disabled={false} // or true if you want to disable the input
+              isMain={true} 
+              disabled={false} 
             />
           </Box>
           <Box width="450px" margin="0 auto">
@@ -171,8 +163,8 @@ const CreateAccount = () => {
               value={editingUsername}
               onChange={(e) => setEditingUsername(e.target.value)}
               placeholder="username"
-              isMain={true} // or false depending on your styling needs
-              disabled={false} // or true if you want to disable the input
+              isMain={true} 
+              disabled={false} 
             />
           </Box>
 
