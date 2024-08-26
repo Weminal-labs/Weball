@@ -1,15 +1,20 @@
 import styled from "styled-components";
-import { Box, Grid } from "@mui/material";
+import { Box, Grid, TextField } from "@mui/material";
 
 export const ContainerBox = styled.div`
   width: 100%;
   display: flex;
-  justify-content: space-between;
+    flex-direction:column;
+    gap:8px;
+    margin-top:10px
+
 `;
 
 export const FlexBox = styled.div`
   width: 100%;
   display: flex;
+    justify-content: space-between;
+
   gap: 12px;
 `;
 
@@ -28,6 +33,30 @@ export const JoinRoomContainer = styled.div`
   overflow-y: scroll;
   flex-wrap: wrap;
   gap: 25px;
-  padding: 50px;
-  background: linear-gradient(45deg, #219ce2 30%, #0cbd16 90%);
 `;
+export const ButtonContainer = styled.div`
+  width:140px
+`
+export const CustomTextField = styled(TextField)(({ theme }) => ({
+  width: '80%',
+  '& .MuiOutlinedInput-root': {
+    '& fieldset': {
+      borderColor: 'green', // Default border color
+    },
+    '&:hover fieldset': {
+      borderColor: 'white', // Border color on hover
+    },
+    '&.Mui-focused fieldset': {
+      borderColor: 'blue', // Border color when focused
+    },
+  },
+  '& .MuiInputLabel-root': {
+    color: 'grey', // Label color
+  },
+  '& .MuiInputLabel-root.Mui-focused': {
+    color: 'blue', // Label color when focused
+  },
+  '& .MuiOutlinedInput-input': {
+    color: 'white', // Input text color
+  },
+}));

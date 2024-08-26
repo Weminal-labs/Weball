@@ -98,7 +98,6 @@ const ContentContainer = styled.div`
   align-items: center;
   width: 100%;
   height: 70vh;
-  background: linear-gradient(45deg, #219CE2 30%,#0CBD16 90%);
   position: relative;
   padding: 5px;
 `;

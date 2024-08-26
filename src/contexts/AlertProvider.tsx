@@ -21,10 +21,10 @@ interface AlertProviderProps {
 
 export const AlertProvider = ({ children }: AlertProviderProps) => {
   const [open, setOpen] = useState(false);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState<string|ReactNode>('');
   const [severity, setSeverity] = useState<"error" | "warning" | "info" | "success">('error');
 
-  const setAlert = (message: string, severity: "error" | "warning" | "info" | "success" = 'error') => {
+  const setAlert = (message: string|ReactNode, severity: "error" | "warning" | "info" | "success" = 'error') => {
     setMessage(message);
     setSeverity(severity);
     setOpen(true);

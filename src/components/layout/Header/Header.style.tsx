@@ -2,13 +2,12 @@ import styled from "styled-components";
 import { Box, IconButton } from "@mui/material";
 
 export const HeaderContainer = styled.div`
-  height: 60px;
+  height: 100%;
   padding: 20px;
   text-align: left;
   display: flex;
   justify-content: space-evenly;
   align-items: center;
-  background-color: #181733;
 `;
 
 export const LeftHeader = styled.div`
@@ -118,7 +117,7 @@ export const PlayerInfoModalBox = styled(Box)`
   left: 50%;
   transform: translate(-50%, -50%);
   width: 400px;
-  background-color: #181733;
+  background-color: #233A3E;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);

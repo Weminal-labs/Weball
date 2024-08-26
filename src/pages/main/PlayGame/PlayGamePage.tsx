@@ -15,7 +15,7 @@ import useAuth from "../../../hooks/useAuth";
 import useGetRoom from "../../../hooks/useGetRoom";
 import UnityGameComponent, { useUnityGame } from "../../../hooks/useUnityGame";
 import { RoomType } from "../../../type/type";
-import CreateForm from "../../../components/create-room/CreateForm";
+import CreateForm from "../../../components/create-room/CreateForm/CreateForm";
 import AlertComponent from "../../../components/layout/AlertComponent";
 import {
   Aptos,
@@ -24,7 +24,9 @@ import {
   Network,
 } from "@aptos-labs/ts-sdk";
 import {
+  ButtonContainer,
   ContainerBox,
+  CustomTextField,
   FlexBox,
   GridContainer,
   JoinRoomContainer,
@@ -33,6 +35,7 @@ import { MODULE_ADDRESS } from "../../../utils/Var";
 import { useAptimusFlow } from "aptimus-sdk-test/react";
 import { Compare } from "../../../utils/CompareAddress";
 import useContract from "../../../hooks/useContract";
+import CustomButton from "../../../components/buttons/CustomButton";
 
 const ITEMS_PER_PAGE = 6;
 
@@ -139,7 +142,7 @@ const PlayGame: React.FC = () => {
       roomId: roomObj?.room_id,
       roomName: roomObj?.room_name,
       userId: address,
-      userName: auth?.family_name,
+      userName: "123456",
     };
     sendMessage("RoomPlayer", "JoinOrCreateRoom", JSON.stringify(obj));
     setShow(true);
@@ -220,33 +223,35 @@ const PlayGame: React.FC = () => {
         ) : (
           <>
             <ContainerBox>
-              <FlexBox>
-                <TextField
-                  label="Search Room by ID"
-                  variant="outlined"
-                  value={searchTerm}
-                  onChange={handleSearchChange}
-                  size="small"
-                  sx={{ width: "40%" }}
-                />
+              <CustomTextField
+                label="Search Room by ID"
+                variant="outlined"
+                value={searchTerm}
+                onChange={handleSearchChange}
+                size="small"
+              />
 
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handleReload}
-                >
-                  Reload
-                </Button>
+              <FlexBox>
+                <ButtonContainer>
+                  <CustomButton
+                    content="Reload"
+                    disabled={false}
+                    isMain={false}
+                    onClick={handleReload}
+                  />
+                </ButtonContainer>
+
+                <ButtonContainer>
+                  <CustomButton
+                    content="Create"
+                    disabled={false}
+                    isMain={true}
+                    onClick={() => {
+                      setOpenCreate(true);
+                    }}
+                  />
+                </ButtonContainer>
               </FlexBox>
-              <Button
-                variant="contained"
-                color="success"
-                onClick={() => {
-                  setOpenCreate(true);
-                }}
-              >
-                Create
-              </Button>
             </ContainerBox>
 
             <GridContainer container spacing={4}>

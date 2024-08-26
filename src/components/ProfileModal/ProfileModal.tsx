@@ -6,11 +6,11 @@ import { MODULE_ADDRESS } from "../../utils/Var";
 import { PlayerInfo } from "../../type/type";
 import useGetPlayer from "../../hooks/useGetPlayer";
 import useContract from "../../hooks/useContract";
-import { Box, Button, Divider, LinearProgress, Typography, TextField, Grid, Avatar } from "@mui/material";
+import { Box, LinearProgress, Typography, Avatar } from "@mui/material";
 import { shortenAddress } from '../../utils/Shorten';
 import { ContentCopy } from "@mui/icons-material";
-import { Cancel, CheckCircle, Star, AttachMoney } from "@mui/icons-material";
 import { useAlert } from "../../contexts/AlertProvider";
+import CustomButton from "../buttons/CustomButton";
 type Coin = { coin: { value: string } };
 
 export interface ProfileModalProps {
@@ -108,29 +108,29 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ open, handleOpen, handleClo
     }
   };
 
-  const handleUpdate = async () => {
-    if (usernameTaken) {
-      setAlert("Username is already taken. Please choose another one.", "error");
-      return;
-    }
-    await callContract({
-      functionName: "update_account",
-      functionArgs: [editingName, editingUsername, editingImageLink],
-      onSuccess: (data: any) => {
-        setAlert("Profile updated successfully!", "success");
-        setPlayerInfo((prev) => ({
-          ...prev,
-          name: editingName,
-          username: editingUsername,
-          user_image: editingImageLink,
-        }));
-        handleCloseModal();
-      },
-      onError: (error: any) => {
-        console.error("Error updating profile:", error);
-      },
-    });
-  };
+  // const handleUpdate = async () => {
+  //   if (usernameTaken) {
+  //     setAlert("Username is already taken. Please choose another one.", "error");
+  //     return;
+  //   }
+  //   await callContract({
+  //     functionName: "update_account",
+  //     functionArgs: [editingName, editingUsername, editingImageLink],
+  //     onSuccess: (data: any) => {
+  //       setAlert("Profile updated successfully!", "success");
+  //       setPlayerInfo((prev) => ({
+  //         ...prev,
+  //         name: editingName,
+  //         username: editingUsername,
+  //         user_image: editingImageLink,
+  //       }));
+  //       handleCloseModal();
+  //     },
+  //     onError: (error: any) => {
+  //       console.error("Error updating profile:", error);
+  //     },
+  //   });
+  // };
 
   const handleCloseModal = () => {
     handleClose();
@@ -139,52 +139,99 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ open, handleOpen, handleClo
     setEditingImageLink("");
   };
 
-  const InfoRow = ({ label, value }: { label: string; value: string }) => (
-  <Box display="flex" alignItems="center" mb={1}>
-    <Typography variant="body1" fontWeight="bold" sx={{ mr: 1, fontSize: '1.2rem' }}>
-      {label}
-    </Typography>
-    <Typography variant="body1" sx={{ fontSize: '1.2rem' }}>{value}</Typography>
-  </Box>
-);
+  return (
+    <Modal open={open} onClose={handleCloseModal} sx={{
+      backdropFilter: "blur(8px)",
 
-// Reusable Component for Stat Boxes
-const StatBox = ({ title, value }: { title: string; value: string }) => (
-  <Box textAlign="center" flex={1}>
-    <Typography variant="h6" fontWeight="bold">{value}</Typography>
-    <Typography variant="subtitle2" color="textSecondary">{title}</Typography>
-  </Box>
-);
-
-
-return (
-  <Modal open={open} onClose={handleCloseModal}>
-  <Box sx={{ width: '90vw', maxWidth: '500px', margin: 'auto', marginTop: '5%', bgcolor: 'background.paper', borderRadius: '8px', boxShadow: 24, padding: 3, position: 'relative', textAlign: 'center' }}>
-    <Typography variant="h6" fontWeight="bold" mb={2} sx={{ fontSize: '1.5rem'}}>
-      Player Information
-    </Typography>
-    {loading && (
-      <Box width="100%" mb={2}>
-        <LinearProgress />
-      </Box>
-    )}
-    <Box display="flex" alignItems="center" gap={2} mb={1}>
-      <Avatar
-        src={playerInfo?.user_image || auth?.picture || ""}
-        alt="Profile Picture"
-        sx={{ width: 80, height: 80, cursor: editing ? 'pointer' : 'default' }}
-      />
-      <Box>
-        <Typography variant="body1" sx={{ fontSize: '1.2rem' }}>✉️ {auth?.email}</Typography>
-        <Typography variant="body1" display="flex" alignItems="center" sx={{ fontSize: '1.2rem' }}>
-          🪪 {shortenAddress(address, 5)} <ContentCopy style={{ fontSize: 'smaller', cursor: 'pointer', marginLeft: '5px' }} onClick={() => navigator.clipboard.writeText(address)} />
+    }}>
+      <Box sx={{
+        width: '90vw', maxWidth: '580px', margin: 'auto', marginTop: '7%', background: 'linear-gradient(180deg, rgba(68, 97, 108, 0.6) 0%, rgba(42, 72, 74, 0.6) 100%)',
+        backdropFilter: "blur(1.5rem)", borderRadius: '8px', boxShadow: 24, padding: 3, position: 'relative', textTransform: 'uppercase'
+      }}>
+        <Typography variant="h6" fontWeight="bold" mb={2} mt={2} align="center" fontSize="2.3rem" letterSpacing="0.2rem" color="white">
+          Player Information
         </Typography>
-        <Typography variant="body1" display="flex" alignItems="center" sx={{ fontSize: '1.2rem' }}>
-          <AttachMoney color="action" /> {parseFloat(balance) / 100000000} APT
-        </Typography>
-      </Box>
-    </Box>
-    <Box sx={{ overflowY: 'auto', maxHeight: '50vh', mb: 3 }}>
+        {loading && (
+          <Box width="100%" mb={2}>
+            <LinearProgress />
+          </Box>
+        )}
+        <Box display="flex" alignItems="center" gap={4} margin="10px 0px 10px 35px" >
+          <Avatar
+            src={playerInfo?.user_image || auth?.picture || ""}
+            alt="Profile Picture"
+            sx={{ width: 60, height: 60, cursor: editing ? 'pointer' : 'default' }}
+
+          />
+          <Box display="flex" flexDirection="column" gap={1} mb={2} mt={2} >
+            <Typography variant="body1">email: {auth?.email}</Typography>
+            <Typography variant="body1" display="flex" alignItems="center">
+              id: {shortenAddress(address, 5)} <ContentCopy style={{ cursor: 'pointer', marginLeft: '5px' }} onClick={() => navigator.clipboard.writeText(address)} />
+            </Typography>
+            <Typography variant="body1">username: {playerInfo?.name}</Typography>
+            <Typography variant="body1" display="flex" alignItems="center"> $ {(parseFloat(balance) / 100000000).toFixed(2)} APT</Typography>
+          </Box>
+        </Box>
+        <Typography variant="body1" fontSize="1.3rem" margin="0px 0px 0px 35px">   Win Rate: {winRate}%</Typography>
+        <Box display="flex" justifyContent="start" flexDirection="row" gap={2}  margin="30px 0px 0px 35px">
+          <Box
+            width="120px"
+            height="50px"
+            textAlign="center"
+            lineHeight="50px"
+            sx={{
+              position: "relative",
+              "&::before": {
+                content: '""',
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                padding: "2px", // Adjust the thickness of the border here
+                background: "linear-gradient(to right, #F3F3F3, #433100)",
+                WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                maskComposite: "exclude",
+                WebkitMaskComposite: "xor",
+              },
+              backgroundColor: "rgba(21, 45, 49, 0.6)" // 60% opacity
+
+            }}
+          >{Number(playerInfo?.games_played) - Number(playerInfo?.winning_games)} losses</Box>
+          <Box
+            width="110px"
+            height="50px"
+            textAlign="center"
+            lineHeight="50px"
+            
+            sx={{
+              position: "relative",
+              borderRadius: "10px",
+              "&::before": {
+                content: '""',
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                padding: "2px", // Adjust the thickness of the border here
+                background: "linear-gradient(to right, #FFDE64, #433100)",
+                WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                maskComposite: "exclude",
+                WebkitMaskComposite: "xor",
+              },
+              backgroundColor: "#152D31", // Inner content background color
+            }}
+          >{Number(playerInfo?.winning_games)} wins</Box>
+
+        </Box>
+        <Box display="flex" justifyContent="center" margin="35px 35px 25px 35px">
+          <CustomButton content="close" isMain={true} onClick={handleCloseModal} disabled={loading} />
+        </Box>
+
+        {/* <Box sx={{ overflowY: 'auto', maxHeight: '50vh', mb: 3 }}>
       {editing ? (
         <>
           <TextField
@@ -252,8 +299,8 @@ return (
           </Box>
         </>
       )}
-    </Box>
-    {!editing && (
+    </Box> */}
+        {/* {!editing && (
       <>
         <Box display="flex" justifyContent="space-between" gap={2} mb={2}>
           <StatBox title="Wins" value={playerInfo?.winning_games} />
@@ -261,28 +308,28 @@ return (
           <StatBox title="Losses" value={(Number(playerInfo?.games_played) - Number(playerInfo?.winning_games)).toString()} />
         </Box>
       </>
-    )}
-    <Box display="flex" justifyContent="flex-end" gap={2}>
-      {editing ? (
-        <>
-          <Button onClick={handleUpdate} variant="contained" color="primary" disabled={loading || usernameTaken}>
-            {loading ? "Updating..." : "Update"}
-          </Button>
-          <Button onClick={() => setEditing(false)} variant="outlined">
-            Cancel
-          </Button>
-        </>
-      ) : (
-        <Button onClick={() => setEditing(true)} variant="contained">
-          Edit
-        </Button>
-      )}
-    </Box>
-  </Box>
-</Modal>
+    )} */}
+        {/* <Box display="flex" justifyContent="flex-end" gap={2}>
+          {editing ? (
+            <>
+              <Button onClick={handleUpdate} variant="contained" color="primary" disabled={loading || usernameTaken}>
+                {loading ? "Updating..." : "Update"}
+              </Button>
+              <Button onClick={() => setEditing(false)} variant="outlined">
+                Cancel
+              </Button>
+            </>
+          ) : (
+            <Button onClick={() => setEditing(true)} variant="contained">
+              Edit
+            </Button>
+          )}
+        </Box> */}
+      </Box>
+    </Modal>
 
 
-);
+  );
 };
 
 export default ProfileModal;

@@ -380,7 +380,7 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
               )}
             </Box>
             <Typography sx={{ mt: 4 }}>
-              TOTAL: {(Number(room?.bet_amount) / 100000000).toFixed(2)} APT
+              TOTAL: {(Number(room?.bet_amount) / 10000000).toFixed(2)} APT
             </Typography>
             <Box
               sx={{
