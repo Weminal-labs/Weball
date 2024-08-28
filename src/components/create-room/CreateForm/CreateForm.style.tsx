@@ -15,14 +15,14 @@ export const StyledBox = styled(Box)(({ theme, isMobile }) => ({
   flexDirection: 'column',
   gap: isMobile ? theme.spacing(2) : theme.spacing(3),
   width: isMobile ? '90%' : '80%',
-  maxWidth: isMobile ? 'none' : '600px',
+  maxWidth: isMobile ? 'none' : '550px',
   height: 'auto',
   justifyContent: 'center',
   alignItems: 'center',
   padding: theme.spacing(2.5),
   border: '2px solid white',
   borderRadius: '8px',
-  background: 'linear-gradient(180deg, #44616C 0%, #2A484A 100%)',
+  backgroundColor: 'rgba(68, 97, 108, 0.6)',
   backdropFilter: 'blur(1.5rem)',
   boxShadow: '4px 4px 20px rgba(0, 0, 0.1, 0.2)',
   color: 'white',
@@ -61,7 +61,6 @@ export const StyledTextField = styled(TextField)(({ theme }) => ({
 
 export const StyledAutocomplete = styled(Autocomplete)(({ theme }) => ({
   width: '100%',
-  maxWidth: '400px',
   '& .MuiOutlinedInput-root': {
     '& fieldset': {
       borderColor: 'white',
