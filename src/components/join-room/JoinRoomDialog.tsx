@@ -31,7 +31,6 @@ const JoinRoomDialog: React.FC<Pros> = ({
       functionName: "join_room_by_room_id",
       functionArgs: [Number(room?.room_id)],
       onSuccess(result) {
-        console.log("ahahha")
         setIsLoading(false);
         openWaitingRoom();
       },
@@ -78,16 +77,17 @@ const JoinRoomDialog: React.FC<Pros> = ({
                     <path d="M17.0978 13.3808L13.3809 20.8146L20.8147 16.3544V12.6375L17.0978 13.3808Z" fill="white" />
                   </svg>
                 </PlayerAvatar>
+
                 <PlayerUser>
                   1/2 PLAYER
                 </PlayerUser>
               </Player>
+
               <APT>
                 <APTAvatar>
                   <svg width="13" height="20" viewBox="0 0 13 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12.696 12.888C12.696 14.264 12.232 15.328 11.304 16.08C10.392 16.832 9.04 17.272 7.248 17.4V19.848H5.256V17.352C3.672 17.192 2.408 16.728 1.464 15.96C0.536 15.176 0.072 14.184 0.072 12.984H2.688C2.688 13.464 2.912 13.864 3.36 14.184C3.824 14.504 4.456 14.728 5.256 14.856V11.304C3.528 11.192 2.272 10.824 1.488 10.2C0.704 9.576 0.312 8.624 0.312 7.344C0.312 6.08 0.728 5.088 1.56 4.368C2.408 3.632 3.64 3.192 5.256 3.048V0.719999H7.248V3.048C8.816 3.176 10.072 3.632 11.016 4.416C11.976 5.2 12.456 6.208 12.456 7.44H9.816C9.816 6.944 9.584 6.528 9.12 6.192C8.656 5.856 8.032 5.64 7.248 5.544V8.832C9.152 8.896 10.536 9.256 11.4 9.912C12.264 10.552 12.696 11.544 12.696 12.888ZM2.976 7.344C2.976 7.76 3.152 8.088 3.504 8.328C3.872 8.552 4.456 8.704 5.256 8.784V5.568C4.52 5.648 3.952 5.84 3.552 6.144C3.168 6.448 2.976 6.848 2.976 7.344ZM7.248 14.88C8.16 14.816 8.856 14.608 9.336 14.256C9.832 13.904 10.08 13.448 10.08 12.888C10.08 12.392 9.856 12.024 9.408 11.784C8.96 11.544 8.24 11.392 7.248 11.328V14.88Z" fill="white" />
                   </svg>
-
                 </APTAvatar>
                 <APTAmount>
                   TOTAL: {Number(room?.bet_amount) / 10000000} APT
@@ -97,15 +97,12 @@ const JoinRoomDialog: React.FC<Pros> = ({
           </ReadyList>
 
           <ReadyButton>
-
             <CustomButton
-        
               content="Join"
               disabled={false}
               isMain={true}
               onClick={JoinRoomHandle}
             >
-              
             </CustomButton>
           </ReadyButton>
         </ReadyContent>
@@ -327,6 +324,5 @@ const APTAvatar = styled.div`
   order: 0;
   flex-grow: 0;
 `;
-
 
 export default JoinRoomDialog;
