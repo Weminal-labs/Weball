@@ -271,11 +271,21 @@ const PlayGame: React.FC = () => {
                   );
               })}
             </GridContainer>
-            <Stack spacing={4} sx={{ marginBottom: "20px" }}>
+            <Stack spacing={4} sx={{ marginBottom: "20px", color: "white" }}>
               <Pagination
                 count={Math.ceil(filteredRooms.length / ITEMS_PER_PAGE)}
                 page={page}
+                color="primary"
                 onChange={handlePageChange}
+                sx={{
+                  "& .MuiPaginationItem-root": {
+                    color: "white", // Màu chữ của các trang
+                  },
+                  "& .MuiPaginationItem-root.Mui-selected": {
+                    backgroundColor: "rgba(255, 255, 255, 0.12)", // Nền cho trang được chọn
+                    color: "white", // Màu chữ cho trang được chọn
+                  },
+                }}
               />
             </Stack>
           </>

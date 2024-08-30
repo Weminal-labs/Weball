@@ -146,9 +146,10 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ open, handleOpen, handleClo
     }}>
       <Box sx={{
         width: '90vw', maxWidth: '580px', margin: 'auto', marginTop: '7%', background: 'linear-gradient(180deg, rgba(68, 97, 108, 0.6) 0%, rgba(42, 72, 74, 0.6) 100%)',
-        backdropFilter: "blur(1.5rem)", borderRadius: '8px', boxShadow: 24, padding: 3, position: 'relative', textTransform: 'uppercase'
+        backdropFilter: "blur(1.5rem)", borderRadius: '8px', boxShadow: 24, padding: 3, position: 'relative', textTransform: 'uppercase',
+        color:"white"
       }}>
-        <Typography variant="h6" fontWeight="bold" mb={2} mt={2} align="center" fontSize="2.3rem" letterSpacing="0.2rem" color="white">
+        <Typography variant="h6" fontWeight="bold" mb={2} mt={2} align="center" fontSize="2.3rem" letterSpacing="0.2rem" >
           Player Information
         </Typography>
         {loading && (
