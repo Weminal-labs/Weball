@@ -27,9 +27,6 @@ const GlobalStyle = createGlobalStyle`
   width: 12px;
 }
 
-::-webkit-scrollbar-track {
-  background: #0cbd16;
-}
 
 ::-webkit-scrollbar-thumb {
   background-color: #1E90FF;
@@ -56,13 +53,14 @@ const float = keyframes`
 `;
 
 const LeaderboardContainer = styled.div`
-  background-color: #1a1a2e;
   color: white;
-  padding: 20px;
-  width: 100vw;
-  height: 100vh;
+  padding: 1px;
+  width: 60vw;
+  height: 80vh;
   display: flex;
   flex-direction: column;
+  align-items: center; // Add this line
+  justify-content: center; // Add this line
   overflow: hidden;
   animation: ${fadeIn} 0.5s ease-in;
 `;
@@ -74,8 +72,8 @@ const TabContainer = styled.div`
 `;
 
 const Tab = styled.button<{ $active: boolean }>`
-  background-color: ${(props) => (props.$active ? "#ff2e63" : "transparent")};
-  color: white;
+  background-color: ${(props) => (props.$active ? "white" : "transparent")};
+  color: #488C84;
   border: none;
   padding: 10px 20px;
   margin: 0 5px;
@@ -83,7 +81,7 @@ const Tab = styled.button<{ $active: boolean }>`
   cursor: pointer;
   transition: all 0.3s ease;
   &:hover {
-    background-color: ${(props) => (props.$active ? "#ff2e63" : "#ff2e6350")};
+    background-color: ${(props) => (props.$active ? "white" : "white")};
   }
 `;
 
@@ -113,7 +111,6 @@ const Avatar = styled.img`
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  border: 3px solid #ff2e63;
 `;
 
 const Username = styled.div`
@@ -150,7 +147,6 @@ const LeaderboardList = styled.div`
     background: #252a34;
   }
   &::-webkit-scrollbar-thumb {
-    background: #ff2e63;
     border-radius: 5px;
   }
 `;

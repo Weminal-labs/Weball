@@ -6,11 +6,11 @@ import { MODULE_ADDRESS } from "../../utils/Var";
 import { PlayerInfo } from "../../type/type";
 import useGetPlayer from "../../hooks/useGetPlayer";
 import useContract from "../../hooks/useContract";
-import { Box, Button, Divider, LinearProgress, Typography, TextField, Grid, Avatar } from "@mui/material";
+import { Box, LinearProgress, Typography, Avatar } from "@mui/material";
 import { shortenAddress } from '../../utils/Shorten';
 import { ContentCopy } from "@mui/icons-material";
-import { Cancel, CheckCircle, Star, AttachMoney } from "@mui/icons-material";
 import { useAlert } from "../../contexts/AlertProvider";
+import CustomButton from "../buttons/CustomButton";
 import CustomButton from "../buttons/CustomButton";
 type Coin = { coin: { value: string } };
 
@@ -109,29 +109,29 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ open, handleOpen, handleClo
     }
   };
 
-  const handleUpdate = async () => {
-    if (usernameTaken) {
-      setAlert("Username is already taken. Please choose another one.", "error");
-      return;
-    }
-    await callContract({
-      functionName: "update_account",
-      functionArgs: [editingName, editingUsername, editingImageLink],
-      onSuccess: (data: any) => {
-        setAlert("Profile updated successfully!", "success");
-        setPlayerInfo((prev) => ({
-          ...prev,
-          name: editingName,
-          username: editingUsername,
-          user_image: editingImageLink,
-        }));
-        handleCloseModal();
-      },
-      onError: (error: any) => {
-        console.error("Error updating profile:", error);
-      },
-    });
-  };
+  // const handleUpdate = async () => {
+  //   if (usernameTaken) {
+  //     setAlert("Username is already taken. Please choose another one.", "error");
+  //     return;
+  //   }
+  //   await callContract({
+  //     functionName: "update_account",
+  //     functionArgs: [editingName, editingUsername, editingImageLink],
+  //     onSuccess: (data: any) => {
+  //       setAlert("Profile updated successfully!", "success");
+  //       setPlayerInfo((prev) => ({
+  //         ...prev,
+  //         name: editingName,
+  //         username: editingUsername,
+  //         user_image: editingImageLink,
+  //       }));
+  //       handleCloseModal();
+  //     },
+  //     onError: (error: any) => {
+  //       console.error("Error updating profile:", error);
+  //     },
+  //   });
+  // };
 
   const handleCloseModal = () => {
     handleClose();
@@ -320,6 +320,8 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ open, handleOpen, handleClo
       )}
     </Box> */}
         {/* {!editing && (
+    </Box> */}
+        {/* {!editing && (
       <>
         <Box display="flex" justifyContent="space-between" gap={2} mb={2}>
           <StatBox title="Wins" value={playerInfo?.winning_games} />
@@ -346,8 +348,28 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ open, handleOpen, handleClo
         </Box> */}
       </Box>
     </Modal>
+    )} */}
+        {/* <Box display="flex" justifyContent="flex-end" gap={2}>
+          {editing ? (
+            <>
+              <Button onClick={handleUpdate} variant="contained" color="primary" disabled={loading || usernameTaken}>
+                {loading ? "Updating..." : "Update"}
+              </Button>
+              <Button onClick={() => setEditing(false)} variant="outlined">
+                Cancel
+              </Button>
+            </>
+          ) : (
+            <Button onClick={() => setEditing(true)} variant="contained">
+              Edit
+            </Button>
+          )}
+        </Box> */}
+      </Box>
+    </Modal>
 
 
+  );
   );
 };
 
