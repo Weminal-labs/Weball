@@ -56,9 +56,9 @@ export const UnityGameProvider: React.FC<GameProviderProps> = ({
   const pickWinnerByRoomId = async (roomId: number, winner: string) => {
     const aptosConfig = new AptosConfig({ network: Network.TESTNET });
     const aptos = new Aptos(aptosConfig);
-
+    console.log(import.meta.env.VITE_SECRET_KEY)
     const privateKey = new Ed25519PrivateKey(
-      import.meta.env.SECRET_KEY,
+      import.meta.env.VITE_SECRET_KEY,
     );
 
     const account = await Account.fromPrivateKey({ privateKey });

@@ -10,7 +10,7 @@ import {
 import LoadingScreen from "../../../components/layout/LoadingScreen";
 import RoomCard from "../../../components/join-room/Room";
 import JoinRoomDialog from "../../../components/join-room/JoinRoomDialog";
-import WaitingRoom from "../../../components/create-room/WaitingRoom";
+import WaitingRoom from "../../../components/create-room/WaitingRoom/WaitingRoom";
 import useAuth from "../../../hooks/useAuth";
 import useGetRoom from "../../../hooks/useGetRoom";
 import UnityGameComponent, { useUnityGame } from "../../../hooks/useUnityGame";

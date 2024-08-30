@@ -11,7 +11,7 @@ import { AptimusNetwork } from "aptimus-sdk-test";
 import { MODULE_ADDRESS } from "../../utils/Var";
 import { CreateRoomType, RoomType } from "../../type/type";
 import LoadingScreen from "../../components/layout/LoadingScreen";
-import WaitingRoom from "../../components/create-room/WaitingRoom";
+import WaitingRoom from "../../components/create-room/WaitingRoom/WaitingRoom";
 import AlertComponent from "../../components/layout/AlertComponent";
 import CreateForm from "../../components/create-room/CreateForm/CreateForm";
 import { useNavigate } from "react-router-dom";

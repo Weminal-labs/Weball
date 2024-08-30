@@ -88,7 +88,7 @@ const CustomFormControlLabel: React.FC<CustomFormControlLabelProps> = ({
 );
 
 const CreateForm: React.FC<Props> = ({ createRoomContract, open, onClose }) => {
-  const [roomName, setRoomName] = useState("");
+  const [roomName, setRoomName] = useState<string>("");
   const [bet, setBet] = useState("");
   const [mate, setMate] = useState("");
   const [isMateEnabled, setIsMateEnabled] = useState(false);
@@ -132,7 +132,8 @@ const CreateForm: React.FC<Props> = ({ createRoomContract, open, onClose }) => {
           <StyledAutocomplete
             options={stadiums}
             value={roomName}
-            onChange={(event, newValue) => setRoomName(newValue ?? "")}
+            //@ts-ignore
+            onChange={(event,value) => setRoomName(value)}
             renderInput={(params) => (
               <StyledTextField {...params} label="STADIUM" variant="outlined" fullWidth />
             )}
