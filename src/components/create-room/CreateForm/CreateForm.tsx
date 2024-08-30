@@ -1,12 +1,6 @@
 import {
-  Autocomplete,
   Box,
-  Button,
   FormControlLabel,
-  IconButton,
-  Modal,
-  RadioGroup,
-  TextField,
   Typography,
   Theme,
   useMediaQuery,
@@ -19,6 +13,9 @@ import CloseIcon from "@mui/icons-material/Close";
 import { useAlert } from "../../../contexts/AlertProvider";
 import CustomButton from "../../buttons/CustomButton";
 import { StyledAutocomplete, StyledBox, StyledIconButton, StyledModal, StyledRadioGroup, StyledTextField } from "./CreateForm.style";
+import CustomInput from "../../input/CustomInput";
+import { Aptos, AptosConfig, InputViewFunctionData, Network } from "@aptos-labs/ts-sdk";
+import { SendButton } from "../../SendButton/SendButton";
 
 const stadiums = [
   "Old Trafford",
@@ -56,16 +53,17 @@ const CustomButtonSelect = styled("div")<CustomButtonProps>(
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    width: "90px",
-    height: "40px",
-    backgroundColor: selected ? "green" : "grey",
-    color: selected ? "white" : "green",
+    width: "55px",
+    height: "50px",
+    backgroundColor: selected ? "grey" : "#152D31",
+    color: "white",
     borderRadius: "4px",
     cursor: "pointer",
     userSelect: "none",
     "&:hover": {
-      backgroundColor: selected ? "blue" : "grey",
+      backgroundColor: "grey",
     },
+    fontFamily: 'revert'
   }),
 );
 
@@ -85,7 +83,7 @@ const CustomFormControlLabel: React.FC<CustomFormControlLabelProps> = ({
       </CustomButtonSelect>
     }
     label=""
-    style={{ margin: 0 }}
+    sx={{ margin: 0 }}
   />
 );
 
@@ -97,6 +95,8 @@ const CreateForm: React.FC<Props> = ({ createRoomContract, open, onClose }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const { setAlert } = useAlert();
+  const address = localStorage.getItem("address")
+
 
   const allFieldsFilled = () => {
     if (roomName && bet) {
@@ -113,92 +113,86 @@ const CreateForm: React.FC<Props> = ({ createRoomContract, open, onClose }) => {
 
   return (
     <StyledModal
-    open={open}
-    onClose={onClose}
-    aria-labelledby="create-room-modal-title"
-    aria-describedby="create-room-modal-description"
-  >
-    <StyledBox isMobile={isMobile}>
-      <StyledIconButton onClick={onClose}>
-        <CloseIcon />
-      </StyledIconButton>
+      open={open}
+      onClose={onClose}
+      aria-labelledby="create-room-modal-title"
+      aria-describedby="create-room-modal-description"
+      
+    >
+      <StyledBox isMobile={isMobile}>
+        <StyledIconButton onClick={onClose}>
+          <CloseIcon />
+        </StyledIconButton>
 
-      <h1 id="create-room-modal-title" className="text-[40px]">
-        Create a Room
-      </h1>
-
-      <StyledAutocomplete
-        options={stadiums}
-        value={roomName}
-        onChange={(event, newValue) => setRoomName(newValue ?? "")}
-        renderInput={(params) => (
-          <StyledTextField {...params} label="Stadium" variant="outlined" fullWidth />
-        )}
-      />
-
-      <Box sx={{ width: '100%', maxWidth: '400px' }}>
-        <Typography
-          variant="h6"
-          sx={{ textAlign: 'left', fontWeight: 'bold' }}
-        >
-          APT
-        </Typography>
-        <StyledRadioGroup
-          aria-label="bet"
-          name="bet"
-          value={bet}
-          onChange={(e) => setBet(e.target.value)}
-          row
-        >
-          <CustomFormControlLabel
-            value="0.5"
-            label="0.5"
-            selectedValue={bet}
-            onChange={setBet}
+        <h1 id="create-room-modal-title" className="text-[40px]">
+          Create a Room
+        </h1>
+        <Box sx={{ width: '90%', maxWidth: '500px' }}>
+          <Typography variant="h6" mb={1} fontSize='0.8rem' letterSpacing='0.1rem'>STAGE</Typography>
+          <StyledAutocomplete
+            options={stadiums}
+            value={roomName}
+            onChange={(event, newValue) => setRoomName(newValue ?? "")}
+            renderInput={(params) => (
+              <StyledTextField {...params} label="STADIUM" variant="outlined" fullWidth />
+            )}
           />
-          <CustomFormControlLabel
-            value="1"
-            label="1"
-            selectedValue={bet}
-            onChange={setBet}
-          />
-          <CustomFormControlLabel
-            value="3"
-            label="3"
-            selectedValue={bet}
-            onChange={setBet}
-          />
-        </StyledRadioGroup>
-      </Box>
-      <div className="flex flex-col">
-        <FormControlLabel
-          control={
-            <Switch
-              checked={isMateEnabled}
-              onChange={(e) => setIsMateEnabled(e.target.checked)}
+        </Box>
+        <Box sx={{ width: '90%', maxWidth: '500px' }}>
+          <Typography variant="h6" mb={1} fontSize='0.8rem' letterSpacing='0.1rem'>BET</Typography>
+          <StyledRadioGroup
+            sx={{ maxWidth: '40%', display: 'flex', justifyContent: 'space-between', margin: '0 auto' }}
+            aria-label="bet"
+            name="bet"
+            value={bet}
+            onChange={(e) => setBet(e.target.value)}
+            row
+          >
+            <CustomFormControlLabel
+              value="0.5"
+              label="0.5"
+              selectedValue={bet}
+              onChange={setBet}
             />
-          }
-          label="Mate"
-        />
-        <StyledTextField
-          label="Your mate"
-          variant="outlined"
-          value={mate}
-          onChange={(e) => setMate(e.target.value)}
-          disabled={!isMateEnabled}
-          sx={{ width: '400px' }}
-        />
-      </div>
-      <div className="w-[75%]">
-        <CustomButton
-          onClick={allFieldsFilled}
-          content="Create"
-          disabled={false}
-          isMain={true}
-        />
-      </div>
-    </StyledBox>
-  </StyledModal>
+            <CustomFormControlLabel
+              value="1"
+              label="1"
+              selectedValue={bet}
+              onChange={setBet}
+            />
+            <CustomFormControlLabel
+              value="3"
+              label="3"
+              selectedValue={bet}
+              onChange={setBet}
+            />
+          </StyledRadioGroup>
+        </Box>
+        <Box sx={{ width: '90%', maxWidth: '500px' }}>
+          <Typography variant="h6" mb={1} fontSize='0.8rem' letterSpacing='0.1rem'>MATE</Typography>
+          <CustomInput
+            value={mate}
+            onChange={(e) => setMate(e.target.value)}
+            placeholder="YOUR MATE"
+            isMain={true}
+            disabled={false}
+          />
+        </Box>
+        <Box display="flex" justifyContent="center" width="90%" mt={1}>
+          <SendButton walletAddress={address || ""} type={Network.TESTNET}>
+            Faucet
+          </SendButton>
+        </Box>
+        <div className="w-[90%] mb-5">
+          <CustomButton
+            onClick={allFieldsFilled}
+            content="Create"
+            disabled={false}
+            isMain={true}
+          />
+        </div>
+      </StyledBox>
+    </StyledModal>
   );
 };
 

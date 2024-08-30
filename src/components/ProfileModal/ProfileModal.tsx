@@ -139,6 +139,24 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ open, handleOpen, handleClo
     setEditingImageLink("");
   };
 
+  const InfoRow = ({ label, value }: { label: string; value: string }) => (
+    <Box display="flex" alignItems="center" mb={1}>
+      <Typography variant="body1" fontWeight="bold" sx={{ mr: 1, fontSize: '1.2rem' }}>
+        {label}
+      </Typography>
+      <Typography variant="body1" sx={{ fontSize: '1.2rem' }}>{value}</Typography>
+    </Box>
+  );
+
+  // Reusable Component for Stat Boxes
+  const StatBox = ({ title, value }: { title: string; value: string }) => (
+    <Box textAlign="center" flex={1}>
+      <Typography variant="h6" fontWeight="bold">{value}</Typography>
+      <Typography variant="subtitle2" color="textSecondary">{title}</Typography>
+    </Box>
+  );
+
+
   return (
     <Modal open={open} onClose={handleCloseModal} sx={{
       backdropFilter: "blur(8px)",
@@ -169,12 +187,12 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ open, handleOpen, handleClo
             <Typography variant="body1" display="flex" alignItems="center">
               id: {shortenAddress(address, 5)} <ContentCopy style={{ cursor: 'pointer', marginLeft: '5px' }} onClick={() => navigator.clipboard.writeText(address)} />
             </Typography>
-            <Typography variant="body1">username: {playerInfo?.name}</Typography>
-            <Typography variant="body1" display="flex" alignItems="center"> $ {(parseFloat(balance) / 100000000).toFixed(2)} APT</Typography>
+            <Typography variant="body1">creator: {playerInfo?.name}</Typography>
+            <Typography variant="body1" display="flex" alignItems="center"> $ {parseFloat(balance) / 100000000} </Typography>
           </Box>
         </Box>
         <Typography variant="body1" fontSize="1.3rem" margin="0px 0px 0px 35px">   Win Rate: {winRate}%</Typography>
-        <Box display="flex" justifyContent="start" flexDirection="row" gap={2}  margin="30px 0px 0px 35px">
+        <Box display="flex" justifyContent="start" flexDirection="row" gap={2} margin="30px 0px 0px 35px">
           <Box
             width="120px"
             height="50px"
@@ -205,7 +223,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ open, handleOpen, handleClo
             height="50px"
             textAlign="center"
             lineHeight="50px"
-            
+
             sx={{
               position: "relative",
               borderRadius: "10px",
@@ -300,6 +318,8 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ open, handleOpen, handleClo
           </Box>
         </>
       )}
+    </Box> */}
+        {/* {!editing && (
     </Box> */}
         {/* {!editing && (
       <>
