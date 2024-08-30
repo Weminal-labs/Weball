@@ -11,7 +11,6 @@ import { shortenAddress } from '../../utils/Shorten';
 import { ContentCopy } from "@mui/icons-material";
 import { useAlert } from "../../contexts/AlertProvider";
 import CustomButton from "../buttons/CustomButton";
-import CustomButton from "../buttons/CustomButton";
 type Coin = { coin: { value: string } };
 
 export interface ProfileModalProps {
@@ -192,7 +191,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ open, handleOpen, handleClo
           </Box>
         </Box>
         <Typography variant="body1" fontSize="1.3rem" margin="0px 0px 0px 35px">   Win Rate: {winRate}%</Typography>
-        <Box display="flex" justifyContent="start" flexDirection="row" gap={2}  margin="30px 0px 0px 35px">
+        <Box display="flex" justifyContent="start" flexDirection="row" gap={2} margin="30px 0px 0px 35px">
           <Box
             width="120px"
             height="50px"
@@ -223,7 +222,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ open, handleOpen, handleClo
             height="50px"
             textAlign="center"
             lineHeight="50px"
-            
+
             sx={{
               position: "relative",
               borderRadius: "10px",
@@ -348,28 +347,8 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ open, handleOpen, handleClo
         </Box> */}
       </Box>
     </Modal>
-    )} */}
-        {/* <Box display="flex" justifyContent="flex-end" gap={2}>
-          {editing ? (
-            <>
-              <Button onClick={handleUpdate} variant="contained" color="primary" disabled={loading || usernameTaken}>
-                {loading ? "Updating..." : "Update"}
-              </Button>
-              <Button onClick={() => setEditing(false)} variant="outlined">
-                Cancel
-              </Button>
-            </>
-          ) : (
-            <Button onClick={() => setEditing(true)} variant="contained">
-              Edit
-            </Button>
-          )}
-        </Box> */}
-      </Box>
-    </Modal>
 
 
-  );
   );
 };
 
