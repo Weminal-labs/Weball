@@ -117,7 +117,7 @@ const CreateForm: React.FC<Props> = ({ createRoomContract, open, onClose }) => {
       onClose={onClose}
       aria-labelledby="create-room-modal-title"
       aria-describedby="create-room-modal-description"
-      
+
     >
       <StyledBox isMobile={isMobile}>
         <StyledIconButton onClick={onClose}>
@@ -168,16 +168,24 @@ const CreateForm: React.FC<Props> = ({ createRoomContract, open, onClose }) => {
             />
           </StyledRadioGroup>
         </Box>
-        <Box sx={{ width: '90%', maxWidth: '500px' }}>
-          <Typography variant="h6" mb={1} fontSize='0.8rem' letterSpacing='0.1rem'>MATE</Typography>
-          <CustomInput
-            value={mate}
-            onChange={(e) => setMate(e.target.value)}
-            placeholder="YOUR MATE"
-            isMain={true}
-            disabled={false}
-          />
-        </Box>
+        <Box sx={{width: '90%'}}>
+          <Box sx={{ width: '100%', maxWidth: '500px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Typography variant="h6" fontSize='0.8rem' letterSpacing='0.1rem'>MATE</Typography>
+            <Switch
+              checked={isMateEnabled}
+              onChange={(e) => setIsMateEnabled(e.target.checked)}
+              color="primary"
+            />
+          </Box>
+          <Box sx={{ width: '100%', maxWidth: '500px' }}>
+            <CustomInput
+              value={mate}
+              onChange={(e) => setMate(e.target.value)}
+              placeholder="YOUR MATE"
+              isMain={true}
+              disabled={!isMateEnabled}
+            />
+          </Box></Box>
         <Box display="flex" justifyContent="center" width="90%" mt={1}>
           <SendButton walletAddress={address || ""} type={Network.TESTNET}>
             Faucet
