@@ -1,11 +1,11 @@
 import { FaucetClient } from "aptos";
 import { sanitizeAddress } from "../utils/sanitizeAddress";
 
-const NODE_URL_DEVNET = "https://fullnode.devnet.aptoslabs.com/v1";
-const FAUCET_URL_DEVNET = "https://faucet.devnet.aptoslabs.com";
+const NODE_URL_DEVNET = "https://aptos.devnet.inola.movementlabs.xyz/v1";
+const FAUCET_URL_DEVNET = "https://faucet.devnet.inola.movementlabs.xyz";
 
-const NODE_URL_TESTNET = "https://fullnode.testnet.aptoslabs.com/v1";
-const FAUCET_URL_TESTNET = "https://faucet.testnet.aptoslabs.com";
+const NODE_URL_TESTNET = "https://aptos.testnet.suzuka.movementlabs.xyz/v1/";
+const FAUCET_URL_TESTNET = "https://faucet.testnet.suzuka.movementlabs.xyz/";
 
 const networkWithFaucet = {
   devnet: {
