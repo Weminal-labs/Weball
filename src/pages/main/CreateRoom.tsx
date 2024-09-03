@@ -48,7 +48,11 @@ const CreateRoom: React.FC = () => {
     console.log("loadGame state updated:", loadGame);
   }, [loadGame]);
   const getCurrentRoom = async () => {
-    const aptosConfig = new AptosConfig({ network: Network.TESTNET });
+    const aptosConfig = new AptosConfig({ 
+      network: Network.TESTNET,
+      fullnode: 'https://faucet.testnet.suzuka.movementlabs.xyz/v1',
+      faucet: 'https://faucet.testnet.suzuka.movementlabs.xyz/',
+    });
     const aptos = new Aptos(aptosConfig);
     const payload: InputViewFunctionData = {
       function: `${MODULE_ADDRESS}::gamev3::get_room_now`,
@@ -83,7 +87,11 @@ const CreateRoom: React.FC = () => {
     setOpenAlert(false);
   };
   const createRoomContract = async (ROOM_NAME: string, bet_amount: string) => {
-    const aptosConfig = new AptosConfig({ network: Network.TESTNET });
+    const aptosConfig = new AptosConfig({ 
+      network: Network.TESTNET,
+      fullnode: 'https://faucet.testnet.suzuka.movementlabs.xyz/v1',
+      faucet: 'https://faucet.testnet.suzuka.movementlabs.xyz/',
+    });
     const aptos = new Aptos(aptosConfig);
     const FUNCTION_NAME = `${MODULE_ADDRESS}::gamev3::create_room`;
     try {

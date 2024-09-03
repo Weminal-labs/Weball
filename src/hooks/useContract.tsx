@@ -25,7 +25,11 @@ const useContract = () => {
     onError,
     onFinally,
   }: useContractProps) => {
-    const aptosConfig = new AptosConfig({ network: Network.TESTNET });
+    const aptosConfig = new AptosConfig({ 
+      network: Network.TESTNET,
+      fullnode: 'https://faucet.testnet.suzuka.movementlabs.xyz/v1',
+      faucet: 'https://faucet.testnet.suzuka.movementlabs.xyz/',
+    });
     const aptos = new Aptos(aptosConfig);
     const address = localStorage.getItem("address")
 

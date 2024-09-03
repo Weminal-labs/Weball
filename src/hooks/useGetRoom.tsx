@@ -9,7 +9,11 @@ const useGetRoom = () => {
   
     const getRooms = async () => {
       setIsLoading(true);
-      const aptosConfig = new AptosConfig({ network: Network.TESTNET });
+      const aptosConfig = new AptosConfig({ 
+        network: Network.TESTNET,
+        fullnode: 'https://faucet.testnet.suzuka.movementlabs.xyz/v1',
+        faucet: 'https://faucet.testnet.suzuka.movementlabs.xyz/',
+      });
       const aptos = new Aptos(aptosConfig);
       const payload: InputViewFunctionData = {
         function: `${MODULE_ADDRESS}::gamev3::get_waiting_rooms`,

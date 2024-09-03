@@ -68,7 +68,11 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ open, handleOpen, handleClo
   const fetchPlayerInfo = async (address: string) => {
     setLoading(true);
     const player = await fetchPlayer(address);
-    const aptosConfig = new AptosConfig({ network: Network.TESTNET });
+    const aptosConfig = new AptosConfig({ 
+      network: Network.TESTNET,
+      fullnode: 'https://faucet.testnet.suzuka.movementlabs.xyz/v1',
+      faucet: 'https://faucet.testnet.suzuka.movementlabs.xyz/',
+    });
     const aptos = new Aptos(aptosConfig);
     const resource = await aptos.getAccountResource<Coin>({
       accountAddress: address,

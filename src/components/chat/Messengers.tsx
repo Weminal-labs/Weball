@@ -17,7 +17,11 @@ const Messengers = ({ roomId }: Props) => {
   const [messages, setMessages] = useState<MessageType[]>([])
 
   useEffect(() => {
-    const aptosConfig = new AptosConfig({ network: Network.TESTNET });
+    const aptosConfig = new AptosConfig({ 
+      network: Network.CUSTOM,
+      fullnode: 'https://faucet.testnet.suzuka.movementlabs.xyz/v1',
+      faucet: 'https://faucet.testnet.suzuka.movementlabs.xyz/',
+    });
     const aptos = new Aptos(aptosConfig);
     
     const getChatMessage = async () => {

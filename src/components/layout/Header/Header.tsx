@@ -55,13 +55,17 @@ const Header: React.FC = () => {
     if (player) setPlayerInfo(player);
     setLoading(false);
   };
-
+  const aptosConfig = new AptosConfig({ 
+    network: Network.CUSTOM,
+    fullnode: 'https://faucet.testnet.suzuka.movementlabs.xyz/v1',
+    faucet: 'https://faucet.testnet.suzuka.movementlabs.xyz/',
+  });
+  const aptos = new Aptos(aptosConfig);
   
   const fetchBalance = async (address: string) => {
     setLoading(true);
     const player = await fetchPlayer(address);
-    const aptosConfig = new AptosConfig({ network: Network.TESTNET });
-    const aptos = new Aptos(aptosConfig);
+
     const resource =await aptos.getAccountResource<Coin>({
       accountAddress: address,
       resourceType: "0x1::coin::CoinStore<0x1::aptos_coin::AptosCoin>",
