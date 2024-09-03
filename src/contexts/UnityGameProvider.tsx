@@ -102,7 +102,7 @@ export const UnityGameProvider: React.FC<GameProviderProps> = ({
         <>
           Transaction:{" "}
           <a
-            href={`https://explorer.aptoslabs.com/txn/${executedTransaction.hash}?network=testnet`}
+            href={`https://explorer.movementlabs.xyz/txn/${executedTransaction.hash}?network=testnet`}
             target="_blank"
             rel="noopener noreferrer"
           >

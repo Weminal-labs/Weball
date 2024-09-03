@@ -256,7 +256,7 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
             <>
               Ready Transaction:{" "}
               <a
-                href={`https://explorer.aptoslabs.com/txn/${result.hash}?network=testnet`}
+                href={`https://explorer.movementlabs.xyz/txn/${result.hash}?network=testnet`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
