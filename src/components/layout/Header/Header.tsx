@@ -57,7 +57,6 @@ const Header: React.FC = () => {
   
   const fetchBalance = async (address: string) => {
     setLoading(true);
-    const player = await fetchPlayer(address);
     const aptosConfig = new AptosConfig({ network: Network.TESTNET });
     const aptos = new Aptos(aptosConfig);
     const resource =await aptos.getAccountResource<Coin>({
@@ -70,6 +69,11 @@ const Header: React.FC = () => {
     setBalance(value)
     setLoading(false);
   };
+  
+  useEffect(()=>{
+    const address = localStorage.getItem("address")??""
+    fetchPlayerInfo(address)
+  },[])
 
   useEffect(() => {
     if (address) {
@@ -194,7 +198,7 @@ const Header: React.FC = () => {
          <WelcomeText onClick={() => navigator.clipboard.writeText(address ?? "")}>{shortenAddress(address ?? "", 5)}</WelcomeText>
          <Avatar
            component="div"
-           src={`https://i.pinimg.com/564x/08/13/41/08134115f47ccd166886b40f36485721.jpg`}
+           src={playerInfo?playerInfo?.user_image:"https://i.pinimg.com/564x/08/13/41/08134115f47ccd166886b40f36485721.jpg"}
             onClick={handleClick}
            sx={{ cursor: "pointer" }}
          />

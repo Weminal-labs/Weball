@@ -14,16 +14,16 @@ const LeaveDialog = ({openDialog,handleCloseDialog,handleCloseRoom}:Pros) => {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">Xác nhận rời phòng !!!</DialogTitle>
+        <DialogTitle id="alert-dialog-title">confirm leaving</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Bộ mày rảnh lắm hả
+          Are you sure you want to leave the room?
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDialog}>hủy</Button>
+          <Button onClick={handleCloseDialog}>Close</Button>
           <Button onClick={handleCloseRoom} autoFocus>
-            Xác nhận
+            Confirm
           </Button>
         </DialogActions>
       </Dialog>
