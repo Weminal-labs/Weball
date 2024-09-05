@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Typography } from "@mui/material";
-import PersonRemoveAlt1Icon from "@mui/icons-material/PersonRemoveAlt1";
 
-import useAuth from "../../../hooks/useAuth";
 import { CreateRoomType, RoomType } from "../../../type/type";
 import { shortenAddress } from "../../../utils/Shorten";
 import {
@@ -70,8 +68,6 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
   const [openDialog, setOpenDialog] = useState(false);
   const [player2, setPlayer2] = useState<Player | null>(null);
   const [player1, setPlayer1] = useState<Player | null>(null);
-  // const [openAlert, setOpenAlert] = useState(false);
-  // const [contentAlert, setContentAlert] = useState("");
   const [openChat, setOpenChat] = useState(false);
   const [valueVol, setValueVol] = React.useState<number>(30);
   const [openVol, setOpenVol] = React.useState<boolean>(false);

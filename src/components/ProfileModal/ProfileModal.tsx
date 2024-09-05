@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Modal } from "@mui/material";
-import useAuth from "../../hooks/useAuth";
 import { Aptos, AptosConfig, InputViewFunctionData, Network } from "@aptos-labs/ts-sdk";
 import { MODULE_ADDRESS } from "../../utils/Var";
 import { PlayerInfo } from "../../type/type";
@@ -28,7 +27,6 @@ const existingImages = [
 ];
 
 const ProfileModal: React.FC<ProfileModalProps> = ({ open, handleOpen, handleClose }) => {
-  const { auth } = useAuth();
   const address = localStorage.getItem("address") ?? "";
   const [balance, setBalance] = useState<string>("");
   const { fetchPlayer } = useGetPlayer();
@@ -177,17 +175,17 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ open, handleOpen, handleClo
         )}
         <Box display="flex" alignItems="center" gap={4} margin="10px 0px 10px 35px" >
           <Avatar
-            src={playerInfo?.user_image || auth?.picture || ""}
+            src={playerInfo?.user_image || ""}
             alt="Profile Picture"
             sx={{ width: 60, height: 60, cursor: editing ? 'pointer' : 'default' }}
 
           />
           <Box display="flex" flexDirection="column" gap={1} mb={2} mt={2} >
-            <Typography variant="body1">email: {auth?.email}</Typography>
+            {/* <Typography variant="body1">email: {auth?.email}</Typography> */}
             <Typography variant="body1" display="flex" alignItems="center">
               id: {shortenAddress(address, 5)} <ContentCopy style={{ cursor: 'pointer', marginLeft: '5px' }} onClick={() => navigator.clipboard.writeText(address)} />
             </Typography>
-            <Typography variant="body1">creator: {playerInfo?.name}</Typography>
+            <Typography variant="body1">creator: {playerInfo?.username}</Typography>
             <Typography variant="body1" display="flex" alignItems="center"> $ {parseFloat(balance) / 100000000} </Typography>
           </Box>
         </Box>

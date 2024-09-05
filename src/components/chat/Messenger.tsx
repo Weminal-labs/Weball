@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import useAuth from "../../hooks/useAuth";
 import { Compare } from "../../utils/CompareAddress";
 import useGetPlayer from "../../hooks/useGetPlayer";
 interface Pros {
