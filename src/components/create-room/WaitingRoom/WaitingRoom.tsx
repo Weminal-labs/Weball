@@ -320,7 +320,7 @@ const WaitingRoom = ({ open, room, closeRoom, isCreator, openGame }: Pros) => {
           setOpenDialog(true);
         }}
         sx={{
-          backdropFilter: "blur(3px)",
+          // backdropFilter: "blur(3px)",
         }}
       >
         <WaitingRoomModalContainer>

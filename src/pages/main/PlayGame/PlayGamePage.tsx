@@ -35,6 +35,7 @@ import { useAptimusFlow } from "aptimus-sdk-test/react";
 import { Compare } from "../../../utils/CompareAddress";
 import useContract from "../../../hooks/useContract";
 import CustomButton from "../../../components/buttons/CustomButton";
+import { useAlert } from "../../../contexts/AlertProvider";
 
 const ITEMS_PER_PAGE = 6;
 
@@ -51,6 +52,7 @@ const PlayGame: React.FC = () => {
   const [isCreator, setIsCreator] = useState(false);
   const [openCreate, setOpenCreate] = useState(false);
   const { callContract, loading, error } = useContract();
+  const { setAlert } = useAlert();
 
   useEffect(() => {
     getCurrentRoom();
@@ -194,15 +196,8 @@ const PlayGame: React.FC = () => {
         setIsLoading(false);
         // @ts-ignore
         console.error("Mã Lỗi:", error.status);
-        // @ts-ignore
-        if (error.status === 429) {
-          setContentAlert("Exceed request limit, please wait 5 minutes");
-          setOpenAlert(true);
-        }
-
-        // @ts-ignore
-        setContentAlert(error.toString());
-        setOpenAlert(true);
+       
+        setAlert("Error: " + error.toString());
         console.error("Lỗi khi gọi hàm smart contract:", error);
       },
     });
