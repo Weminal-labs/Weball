@@ -3,7 +3,7 @@ import "./App.css";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 import Layout from "./pages/layout/Layout";
-import Leaderboard from "./pages/main/Leaderboard";
+import Leaderboard from "./pages/main/LeaderBoard/Leaderboard";
 import { LoginPage } from "./pages/main/Login/Login";
 import { CallbackPage } from "./pages/layout/Callback";
 import AuthLayout from "./pages/layout/AuthLayout";

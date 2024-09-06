@@ -108,6 +108,7 @@ const CreateForm: React.FC<Props> = ({ createRoomContract, open, onClose }) => {
       );
     } else {
       setAlert("Fields are not filled", "error");
+      console.log("Fields are not filled");
     }
   };
 

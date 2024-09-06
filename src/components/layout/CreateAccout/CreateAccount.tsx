@@ -87,17 +87,13 @@ const CreateAccount = () => {
     setEditingImageLink(imageUrl);
   };
 
-  const allFieldsFilled = () => {
-    return editingName && editingUsername;
-  };
-
   const handleUpdate = async () => {
     if (usernameTaken) {
       setAlert("Username is already taken. Please choose another one.", "info");
       return;
     }
 
-    if (!allFieldsFilled()) {
+    if (!(editingName && editingUsername)) {
       setAlert("All fields must be filled.", "info");
       return;
     }
@@ -209,7 +205,7 @@ const CreateAccount = () => {
             </SendButton>
           </Box>
           <Box display="flex" justifyContent="center" margin="10px 25px 25px 30px">
-            <CustomButton content={loading ? "Loading..." : "Create"} isMain={true} onClick={handleUpdate} disabled={loading || !allFieldsFilled()} />
+            <CustomButton content={loading ? "Loading..." : "Create"} isMain={true} onClick={handleUpdate} disabled={loading} />
           </Box>
 
         </Box>
