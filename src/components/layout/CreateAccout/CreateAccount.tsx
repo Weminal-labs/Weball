@@ -5,7 +5,6 @@ import { Avatar, Box, CircularProgress, Grid, Modal, Typography } from "@mui/mat
 import { MODULE_ADDRESS } from "../../../utils/Var";
 import { SendButton } from "../../SendButton/SendButton";
 import { useAlert } from "../../../contexts/AlertProvider";
-import useAuth from "../../../hooks/useAuth";
 import useContract from "../../../hooks/useContract";
 import CustomButton from "../../buttons/CustomButton";
 import CustomInput from "../../input/CustomInput";
@@ -17,12 +16,10 @@ const CreateAccount = () => {
   const [usernameTaken, setUsernameTaken] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingFetch, setLoadingFetch] = useState<boolean>(true);
-  const { auth } = useAuth();
   const address = localStorage.getItem("address")
   const { callContract } = useContract();
   const { setAlert } = useAlert();
   const existingImages = [
-    `${auth?.picture}`,
     "https://i.pinimg.com/564x/08/13/41/08134115f47ccd166886b40f36485721.jpg",
     "https://i.pinimg.com/564x/92/ab/3f/92ab3fa97e04a9eedc3a73daa634aa84.jpg",
     "https://i.pinimg.com/564x/1a/cd/42/1acd42b4e937c727350954d0df62177d.jpg",

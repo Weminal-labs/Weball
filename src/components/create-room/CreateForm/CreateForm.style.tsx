@@ -6,7 +6,7 @@ export const StyledModal = styled(Modal)(({ theme }) => ({
   backdropFilter: 'blur(8px)',
 }));
 
-export const StyledBox = styled(Box)(({ theme, isMobile }) => ({
+export const StyledBox = styled(Box)<{ isMobile: boolean }>(({ theme, isMobile }) => ({
   position: 'absolute',
   top: '50%',
   left: '50%',

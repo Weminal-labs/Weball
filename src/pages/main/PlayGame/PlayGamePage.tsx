@@ -10,8 +10,7 @@ import {
 import LoadingScreen from "../../../components/layout/LoadingScreen";
 import RoomCard from "../../../components/join-room/Room";
 import JoinRoomDialog from "../../../components/join-room/JoinRoomDialog";
-import WaitingRoom from "../../../components/create-room/WaitingRoom";
-import useAuth from "../../../hooks/useAuth";
+import WaitingRoom from "../../../components/create-room/WaitingRoom/WaitingRoom";
 import useGetRoom from "../../../hooks/useGetRoom";
 import UnityGameComponent, { useUnityGame } from "../../../hooks/useUnityGame";
 import { RoomType } from "../../../type/type";
@@ -36,11 +35,11 @@ import { useAptimusFlow } from "aptimus-sdk-test/react";
 import { Compare } from "../../../utils/CompareAddress";
 import useContract from "../../../hooks/useContract";
 import CustomButton from "../../../components/buttons/CustomButton";
+import { useAlert } from "../../../contexts/AlertProvider";
 
 const ITEMS_PER_PAGE = 6;
 
 const PlayGame: React.FC = () => {
-  const { auth } = useAuth();
   const [page, setPage] = useState<number>(1);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [roomObj, setRoomObj] = useState<RoomType | null>(null);
@@ -50,13 +49,11 @@ const PlayGame: React.FC = () => {
   const address = localStorage.getItem("address");
   const [loadGame, setLoadGame] = useState(false);
   const { getRooms, isLoading, rooms, setIsLoading } = useGetRoom();
-  const [openAlert, setOpenAlert] = useState(false);
-  const [contentAlert, setContentAlert] = useState("");
   const [isCreator, setIsCreator] = useState(false);
   const [openCreate, setOpenCreate] = useState(false);
   const { callContract, loading, error } = useContract();
+  const { setAlert } = useAlert();
 
-  const flow = useAptimusFlow();
   useEffect(() => {
     getCurrentRoom();
   }, []);
@@ -87,12 +84,7 @@ const PlayGame: React.FC = () => {
       setLoadGame(true);
     }
   };
-  // useEffect(()=>{
-  //   console.log(openWaitRoom)
-  // },[openWaitRoom])
-  const handleCloseAlert = () => {
-    setOpenAlert(false);
-  };
+
   useEffect(() => {
     getRooms();
   }, []);
@@ -134,8 +126,7 @@ const PlayGame: React.FC = () => {
 
   const openGame = () => {
     if (isLoaded === false) {
-      setContentAlert("Server is loading, please try again");
-      setOpenAlert(true);
+   
       return;
     }
     const obj = {
@@ -159,19 +150,28 @@ const PlayGame: React.FC = () => {
     let functionArgs: any[] = [];
 
     if (withMate) {
+      console.log(mateAddress);
       functionName = "create_room_mate";
       const aptosConfig = new AptosConfig({ network: Network.TESTNET });
       const aptos = new Aptos(aptosConfig);
-      const payload: InputViewFunctionData = {
-        function: `${MODULE_ADDRESS}::gamev3::get_address_by_username`,
-        functionArguments: [mateAddress],
-      };
-
-      const response = await aptos.view({ payload });
+      try {
+        const payload: InputViewFunctionData = {
+          function: `${MODULE_ADDRESS}::gamev3::get_address_by_username`,
+          functionArguments: [mateAddress],
+        };
+        const response = await aptos.view({ payload });
+        // @ts-ignore
+        const findAddress: string = response[0];
+        console.log(findAddress);
+        functionArgs = [ROOM_NAME, bet_amount, findAddress];
+      } catch (error) {
+        console.error("Lỗi khi tạo payload:", error);
+       
+        return;
+      }
       // @ts-ignore
-      const findAddress: string = response[0];
-      console.log(findAddress);
-      functionArgs = [ROOM_NAME, bet_amount, findAddress];
+
+     
     } else {
       functionName = "create_room";
       functionArgs = [ROOM_NAME, bet_amount];
@@ -190,22 +190,14 @@ const PlayGame: React.FC = () => {
         setIsCreator(true);
         setLoadGame(true);
 
-        console.log(createRoomObj);
       },
       onError: (error) => {
         setOpenCreate(true);
         setIsLoading(false);
         // @ts-ignore
         console.error("Mã Lỗi:", error.status);
-        // @ts-ignore
-        if (error.status === 429) {
-          setContentAlert("Exceed request limit, please wait 5 minutes");
-          setOpenAlert(true);
-        }
-
-        // @ts-ignore
-        setContentAlert(error.toString());
-        setOpenAlert(true);
+       
+        setAlert("Error: " + error.toString());
         console.error("Lỗi khi gọi hàm smart contract:", error);
       },
     });
@@ -271,11 +263,21 @@ const PlayGame: React.FC = () => {
                   );
               })}
             </GridContainer>
-            <Stack spacing={4} sx={{ marginBottom: "20px" }}>
+            <Stack spacing={4} sx={{ marginBottom: "20px", color: "white" }}>
               <Pagination
                 count={Math.ceil(filteredRooms.length / ITEMS_PER_PAGE)}
                 page={page}
+                color="primary"
                 onChange={handlePageChange}
+                sx={{
+                  "& .MuiPaginationItem-root": {
+                    color: "white", // Màu chữ của các trang
+                  },
+                  "& .MuiPaginationItem-root.Mui-selected": {
+                    backgroundColor: "rgba(255, 255, 255, 0.12)", // Nền cho trang được chọn
+                    color: "white", // Màu chữ cho trang được chọn
+                  },
+                }}
               />
             </Stack>
           </>
@@ -323,11 +325,7 @@ const PlayGame: React.FC = () => {
           setOpenCreate(false);
         }}
       ></CreateForm>
-      <AlertComponent
-        handleCloseAlert={handleCloseAlert}
-        openAlert={openAlert}
-        content={contentAlert}
-      />
+  
     </>
   );
 };

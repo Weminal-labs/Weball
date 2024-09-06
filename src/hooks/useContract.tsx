@@ -3,6 +3,7 @@ import { useState } from "react";
 import { MODULE_ADDRESS } from "../utils/Var";
 import { useAptimusFlow } from "aptimus-sdk-test/react";
 import { AptimusNetwork } from "aptimus-sdk-test";
+import { useWallet } from "@aptos-labs/wallet-adapter-react";
 
 
 interface useContractProps {
@@ -16,8 +17,8 @@ interface useContractProps {
 const useContract = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<null | string>(null);
-  const flow = useAptimusFlow();
-
+  // const flow = useAptimusFlow();
+  const { signAndSubmitTransaction, disconnect}=useWallet()
   const callContract = async ({
     functionName,
     functionArgs,
@@ -33,7 +34,7 @@ const useContract = () => {
       setLoading(true);
       setError(null);
 
-      const transaction = await aptos.transaction.build.simple({
+      const response = await signAndSubmitTransaction({
         sender: address ?? "",
         data: {
           function: `${MODULE_ADDRESS}::gamev3::${functionName}`,
@@ -41,11 +42,7 @@ const useContract = () => {
         },
       });
 
-      const committedTransaction = await flow.executeTransaction({
-        aptos,
-        transaction,
-        network: AptimusNetwork.TESTNET,
-      });
+      const committedTransaction=await aptos.waitForTransaction({ transactionHash: response.hash });
 
       if (onSuccess) {
         onSuccess(committedTransaction);
@@ -53,15 +50,16 @@ const useContract = () => {
     } catch (error: any) { 
       console.log(error.message)
       if (error.status === 400) {
-        flow.logout();
+        disconnect
         localStorage.clear()
         window.location.reload();
       }
-      if(error.message==="Missing required data for execution."){
-        flow.logout();
-        localStorage.clear()
-        window.location.reload();
-      }
+      // if(error.message==="Missing required data for execution."){
+      //   disconnect        
+        
+      //   localStorage.clear()
+      //   window.location.reload();
+      // }
       // Handle error here
       setError(error.toString());
       if (onError) {

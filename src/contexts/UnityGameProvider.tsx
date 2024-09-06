@@ -56,14 +56,12 @@ export const UnityGameProvider: React.FC<GameProviderProps> = ({
   const pickWinnerByRoomId = async (roomId: number, winner: string) => {
     const aptosConfig = new AptosConfig({ network: Network.TESTNET });
     const aptos = new Aptos(aptosConfig);
-
     const privateKey = new Ed25519PrivateKey(
-      "0x2099bc34580870f73e17a8b0676107f723dae26c594520ec82767928114fbed2",
+      import.meta.env.VITE_SECRET_KEY,
     );
 
     const account = await Account.fromPrivateKey({ privateKey });
 
-    // Get the account address
     const accountAddress = account.accountAddress.toString();
 
     console.log("Account Address:", accountAddress);
