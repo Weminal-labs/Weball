@@ -61,7 +61,7 @@ const CustomButtonSelect = styled("div")<CustomButtonProps>(
     cursor: "pointer",
     userSelect: "none",
     "&:hover": {
-      backgroundColor: "grey",
+      backgroundColor: selected ? "darkgrey" : "#1E3A3D", // Updated hover color
     },
     fontFamily: 'revert'
   }),
