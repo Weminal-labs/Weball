@@ -19,19 +19,21 @@ const RequireAuth = () => {
   const navigate = useNavigate();
   const { account,connected, isLoading, } = useWallet();
   useEffect(() => {
-
-    if(!isLoading){
+    // console.log(isLoading)
+    if(connected){
       const address = localStorage.getItem("address") ?? "";
-      if (connected) {
+ 
   
         UpdateAccount(address);
-      }
+      
   
     }
 
 
-  }, [connected,isLoading]);
-
+  }, [connected]);
+  useEffect(()=>{
+    console.log(isLoading)
+  },[isLoading])
   const UpdateAccount = async (address: string | undefined) => {
     console.log("Address:", address);
 
@@ -61,8 +63,8 @@ const RequireAuth = () => {
   if (isLoading) {
     return <div>Loading...</div>;
   }
-  // return <Outlet/>
-  return account ? (
+
+  return connected ? (
     <Outlet />
   ) : (
     <Navigate to="auth/login" state={{ from: location }} replace />

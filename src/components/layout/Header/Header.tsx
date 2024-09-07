@@ -193,6 +193,9 @@ const Header: React.FC = () => {
   return (
  
     <HeaderContainer>
+      <div className="w-40 h-40 absolute top-[15%] left-[40px]">
+        <img src="/logo.png" alt="" className="object-cover"/>
+      </div>
        <RightHeader>
 
          <WelcomeText onClick={() => navigator.clipboard.writeText(address ?? "")}>{shortenAddress(address ?? "", 5)}</WelcomeText>
