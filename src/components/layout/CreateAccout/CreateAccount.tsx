@@ -105,7 +105,7 @@ const CreateAccount = () => {
     setLoading(true);
     await callContract({
       functionName: "update_account",
-      functionArgs: [editingName, editingUsername, editingImageLink],
+      functionArgs: [editingName.toString(), editingUsername.toString(), editingImageLink.toString()],
       onSuccess(result) {
         window.location.href = "/";
         setAlert("Create account successfully!", "success");

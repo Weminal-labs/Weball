@@ -5,6 +5,7 @@ import { useAptimusFlow } from "aptimus-sdk-test/react";
 import { AptimusNetwork } from "aptimus-sdk-test";
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
 
+import { AptosConnectButton, useAptosWallet } from "@razorlabs/wallet-kit";
 
 interface useContractProps {
   functionName: string;
@@ -18,7 +19,7 @@ const useContract = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<null | string>(null);
   // const flow = useAptimusFlow();
-  const { signAndSubmitTransaction, disconnect}=useWallet()
+  const { signAndSubmitTransaction, disconnect}=useAptosWallet()
   const callContract = async ({
     functionName,
     functionArgs,
@@ -27,10 +28,10 @@ const useContract = () => {
     onFinally,
   }: useContractProps) => {
     const aptosConfig = new AptosConfig({
-      
+      network: Network.TESTNET,
       fullnode: 'https://aptos.testnet.suzuka.movementlabs.xyz/v1',
       faucet: 'https://faucet.testnet.suzuka.movementlabs.xyz/',
-    });
+      });
     const aptos = new Aptos(aptosConfig);
     const address = localStorage.getItem("address")
 
@@ -38,14 +39,22 @@ const useContract = () => {
       setLoading(true);
       setError(null);
 
+      // const response = await signAndSubmitTransaction({
+      //   // sender: address ?? "",
+
+      //   data: {
+      //     function: `${MODULE_ADDRESS}::gamev3::${functionName}`,
+      //     functionArguments: functionArgs,
+      //   },
+      // });
       const response = await signAndSubmitTransaction({
-        sender: address ?? "",
-        data: {
+        payload: {
+        
           function: `${MODULE_ADDRESS}::gamev3::${functionName}`,
           functionArguments: functionArgs,
-        },
+          typeArguments: []
+        }
       });
-
       const committedTransaction=await aptos.waitForTransaction({ transactionHash: response.hash });
 
       if (onSuccess) {

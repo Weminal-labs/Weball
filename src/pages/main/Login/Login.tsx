@@ -5,6 +5,8 @@ import { WalletSelector as AntdWalletSelector } from "@aptos-labs/wallet-adapter
 import './wallet.css'
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import { useNavigate } from "react-router-dom";
+import { AptosConnectButton, useAptosWallet } from "@razorlabs/wallet-kit";
+
 export const LoginPage = () => {
   // const flow = useAptimusFlow();
 
@@ -18,7 +20,7 @@ export const LoginPage = () => {
   //   });
   //   window.location.href = url.toString();
   // };
-  const {connected,account}=useWallet()
+  const {connected,account}=useAptosWallet()
   const navigate = useNavigate();
   useEffect(()=>{
     if(connected){
@@ -39,7 +41,8 @@ export const LoginPage = () => {
           Sign in with Google
         </p>
       </div> */}
-            <AntdWalletSelector />
+            <AptosConnectButton />
+
 
     </div>
   );

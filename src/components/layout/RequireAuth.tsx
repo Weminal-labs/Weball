@@ -11,13 +11,14 @@ import {
 } from "@aptos-labs/ts-sdk";
 import { MODULE_ADDRESS } from "../../utils/Var";
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
+import { AptosConnectButton, useAptosWallet } from "@razorlabs/wallet-kit";
 
 const RequireAuth = () => {
   const location = useLocation();
   const [loading, setLoading] = useState(true);
   const [checkUpdate, setCheckUpdate] = useState(true);
   const navigate = useNavigate();
-  const { account,connected, isLoading, } = useWallet();
+  const { account,connected, connecting } = useAptosWallet();
   useEffect(() => {
     // console.log(isLoading)
     if(connected){
@@ -30,10 +31,10 @@ const RequireAuth = () => {
     }
 
 
-  }, [connected]);
-  useEffect(()=>{
-    console.log(isLoading)
-  },[isLoading])
+  }, [connecting]);
+  // useEffect(()=>{
+  //   console.log(isLoading)
+  // },[isLoading])
   const UpdateAccount = async (address: string | undefined) => {
     console.log("Address:", address);
 
@@ -60,7 +61,7 @@ const RequireAuth = () => {
     }
   };
 
-  if (isLoading) {
+  if (connecting) {
     return <div>Loading...</div>;
   }
 
