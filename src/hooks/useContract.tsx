@@ -49,11 +49,11 @@ const useContract = () => {
       }
     } catch (error: any) { 
       console.log(error.message)
-      if (error.status === 400) {
-        disconnect
-        localStorage.clear()
-        window.location.reload();
-      }
+      // if (error.status === 400) {
+      //   disconnect
+      //   localStorage.clear()
+      //   window.location.reload();
+      // }
       // if(error.message==="Missing required data for execution."){
       //   disconnect        
         
@@ -63,6 +63,7 @@ const useContract = () => {
       // Handle error here
       setError(error.toString());
       if (onError) {
+        
         onError(error);
       }
     } finally {

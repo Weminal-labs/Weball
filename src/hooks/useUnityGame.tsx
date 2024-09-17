@@ -32,7 +32,6 @@ const style = {
   transform: "translate(-50%, -50%)",
   width: "70%",
   height: "75%",
-  bgcolor: "background.paper",
   boxShadow: 24,
   p: 3,
 };

@@ -1,6 +1,5 @@
 import { AptosWalletAdapterProvider } from "@aptos-labs/wallet-adapter-react";
 import { PropsWithChildren } from "react";
-import { BitgetWallet } from "@bitget-wallet/aptos-wallet-adapter";
 // import { MartianWallet } from "@martianwallet/aptos-wallet-adapter";
 // import { FewchaWallet } from "fewcha-plugin-wallet-adapter";
 
@@ -11,7 +10,6 @@ export const WalletProvider = ({ children }: PropsWithChildren) => {
     // const { toast } = useToast();
   
     const wallets = [
-      new BitgetWallet(),
     //   new MartianWallet(),
     //   new FewchaWallet(),
 
@@ -23,7 +21,7 @@ export const WalletProvider = ({ children }: PropsWithChildren) => {
   
     return (
       <AptosWalletAdapterProvider
-        plugins={wallets}
+        // plugins={wallets}
         autoConnect={true}
         dappConfig={{
           network: Network.TESTNET,
