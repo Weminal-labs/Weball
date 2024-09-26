@@ -4,21 +4,21 @@
 
 @font-face {
   font-family: 'Nord';
-  src: url('/font/TTF/Nord-Regular.ttf') format('truetype');
+  src: url('/font/Nord-Regular.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'Nord';
-  src: url('/font/TTF/Nord-Bold.ttf') format('truetype');
+  src: url('/font/Nord-Bold.ttf') format('truetype');
   font-weight: bold;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'Nord';
-  src: url('/font/TTF/Nord-Italic.ttf') format('truetype');
+  src: url('/font/Nord-Italic.ttf') format('truetype');
   font-weight: normal;
   font-style: italic;
 }
