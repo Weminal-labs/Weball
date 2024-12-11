@@ -3,7 +3,7 @@ import { Box, IconButton } from "@mui/material";
 
 export const HeaderContainer = styled.div`
   height: 100%;
-  padding: 20px;
+  padding: 30px 30px 0 0;
   text-align: left;
   display: flex;
   justify-content: space-evenly;
@@ -52,7 +52,7 @@ export const RightHeader = styled.div`
 
 export const WelcomeText = styled.p`
   color: white;
-  font-size: 14px;
+  font-size: 16px;
   margin-right: 20px;
   cursor: pointer;
 `;

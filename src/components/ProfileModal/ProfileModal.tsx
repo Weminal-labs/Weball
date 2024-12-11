@@ -10,6 +10,8 @@ import { shortenAddress } from '../../utils/Shorten';
 import { ContentCopy } from "@mui/icons-material";
 import { useAlert } from "../../contexts/AlertProvider";
 import CustomButton from "../buttons/CustomButton";
+import { useWallet } from "@aptos-labs/wallet-adapter-react";
+
 type Coin = { coin: { value: string } };
 
 export interface ProfileModalProps {
@@ -18,19 +20,13 @@ export interface ProfileModalProps {
   handleClose: () => void;
 }
 
-const existingImages = [
-  "https://i.pinimg.com/564x/08/13/41/08134115f47ccd166886b40f36485721.jpg",
-  "https://i.pinimg.com/564x/92/ab/3f/92ab3fa97e04a9eedc3a73daa634aa84.jpg",
-  "https://i.pinimg.com/564x/1a/cd/42/1acd42b4e937c727350954d0df62177d.jpg",
-  "https://i.pinimg.com/564x/0b/2d/d4/0b2dd46969ebcec7433a030e5e19b624.jpg",
-  "https://i.pinimg.com/564x/4c/53/a8/4c53a88106cf101590c53ddc421c5c56.jpg",
-];
-
 const ProfileModal: React.FC<ProfileModalProps> = ({ open, handleOpen, handleClose }) => {
   const address = localStorage.getItem("address") ?? "";
   const [balance, setBalance] = useState<string>("");
   const { fetchPlayer } = useGetPlayer();
   const { callContract } = useContract();
+  const { disconnect } = useWallet()
+
 
   const [playerInfo, setPlayerInfo] = useState<PlayerInfo>({
     username: "", name: "", points: "0", games_played: "0", winning_games: "0", likes_received: "0", dislikes_received: "0", user_image: "", pool: "",
@@ -130,6 +126,12 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ open, handleOpen, handleClo
   //   });
   // };
 
+  const handleLogout = () => {
+    localStorage.clear();
+    disconnect()
+    window.location.reload();
+  };
+
   const handleCloseModal = () => {
     handleClose();
     setEditing(false);
@@ -137,33 +139,15 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ open, handleOpen, handleClo
     setEditingImageLink("");
   };
 
-  const InfoRow = ({ label, value }: { label: string; value: string }) => (
-    <Box display="flex" alignItems="center" mb={1}>
-      <Typography variant="body1" fontWeight="bold" sx={{ mr: 1, fontSize: '1.2rem' }}>
-        {label}
-      </Typography>
-      <Typography variant="body1" sx={{ fontSize: '1.2rem' }}>{value}</Typography>
-    </Box>
-  );
-
-  // Reusable Component for Stat Boxes
-  const StatBox = ({ title, value }: { title: string; value: string }) => (
-    <Box textAlign="center" flex={1}>
-      <Typography variant="h6" fontWeight="bold">{value}</Typography>
-      <Typography variant="subtitle2" color="textSecondary">{title}</Typography>
-    </Box>
-  );
-
-
   return (
     <Modal open={open} onClose={handleCloseModal} sx={{
       backdropFilter: "blur(8px)",
 
     }}>
       <Box sx={{
-        width: '90vw', maxWidth: '580px', margin: 'auto', marginTop: '7%', background: 'linear-gradient(180deg, rgba(68, 97, 108, 0.6) 0%, rgba(42, 72, 74, 0.6) 100%)',
+        width: '90vw', maxWidth: '580px', margin: 'auto', marginTop: '5%', background: 'linear-gradient(180deg, rgba(68, 97, 108, 0.6) 0%, rgba(42, 72, 74, 0.6) 100%)',
         backdropFilter: "blur(1.5rem)", borderRadius: '8px', boxShadow: 24, padding: 3, position: 'relative', textTransform: 'uppercase',
-        color:"white"
+        color: "white"
       }}>
         <Typography variant="h6" fontWeight="bold" mb={2} mt={2} align="center" fontSize="2.3rem" letterSpacing="0.2rem" >
           Player Information
@@ -181,7 +165,6 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ open, handleOpen, handleClo
 
           />
           <Box display="flex" flexDirection="column" gap={1} mb={2} mt={2} >
-            {/* <Typography variant="body1">email: {auth?.email}</Typography> */}
             <Typography variant="body1" display="flex" alignItems="center">
               id: {shortenAddress(address, 5)} <ContentCopy style={{ cursor: 'pointer', marginLeft: '5px' }} onClick={() => navigator.clipboard.writeText(address)} />
             </Typography>
@@ -244,7 +227,8 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ open, handleOpen, handleClo
           >{Number(playerInfo?.winning_games)} wins</Box>
 
         </Box>
-        <Box display="flex" justifyContent="center" margin="35px 35px 25px 35px">
+        <Box display="flex" flexDirection="column" gap={2} justifyContent="center" margin="35px 35px 25px 35px">
+          <CustomButton content="Logout" isMain={true} onClick={handleLogout} disabled={loading} />
           <CustomButton content="close" isMain={true} onClick={handleCloseModal} disabled={loading} />
         </Box>
 
